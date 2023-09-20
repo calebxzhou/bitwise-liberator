@@ -1,0 +1,51 @@
+package servlet;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.sql.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import dao.*;
+import model.*;
+
+//查询全部信息
+@WebServlet("/${entity.capEn()}QueryAllServlet")
+public class ${entity.capEn()}QueryAllServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+        String cond = req.getParameter("condition");
+        String val = req.getParameter("value");
+
+        //去数据库读取全部信息
+        List<${entity.getVoName()}> list = new ArrayList<>();
+            if(cond != null && val != null){
+                if("id".equals(cond)){
+                    list = new ArrayList<>(Arrays.asList(DAOFactory.get${entity.capEn()}DAOInstance().doQueryById(val)));
+                }
+                #foreach( $field in $vo.Fields )
+                    #if(${field.NameEn} != "id")
+                        //搜索条件是否为${field.NameCn}
+                        if("${field.NameEn}".equals(cond)){
+                            list = DAOFactory.get${entity.capEn()}DAOInstance().doQueryBy${field.capEn()}(${field.getJavaType()}.valueOf(val));
+                        }
+                    #end
+                #end
+            }else{
+                list = DAOFactory.get${entity.capEn()}DAOInstance().doQueryAll();
+            }
+        //存入list
+        req.setAttribute("list",list);
+        //跳到jsp
+        req.getRequestDispatcher("${entity.NameEn}_queryall.jsp").forward(req,resp);
+    }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+        doGet(req,resp);
+    }
+}

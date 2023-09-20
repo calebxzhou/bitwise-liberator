@@ -1,0 +1,41 @@
+--第一部分，第二部分，第三部分需要分开执行，请您注意~
+
+
+
+--第一部分始
+create database ${stu.getNamePinyin()};
+--第一部分终
+
+
+
+--第二部分始
+use ${stu.getNamePinyin()};
+
+#foreach($entity in $entities )
+    --${entity.NameCn}表格
+create table ${entity.capEn()} (
+    #foreach($field in $entity.Fields)
+        ${field.NameEn} ${field.getSqlTypeWithLength()}, --${field.NameCn}
+    #end
+)
+    go
+#end
+insert into Usr values('admin','123456','123');
+--第二部分终
+
+
+
+
+--第三部分始 如果没有就不用管
+#foreach($entity in $entities )
+
+    #if(${entity.hasForeignKey()})
+    --${entity.NameCn}视图
+        ${entity.getViewSqlDefinition()}
+    #end
+go
+#end
+--第三部分终
+
+
+

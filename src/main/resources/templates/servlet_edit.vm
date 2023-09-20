@@ -1,0 +1,47 @@
+package servlet;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.sql.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import dao.*;
+import model.*;
+//负责修改${entity.NameCn}信息的控制器类
+@WebServlet("/${entity.capEn()}EditServlet")
+public class ${entity.capEn()}EditServlet extends HttpServlet {
+    //跳转到${entity.NameCn}的修改界面
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+        //去数据库读取对应编号的数据，写到修改界面里
+        ${entity.getVoName()} ${entity.NameEn} = DAOFactory.get${entity.capEn()}DAOInstance().doQueryById(req.getParameter("id"));
+        req.setAttribute("${entity.NameEn}",${entity.NameEn});
+        ##外键
+        #if($entity.hasForeignKey())
+        #foreach($fkfield in $entity.getForeignKeyFieldList())
+            //下拉框
+        req.setAttribute("${fkfield.getForeignKey().Table}_list",DAOFactory.get${fkfield.getForeignKey().capEn()}DAOInstance().doQueryAll());
+        #end
+        #end
+        req.getRequestDispatcher("${entity.NameEn}_edit.jsp").forward(req,resp);
+    }
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+        //创建新的${entity.NameCn}对象
+        ${entity.capEn()} ${entity.NameEn} = new ${entity.capEn()}();
+        #foreach( $field in $entity.Fields )
+            //读取界面上的${field.NameCn}内容
+            ${field.getJavaType()} ${field.NameEn} = ${field.getJavaType()}.valueOf(req.getParameter("${field.NameEn}"));
+            //把${field.NameCn}写入到${entity.NameCn}对象里
+            ${entity.NameEn}.set${field.capEn()}(${field.NameEn});
+        #end
+        //去数据库更新${entity.NameCn}对象
+        DAOFactory.get${entity.capEn()}DAOInstance().doUpdate(${entity.NameEn});
+        //跳回查询${entity.NameCn}全部信息界面
+        req.getRequestDispatcher("${entity.capEn()}QueryAllServlet").forward(req,resp);
+    }
+}

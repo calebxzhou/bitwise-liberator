@@ -1,0 +1,39 @@
+package dao;
+
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+
+import java.util.*;
+import java.sql.*;
+
+//链接数据库
+public class DBConnection {
+    private static final String dbDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private static final String dbUrl = "jdbc:sqlserver://127.0.0.1:1433; DatabaseName=${stu.getNamePinyin()}";
+    private static final String dbName = "sa";
+    private static final String dbPwd = "123456";
+    private static Connection conn = null;
+
+    public static Connection getConnection() {
+        try {
+            Class.forName(dbDriver);
+            conn = DriverManager.getConnection(dbUrl, dbName, dbPwd);
+        } catch (Exception ex) {
+            // TODO Auto-generated catch block
+            ex.printStackTrace();
+        }
+        return conn;
+    }
+
+    public static void close(){
+        if(conn != null){
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
+}

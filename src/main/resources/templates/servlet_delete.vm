@@ -1,0 +1,27 @@
+package servlet;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.sql.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import dao.*;
+import model.*;
+
+//负责删除${entity.NameCn}信息的控制器类
+@WebServlet("/${entity.capEn()}DeleteServlet")
+public class ${entity.capEn()}DeleteServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+        DAOFactory.get${entity.capEn()}DAOInstance().doDelete(req.getParameter("id"));
+        //跳回信息查询界面
+        req.getRequestDispatcher("${entity.capEn()}QueryAllServlet").forward(req,resp);
+    }
+
+}

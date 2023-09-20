@@ -29,6 +29,6 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     // https://mvnrepository.com/artifact/org.freemarker/freemarker
-    implementation("org.freemarker:freemarker:2.3.32")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("io.ktor:ktor-server-freemarker:$ktor_version")
 }
