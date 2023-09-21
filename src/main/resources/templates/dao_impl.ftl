@@ -101,21 +101,28 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
         }
         return flag;
     }
-    public boolean doCreate(${entity.id} ${entity.NameEn}) {
+
+    public boolean doCreate(${entity.id} ${entity.asFieldId}) {
         try{
             String sql = "insert into ${entity.id} values (${entity.getInsertStatement()})";
             pstmt = conn.prepareStatement(sql);
-            #foreach( $field in $entity.Fields )
-            pstmt.${field.getPstmtMethod()}($foreach.count,${entity.NameEn}.get${field.id}());
-            #end
+            <#list 0..entity.fields?size-1 as i>
+                pstmt.setObject($foreach.count,${entity.NameEn}.get${field.id}());
+            </#list>
+
             int count = pstmt.executeUpdate();
             if(count>0){
                 flag=true;
             }
-        }  catch(Exception e){e.printStackTrace();}finally {try{
+        }  catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            try{
 				pstmt.close();
 	            conn.close();
-}catch(Exception e){e.printStackTrace();}
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
         return flag;
 
