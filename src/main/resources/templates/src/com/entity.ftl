@@ -1,3 +1,5 @@
+<#-- @ftlvariable name="entity" type="calebxzhou.codenliberate.model.Entity" -->
+
 package com.entity;
 
 //${entity.name}

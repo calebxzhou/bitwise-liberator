@@ -16,13 +16,13 @@ public interface ${entity.id}DAO{
 
 
     //修改${entity.name}
-    public boolean doUpdate(${entity.id} ${entity.asFieldId});
+    public boolean doUpdate(${entity.id} ${entity.asVar});
 
     //插入${entity.name}
-    public boolean doInsert(${entity.id} ${entity.asFieldId});
+    public boolean doInsert(${entity.id} ${entity.asVar});
 
     //删除${entity.name}
-    public boolean doDelete(${entity.id} ${entity.asFieldId});
+    public boolean doDelete(${entity.id} ${entity.asVar});
 
 
 }

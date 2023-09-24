@@ -7,9 +7,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Entity(val id:String,val name:String,val fields: List<Field>){
-    val asFieldId = id.decapitalize().substring(0,3)
-    val vo = "${id}Vo"
-    val voFieldId = vo.decapitalize().substring(0,3)
+    //作为变量（id首字母不大写 取前三字母）
+    val asVar = id.decapitalize().substring(0,3)
     val updateSql = fields.joinToString(",") { it.name + "= ? " }
     val whereSql = fields.joinToString("and"){it.name + "= ? "}
 }

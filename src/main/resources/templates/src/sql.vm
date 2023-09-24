@@ -12,10 +12,10 @@ create database ${stu.getNamePinyin()};
 use ${stu.getNamePinyin()};
 
 #foreach($entity in $entities )
-    --${entity.NameCn}表格
-create table ${entity.capEn()} (
+    --${entity.name}表格
+create table ${entity.id} (
     #foreach($field in $entity.Fields)
-        ${field.NameEn} ${field.getSqlTypeWithLength()}, --${field.NameCn}
+        ${field.id} ${field.getSqlTypeWithLength()}, --${field.name}
     #end
 )
     go
@@ -30,7 +30,7 @@ insert into Usr values('admin','123456','123');
 #foreach($entity in $entities )
 
     #if(${entity.hasForeignKey()})
-    --${entity.NameCn}视图
+    --${entity.name}视图
         ${entity.getViewSqlDefinition()}
     #end
 go

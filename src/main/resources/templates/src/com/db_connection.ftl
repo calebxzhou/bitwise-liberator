@@ -1,15 +1,15 @@
-package dao;
+<#-- @ftlvariable name="project" type="calebxzhou.codenliberate.model.Project" -->
+package com.dao;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+import ${project.dbBrand.driverClass};
 
 import java.util.*;
 import java.sql.*;
 
-//链接数据库
 public class DBConnection {
-    private static final String dbDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private static final String dbUrl = "jdbc:sqlserver://127.0.0.1:1433; DatabaseName=${stu.getNamePinyin()}";
-    private static final String dbName = "sa";
+    private static final String dbDriver = "${project.dbBrand.driverClass}";
+    private static final String dbUrl = "${project.dbBrand.localDbUrl}";
+    private static final String dbName = "${project.dbBrand.dbAdminUsr}";
     private static final String dbPwd = "123456";
     private static Connection conn = null;
 
@@ -18,7 +18,6 @@ public class DBConnection {
             Class.forName(dbDriver);
             conn = DriverManager.getConnection(dbUrl, dbName, dbPwd);
         } catch (Exception ex) {
-            // TODO Auto-generated catch block
             ex.printStackTrace();
         }
         return conn;

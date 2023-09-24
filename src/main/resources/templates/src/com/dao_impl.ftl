@@ -19,52 +19,52 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
     private PreparedStatement pstmt = null;
     private ResultSet rs = null;
 
-
-
-#foreach($field in ${vo.getFieldsWithoutId()})
-    public List<${entity.vo}> doSelectBy${field.id}(${field.getJavaType()} ${field.NameEn}) {
-        List<${entity.vo}> all${entity.vo} = new ArrayList<>();
-        try {
-            String sql = "select * from ${entity.vo} where ${field.NameEn}=?";
+<#list entity.fields as field>
+    public List<${entity.id}> doSelectBy${field.capId}(${field.type} ${field.id}){
+        List<${entity.id}> ${entity.id}List = new ArrayList<>();
+        try{
+            String sql = "select * from ${entity.id} where ${field.id}=?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.${field.getPstmtMethod()}(1,${field.NameEn});
+            pstmt.setObject(1,${field.id});
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                ${entity.vo} ${entity.voFieldId} = new ${entity.vo}();
-                #foreach( $field in $vo.Fields )
-                ${entity.voFieldId}.set${field.id}(rs.${field.getResultSetGetMethod()}("$field.NameEn"));
-                #end
-                all${entity.vo}.add(${entity.voFieldId});
-            }
-        } catch(Exception e){e.printStackTrace();}finally {try{
-				pstmt.close();
-				rs.close();
-	            conn.close();
-}catch(Exception e){e.printStackTrace();}
-		}
-
-        return all${entity.vo};
-
-
-    }
-#end
-
-    public List<${entity.vo}> doSelectAll() {
-        List<${entity.vo}> ${entity.vo}List = new ArrayList<>();
-        try {
-            pstmt = conn.prepareStatement("select * from ${entity.vo}");
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                ${entity.vo} ${entity.voFieldId} = new ${entity.vo}();
+                ${entity.id} ${entity.asVar} = new ${entity.id}();
                 <#list entity.fields as field>
-                    ${entity.voFieldId}.set${field.capId}(rs.getObject("${field.id}"));
+                    ${entity.asVar}.set${field.capId}(rs.getObject("${field.id}"));
                 </#list>
-                ${entity.vo}List.add(${entity.voFieldId});
+                ${entity.id}List.add(${entity.asVar});
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            try{
+                pstmt.close();
+                rs.close();
+                conn.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+</#list>
+
+
+    public List<${entity.id}> doSelectAll() {
+        List<${entity.id}> ${entity.id}List = new ArrayList<>();
+        try {
+            pstmt = conn.prepareStatement("select * from ${entity.id}");
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                ${entity.id} ${entity.asVar} = new ${entity.id}();
+                <#list entity.fields as field>
+                    ${entity.asVar}.set${field.capId}(rs.getObject("${field.id}"));
+                </#list>
+                ${entity.id}List.add(${entity.asVar});
             }
 
-        }  catch(Exception e){
+        } catch(Exception e){
             e.printStackTrace();
-        }finally {
+        } finally {
             try{
 				pstmt.close();
 				rs.close();
@@ -73,41 +73,46 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
                 e.printStackTrace();
             }
         }
-        return ${entity.vo}List ;
+        return ${entity.id}List ;
 
     }
 
-    public boolean doUpdate(${entity.id} ${entity.asFieldId}) {
+    public boolean doUpdate(${entity.id} ${entity.asVar}) {
         try{
             String sql = "update ${entity.id} set ${entity.updateSql} where ${entity.whereSql}";
             pstmt = conn.prepareStatement(sql);
             <#list 1..entity.fields?size as i>
-                pstmt.setObject(${i},${entity.asFieldId}.get${entity.fields[i].id}());
+                pstmt.setObject(${i},${entity.asVar}.get${entity.fields[i].id}());
             </#list>
             <#list 0..entity.fields?size-1 as i>
                 <#assign index = entity.fields?size+i>
-                pstmt.setObject(${index},${entity.asFieldId}.get${entity.fields[i].id}());
+                pstmt.setObject(${index},${entity.asVar}.get${entity.fields[i].id}());
             </#list>
-            pstmt.setString($maxCount,${entity.NameEn}.getId());
+            pstmt.setString($maxCount,${entity.asVar}.getId());
             int count = pstmt.executeUpdate();
             if(count>0){
                 flag=true;
             }
 
-        }catch(Exception e){e.printStackTrace();}finally {try{
-                        pstmt.close();
-                        conn.close();
-}catch(Exception e){e.printStackTrace();}
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                pstmt.close();
+                conn.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
         return flag;
     }
 
-    public boolean doCreate(${entity.id} ${entity.asFieldId}) {
+    public boolean doCreate(${entity.id} ${entity.asVar}) {
         try{
             String sql = "insert into ${entity.id} values (${entity.getInsertStatement()})";
             pstmt = conn.prepareStatement(sql);
             <#list 0..entity.fields?size-1 as i>
-                pstmt.setObject($foreach.count,${entity.NameEn}.get${field.id}());
+                pstmt.setObject($foreach.count,${entity.asVar}.get${field.id}());
             </#list>
 
             int count = pstmt.executeUpdate();
