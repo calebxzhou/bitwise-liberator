@@ -21,8 +21,8 @@ public class ${entity.id} implements java.io.Serializable{
 </#list>
 
     public String toString(){
-        return <#list entity.fields as id>
-            ${id} + "," +
+        return <#list entity.fields as field>
+            ${field.id} + "," +
         </#list>
         ".";
     }
