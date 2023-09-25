@@ -109,10 +109,10 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
 
     public boolean doCreate(${entity.id} ${entity.asVar}) {
         try{
-            String sql = "insert into ${entity.id} values (${entity.insertPstmtValues})";
+            String sql = "insert into ${entity.id} values (${entity.insertPstmtValue})";
             pstmt = conn.prepareStatement(sql);
             <#list 0..entity.fields?size-1 as i>
-                pstmt.setObject($foreach.count,${entity.asVar}.get${field.id}());
+                pstmt.setObject(${i},${entity.asVar}.get${entity.fields[i].id}());
             </#list>
 
             int count = pstmt.executeUpdate();
