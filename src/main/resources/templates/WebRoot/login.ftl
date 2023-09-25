@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>欢迎登录$pj.ProjectTitle系统</title>
+    <title>欢迎登录${project.name}系统</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <style>
         html,body {
@@ -43,7 +43,7 @@
 
 <main class="form-signin">
     <form action="LoginServlet" method="POST">
-        <h1 class="h3 mb-3 fw-normal">欢迎登录$pj.ProjectTitle系统</h1>
+        <h1 class="h3 mb-3 fw-normal">欢迎登录${project.name}系统</h1>
 
         <div class="form-floating">
             <input name="id" type="text" class="form-control" id="id" placeholder="用户名" required >

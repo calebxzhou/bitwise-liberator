@@ -8,4 +8,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Project(val name:String, val arch:ProjectArch, val dbBrand: DbBrand, val entities: List<Entity>) {
 
+
 }

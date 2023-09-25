@@ -10,7 +10,7 @@
 
     .bg {
         height: 100%;
-        background: url("${pj.Images.Home}") center no-repeat;
+        background-color: #aaaaaa;
     }
 
 </style>

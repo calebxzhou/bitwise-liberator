@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
-#set ( $DLR = "$")
+<#assign DLR = "$">
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>$pj.ProjectTitle</title>
+    <title></title>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
 
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -56,17 +56,6 @@
         pointer-events: none;
         fill: currentColor;
       }
-      #navbar{
-        background-color: ${pj.Colors.NavBg};
-      }
-      #title{
-        color: ${pj.Colors.NavTitleFont};
-      }
-      .nav-item{
-        background-color: ${pj.Colors.NavItem};
-        color: ${pj.Colors.NavItemFont};
-      }
-
 
     </style>
 
@@ -79,34 +68,26 @@
   <div class="d-flex flex-column flex-shrink-0 p-3" id="navbar" style="width: 280px;">
     <a href="${DLR}{pageContext.request.contextPath}/main.jsp" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
 
-      <span class="fs-4" id="title">$pj.ProjectTitle</span>
+      <span class="fs-4" id="title">${project.name}</span>
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-
-      #foreach($entity in $entities)
+      <#list project.entities as entity>
         <li class="nav-item">
           <a href="#" class="nav-link text-white" onclick="jump('${entity.id}QueryAllServlet')"  aria-current="page">
             #*<svg class="bi me-2" width="16" height="16"><use xlink:href="#home"/></svg>*#
             <span>${entity.name}管理</span>
           </a>
         </li>
-      #end
-
-
+      </#list>
 
     </ul>
     <hr>
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
         <svg class="bi me-2" width="32" height="32"><use xlink:href="#people-circle"></use></svg>
-        <strong>$stu.Name,$stu.Clazz</strong>
+        <strong>Admin</strong>
       </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-        <li><a class="dropdown-item" href="#" onclick="jump('change_password.jsp')">更改密码</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="${DLR}{pageContext.request.contextPath}/LogoutServlet" >退出</a></li>
-      </ul>
     </div>
   </div>
 

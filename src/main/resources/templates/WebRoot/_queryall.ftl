@@ -1,4 +1,4 @@
-#set ( $DLR = "$")
+<#assign DLR = "$">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -6,12 +6,6 @@
     <title>Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body{
-            background: url("${pj.Images.Qall}") !important;
-        }
-
-    </style>
 </head>
 <body>
 <h2 class="m-3">${entity.name}管理</h2>
@@ -25,9 +19,9 @@
 
     <div class="col-2">
         <select class="form-select" name="condition">
-            #foreach( $field in $vo.Fields )
-                <option value="${field.id}">$field.NameCn</option>
-            #end
+            <#list entity.fields as field>
+                <option value="${field.id}">${field.name}</option>
+            </#list>
         </select>
     </div>
     <div class="col">
@@ -44,18 +38,17 @@
   <table class="table table-striped table-sm">
     <thead>
     <tr>
-        #foreach( $field in $vo.Fields )
-            <th scope="col">$field.NameCn</th>
-        #end
-
+        <#list entity.fields as field>
+            <th scope="col">${field.name}</th>
+        </#list>
     </tr>
     </thead>
     <tbody>
     <c:forEach items="${DLR}{list}" var="item">
       <tr>
-          #foreach( $field in $vo.Fields )
+          <#list entity.fields as field>
               <td>${DLR}{item.${field.id}}</td>
-          #end
+          </#list>
           <td>
               <a href="${entity.id}EditServlet?id=${DLR}{item.id}">
                   <button class="btn editBtn">
