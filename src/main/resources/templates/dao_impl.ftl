@@ -82,7 +82,7 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
             String sql = "update ${entity.id} set ${entity.updateSql} where ${entity.whereSql}";
             pstmt = conn.prepareStatement(sql);
             <#list 1..entity.fields?size as i>
-                pstmt.setObject(${i},${entity.asVar}.get${entity.fields[i].id}());
+                pstmt.setObject(${i},${entity.asVar}.get${entity.fields[i-1].id}());
             </#list>
             <#list 0..entity.fields?size-1 as i>
                 <#assign index = entity.fields?size+i>
@@ -109,7 +109,7 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
 
     public boolean doCreate(${entity.id} ${entity.asVar}) {
         try{
-            String sql = "insert into ${entity.id} values (${entity.getInsertStatement()})";
+            String sql = "insert into ${entity.id} values (${entity.insertPstmtValues})";
             pstmt = conn.prepareStatement(sql);
             <#list 0..entity.fields?size-1 as i>
                 pstmt.setObject($foreach.count,${entity.asVar}.get${field.id}());

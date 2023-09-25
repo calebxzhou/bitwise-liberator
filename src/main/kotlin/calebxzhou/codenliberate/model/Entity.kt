@@ -11,4 +11,5 @@ data class Entity(val id:String,val name:String,val fields: List<Field>){
     val asVar = id.decapitalize().substring(0,3)
     val updateSql = fields.joinToString(",") { it.name + "= ? " }
     val whereSql = fields.joinToString("and"){it.name + "= ? "}
+    val insertPstmtValue = (0 until fields.size).toList().map { "?" }.joinToString { "," }
 }
