@@ -3,16 +3,10 @@ package calebxzhou
 import calebxzhou.codenliberate.model.*
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.FileOutputStream
 import java.io.StringWriter
-import java.nio.file.Files
-import java.nio.file.Files.walk
-import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlin.io.path.walk
 
 class ApplicationTest
 fun main() {
@@ -62,28 +56,30 @@ fun main() {
     val pjModel = mapOf("project" to pj)
     CodeTemplate.all.forEach {
         val template = cfg.getTemplate(it.name+".ftl")
-        if(it.scope == CodeTemplateScope.FOR_SINGLE_ENTITY){
+        if(it.scope == CodeTemplateScope.SINGLE_ENTITY){
+            //模板对于每个实体
             for(entity in pj.entities){
                 val dataModel = mapOf("entity" to entity)
                 val out = StringWriter()
-                when (it.type) {
+                when (it.cate) {
                     CodeTemplateCategory.JSP -> {
-                        zipOut.putNextEntry(ZipEntry("${entity.id.decapitalize()}_${it.name.replace("jsp_","")}.jsp"))
+                        zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${entity.id.decapitalize()}_${it.name.replace("jsp_","")}.jsp"))
                     }
                     CodeTemplateCategory.ENTITY -> {
-                        zipOut.putNextEntry(ZipEntry("${entity.id}.java"))
+                        zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${entity.id}.java"))
                     }
                     else -> {
-                        zipOut.putNextEntry(ZipEntry("${entity.id}${it.javaFileName}.java"))
+                        zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${entity.id}${it.fileName}.java"))
                     }
                 }
                 template.process(dataModel,out)
                 zipOut.write(out.toString().toByteArray())
                 zipOut.closeEntry()
             }
-        }else if(it.scope == CodeTemplateScope.FOR_ALL_PROJECT){
+        }else if(it.scope == CodeTemplateScope.ALL_PROJECT){
+            //模板对于整个项目
             val out = StringWriter()
-            zipOut.putNextEntry(ZipEntry("${it.javaFileName}.${it.type.extension}"))
+            zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${it.fileName}.${it.cate.extension}"))
             template.process(pjModel,out)
             zipOut.write(out.toString().toByteArray())
             zipOut.closeEntry()

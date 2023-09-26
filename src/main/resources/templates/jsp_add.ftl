@@ -18,7 +18,7 @@
 <div class="container">
     <main>
         <div class="py-5 text-center">
-            <h2>添.加${entity.name}</h2>
+            <h2>添加${entity.name}</h2>
         </div>
 
         <div class="row g-5">
