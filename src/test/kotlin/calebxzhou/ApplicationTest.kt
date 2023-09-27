@@ -61,17 +61,7 @@ fun main() {
             for(entity in pj.entities){
                 val dataModel = mapOf("entity" to entity)
                 val out = StringWriter()
-                when (it.cate) {
-                    CodeTemplateCategory.JSP -> {
-                        zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${entity.id.decapitalize()}_${it.name.replace("jsp_","")}.jsp"))
-                    }
-                    CodeTemplateCategory.ENTITY -> {
-                        zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${entity.id}.java"))
-                    }
-                    else -> {
-                        zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${entity.id}${it.fileName}.java"))
-                    }
-                }
+                zipOut.putNextEntry(ZipEntry(it.getOutputFilePath(entity.id)))
                 template.process(dataModel,out)
                 zipOut.write(out.toString().toByteArray())
                 zipOut.closeEntry()
@@ -79,7 +69,7 @@ fun main() {
         }else if(it.scope == CodeTemplateScope.ALL_PROJECT){
             //模板对于整个项目
             val out = StringWriter()
-            zipOut.putNextEntry(ZipEntry("${it.cate.dir}/${it.fileName}.${it.cate.extension}"))
+            zipOut.putNextEntry(ZipEntry(it.getOutputFilePath(null)))
             template.process(pjModel,out)
             zipOut.write(out.toString().toByteArray())
             zipOut.closeEntry()
