@@ -79,14 +79,11 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
 
     public boolean doUpdate(${entity.id} ${entity.asVar}) {
         try{
-            String sql = "update ${entity.id} set ${entity.updateSql} where ${entity.whereSql}";
+            String sql = "update ${entity.id} set ${entity.updateSql} where id = ?";
             pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1,${entity.asVar}.getId());
             <#list 1..entity.fields?size as i>
                 pstmt.set${entity.fields[i].pstSet}(${i},${entity.asVar}.get${entity.fields[i-1].id}());
-            </#list>
-            <#list 0..entity.fields?size-1 as i>
-                <#assign index = entity.fields?size+i>
-                pstmt.set${entity.fields[i].pstSet}(${index},${entity.asVar}.get${entity.fields[i].id}());
             </#list>
             pstmt.setString($maxCount,${entity.asVar}.getId());
             int count = pstmt.executeUpdate();

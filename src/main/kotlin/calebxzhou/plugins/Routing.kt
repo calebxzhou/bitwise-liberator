@@ -9,9 +9,8 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            val project = call.receive<Project>()
-
+        post("/generate") {
+            val dslCode = call.receiveParameters()["dsl"]
         }
     }
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代码解放者 Code 'n' Liberate  by calebxzhou</title>
+</head>
+<body>
+<h1>Code 'n' Liberate</h1>
+<form method="post" action="/generate">
+    <textarea cols="100" rows="50" name="dsl">
+        项目名称 教务管理系统
+        数据库品牌 mysql
+        实体定义开始
+            学院 College 学院编号 id 名称 name
+
+            学生 Student 学号 id 姓名 name 电话 tel 学院编号 college_id 备注 comment
+            教师 Teacher 工号 id 姓名 name 电话 tel 学院编号 college_id 备注 comment
+
+
+        实体定义结束
+    </textarea><br>
+    <button type="submit"><h4>立刻生成</h4></button>
+</form>
+</body>
+</html>
