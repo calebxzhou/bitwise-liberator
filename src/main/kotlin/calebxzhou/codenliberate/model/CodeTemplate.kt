@@ -3,10 +3,12 @@ package calebxzhou.codenliberate.model
 import calebxzhou.codenliberate.model.CodeTemplateCategory.*
 import calebxzhou.codenliberate.model.CodeTemplateScope.*
 
+
 data class CodeTemplate(val name: String, val scope: CodeTemplateScope, val cate: CodeTemplateCategory) {
     companion object {
         val SRC_DIR = "src/com"
         val WEBROOT_DIR = "WebRoot"
+        //所有代码模板
         val all = listOf(
             CodeTemplate("dao", SINGLE_ENTITY, DAO),
             CodeTemplate("dao_factory", ALL_PROJECT, UTIL),
@@ -27,9 +29,13 @@ data class CodeTemplate(val name: String, val scope: CodeTemplateScope, val cate
         )
     }
 
+    //驼峰风格文件名
     val camelCaseFileName = name.split("_").joinToString("") { it.capitalize() }
+    //模板输出完整路径
+    fun getOutputFilePath():String = getOutputFilePath(null)
     fun getOutputFilePath(prefix: String?): String = when (cate) {
-        JSP -> "${cate.dir}/${prefix}_${name.replace("jsp_", "")}.${cate.extension}"
+        //对于jsp模板，去掉模板名中的jsp_
+        JSP -> "${cate.dir}/${prefix?:""}${name.replace("jsp_", "")}.${cate.extension}"
         ENTITY -> "${cate.dir}/${prefix}.${cate.extension}"
         else -> {
             if (scope == SINGLE_ENTITY) {

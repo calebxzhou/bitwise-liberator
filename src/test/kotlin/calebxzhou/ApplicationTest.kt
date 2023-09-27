@@ -21,32 +21,32 @@ fun main() {
         "TESTPROJ", ProjectArch.BS, DbBrand.MYSQL, listOf(
             Entity(
                 "Entity1", "实体1", listOf(
-                    Field("id", "编号", "String"),
-                    Field("field1", "字段1", "String"),
-                    Field("field2", "字段2", "String"),
-                    Field("field3", "字段3", "String"),
-                    Field("field4", "字段4", "String"),
-                    Field("field5", "字段5", "String")
+                    Field("id", "编号", PrimitiveDataType.STRING),
+                    Field("field1", "字段1", PrimitiveDataType.STRING),
+                    Field("field2", "字段2", PrimitiveDataType.STRING),
+                    Field("field3", "字段3", PrimitiveDataType.STRING),
+                    Field("field4", "字段4", PrimitiveDataType.STRING),
+                    Field("field5", "字段5", PrimitiveDataType.STRING)
                 )
             ),
             Entity(
                 "Entity2", "实体2", listOf(
-                    Field("id", "编号", "String"),
-                    Field("field1", "字段1", "String"),
-                    Field("field2", "字段2", "String"),
-                    Field("field3", "字段3", "String"),
-                    Field("field4", "字段4", "String"),
-                    Field("field5", "字段5", "String")
+                    Field("id", "编号", PrimitiveDataType.STRING),
+                    Field("field1", "字段1", PrimitiveDataType.STRING),
+                    Field("field2", "字段2", PrimitiveDataType.STRING),
+                    Field("field3", "字段3", PrimitiveDataType.STRING),
+                    Field("field4", "字段4", PrimitiveDataType.STRING),
+                    Field("field5", "字段5", PrimitiveDataType.STRING)
                 )
             ),
             Entity(
                 "Entity3", "实体3", listOf(
-                    Field("id", "编号", "String"),
-                    Field("field1", "字段1", "String"),
-                    Field("field2", "字段2", "String"),
-                    Field("field3", "字段3", "String"),
-                    Field("field4", "字段4", "String"),
-                    Field("field5", "字段5", "String")
+                    Field("id", "编号", PrimitiveDataType.STRING),
+                    Field("field1", "字段1", PrimitiveDataType.STRING),
+                    Field("field2", "字段2", PrimitiveDataType.STRING),
+                    Field("field3", "字段3", PrimitiveDataType.STRING),
+                    Field("field4", "字段4", PrimitiveDataType.STRING),
+                    Field("field5", "字段5", PrimitiveDataType.STRING)
                 )
             ),
         )
@@ -69,7 +69,7 @@ fun main() {
         }else if(it.scope == CodeTemplateScope.ALL_PROJECT){
             //模板对于整个项目
             val out = StringWriter()
-            zipOut.putNextEntry(ZipEntry(it.getOutputFilePath(null)))
+            zipOut.putNextEntry(ZipEntry(it.getOutputFilePath()))
             template.process(pjModel,out)
             zipOut.write(out.toString().toByteArray())
             zipOut.closeEntry()

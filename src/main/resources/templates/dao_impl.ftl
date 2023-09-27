@@ -25,12 +25,12 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
         try{
             String sql = "select * from ${entity.id} where ${field.id}=?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setObject(1,${field.id});
+            pstmt.setInt(1,${field.id});
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 ${entity.id} ${entity.asVar} = new ${entity.id}();
                 <#list entity.fields as field>
-                    ${entity.asVar}.set${field.capId}(rs.getObject("${field.id}"));
+                    ${entity.asVar}.set${field.capId}(rs.${field.rsGet}("${field.id}"));
                 </#list>
                 ${entity.id}List.add(${entity.asVar});
             }
@@ -57,7 +57,7 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
             while (rs.next()) {
                 ${entity.id} ${entity.asVar} = new ${entity.id}();
                 <#list entity.fields as field>
-                    ${entity.asVar}.set${field.capId}(rs.getObject("${field.id}"));
+                    ${entity.asVar}.set${field.capId}(rs.${field.rsGet}("${field.id}"));
                 </#list>
                 ${entity.id}List.add(${entity.asVar});
             }
@@ -82,11 +82,11 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
             String sql = "update ${entity.id} set ${entity.updateSql} where ${entity.whereSql}";
             pstmt = conn.prepareStatement(sql);
             <#list 1..entity.fields?size as i>
-                pstmt.setObject(${i},${entity.asVar}.get${entity.fields[i-1].id}());
+                pstmt.set${entity.fields[i].pstSet}(${i},${entity.asVar}.get${entity.fields[i-1].id}());
             </#list>
             <#list 0..entity.fields?size-1 as i>
                 <#assign index = entity.fields?size+i>
-                pstmt.setObject(${index},${entity.asVar}.get${entity.fields[i].id}());
+                pstmt.set${entity.fields[i].pstSet}(${index},${entity.asVar}.get${entity.fields[i].id}());
             </#list>
             pstmt.setString($maxCount,${entity.asVar}.getId());
             int count = pstmt.executeUpdate();
@@ -112,7 +112,7 @@ public class ${entity.id}DAOImpl implements ${entity.id}DAO{
             String sql = "insert into ${entity.id} values (${entity.insertPstmtValue})";
             pstmt = conn.prepareStatement(sql);
             <#list 0..entity.fields?size-1 as i>
-                pstmt.setObject(${i},${entity.asVar}.get${entity.fields[i].id}());
+                pstmt.set${entity.fields[i].pstSet}(${i},${entity.asVar}.get${entity.fields[i].id}());
             </#list>
 
             int count = pstmt.executeUpdate();

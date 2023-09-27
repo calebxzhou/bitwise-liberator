@@ -26,7 +26,7 @@ enum class CodeTemplateCategory(
     MAPPER_JAVA("$SRC_DIR/mapper"),
     MAPPER_XML(SRC_DIR),
     //其他 通用
-    SQL,
+    SQL("","txt"),
     MISC,
 
 }
