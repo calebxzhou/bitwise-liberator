@@ -31,4 +31,5 @@ dependencies {
     // https://mvnrepository.com/artifact/org.freemarker/freemarker
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("io.ktor:ktor-server-freemarker:$ktor_version")
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
 }
