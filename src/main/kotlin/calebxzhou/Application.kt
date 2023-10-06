@@ -18,6 +18,7 @@ fun Application.module() {
     configureRouting()
     install(StatusPages){
         exception<Throwable> { call ,err ->
+            err.printStackTrace()
             call.respond(HttpStatusCode.InternalServerError, err.localizedMessage)
         }
     }
