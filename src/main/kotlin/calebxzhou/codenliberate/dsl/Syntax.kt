@@ -1,38 +1,41 @@
 package calebxzhou.codenliberate.dsl
 
 import calebxzhou.codenliberate.dsl.KeywordToken.*
+import java.awt.PrintJob
 
 /**
  * Created  on 2023-09-28,21:59.
  */
 class Syntax(val tokens: List<Token>) {
+    enum class CheckState{
+                         INIT,
+        //token后面必须是中文
+        TOKEN_AFTER_CHINESE,
+        //token后面必须是ID
+        TOKEN_AFTER_ID,
+        //token后面数据库品牌限定
+        TOKEN_AFTER_DB_BRAND,
 
+
+    }
     //语法分析
     fun analyze() {
         check()
         genParseTree()
     }
 
-    //规则1：数据库品牌只能是mysql或者sqlserver
-    val rule1: (Token) -> Boolean = {it != MYSQL || it != MSSQL}
     private fun check() {
-        val tokenList = TokenList(tokens)
-        while(tokenList.hasNextToken){
-
-        }
-        //关键字：{项目名称 数据库品牌 用户权限 权限要求}的后面必须是文本
-        for ((index, token) in tokens.withIndex()) {
-            if (token !is KeywordToken) continue
+        var state = CheckState.INIT
+        for(token in tokens){
             when (token) {
                 PJ_NAME, USR_GROUP, PERM_REQ -> {
-                    tokens.getOrNull(index + 1)?.let {
-                        if (it !is ChineseToken) {
-                            throw SyntaxException("关键字：${token.literal}的后面“${it.literal}”必须是中文")
-                        }
-                    } ?: throw SyntaxException("关键字：${token.literal}的后面必须要有内容")
+                    state = CheckState.TOKEN_AFTER_CHINESE
+                    continue
                 }
 
                 DB_BRAND -> {
+                    state = CheckState.TOKEN_AFTER_DB_BRAND
+                    continue
                     tokens.getOrNull(index + 1)?.let {
                         if (it != MYSQL || it != MSSQL) {
                             throw SyntaxException("错误的数据库品牌${it.literal}! 数据库品牌只能是mysql或者sqlserver")
@@ -40,17 +43,18 @@ class Syntax(val tokens: List<Token>) {
                     } ?: throw SyntaxException("关键字：${token.literal}的后面必须要有内容")
 
                 }
-
-                ENTITY_DEF, FUNC_DEF -> {
-                    tokens.getOrNull(index + 1)?.let {
-                        if (it != SeparatorToken.LB) {
-                            throw SyntaxException("${it.literal}后边必须有分隔符“{”")
-                        }
-                    } ?: throw SyntaxException("关键字：${token.literal}的后面必须要有内容")
-                }
-
                 else -> {}
             }
+            if(state == CheckState.TOKEN_AFTER_CHINESE){
+                if(token !is ChineseToken){
+                    throw SyntaxException("关键字：${token.literal}的后面“${it.literal}”必须是中文")
+                }
+            }
+        }
+        //关键字：{项目名称 数据库品牌 用户权限 权限要求}的后面必须是文本
+        for ((index, token) in tokens.withIndex()) {
+
+
         }
 
     }

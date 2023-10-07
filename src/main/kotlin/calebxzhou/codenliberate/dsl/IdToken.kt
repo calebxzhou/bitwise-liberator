@@ -3,7 +3,7 @@ package calebxzhou.codenliberate.dsl
 /**
  * Created  on 2023-10-01,8:03.
  */
-data class IdentifierToken(
+data class IdToken(
     override val literal:String
 ):Token{
     companion object : TokenEvaluator{

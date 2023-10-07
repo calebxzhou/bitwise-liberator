@@ -30,7 +30,7 @@ object Lexer {
         when {
             KEYWORD.match(word) -> KeywordToken.ofLiteral(word)
             SEPARATOR.match(word) -> SeparatorToken.ofLiteral(word)
-            IDENTIFIER.match(word) -> IdentifierToken(word)
+            IDENTIFIER.match(word) -> IdToken(word)
             CHINESE.match(word) -> ChineseToken(word)
             else -> throw LexicalException(word)
         }?:throw LexicalException(word)

@@ -4,7 +4,7 @@ package calebxzhou.codenliberate.dsl
 enum class TokenType(private val evaluator: TokenEvaluator) {
     KEYWORD(KeywordToken),
     SEPARATOR(SeparatorToken),
-    IDENTIFIER(IdentifierToken),
+    IDENTIFIER(IdToken),
     CHINESE(ChineseToken),
 
     ;
