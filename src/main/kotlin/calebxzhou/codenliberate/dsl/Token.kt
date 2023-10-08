@@ -1,5 +1,7 @@
 package calebxzhou.codenliberate.dsl
 
-interface Token{
+import kotlinx.serialization.Serializable
+@Serializable
+sealed interface Token{
     val literal: String
 }

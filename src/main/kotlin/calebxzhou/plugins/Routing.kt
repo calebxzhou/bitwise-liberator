@@ -1,8 +1,10 @@
 package calebxzhou.plugins
 
 import calebxzhou.codenliberate.dsl.Lexer
+import calebxzhou.codenliberate.dsl.Node
 import calebxzhou.codenliberate.dsl.Syntax
 import calebxzhou.codenliberate.model.Project
+import calebxzhou.json
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.http.content.*
@@ -10,6 +12,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.post
+import kotlinx.serialization.encodeToString
 
 fun Application.configureRouting() {
 
@@ -24,9 +27,8 @@ fun Application.configureRouting() {
             //为全项目加上系统角色和系统用户表
             //为每个实体添加comment属性（comment：String/nvarchar200）
             val dslCode = call.receiveParameters()["dsl"]?:return@post
-            Lexer.analyze(dslCode).let {
-                Syntax(it).analyze()
-                call.respond(it.toString())
+            Lexer(dslCode).analyze().let {
+                call.respond(json.encodeToString(Syntax(it).analyze()))
             }
         }
     }
