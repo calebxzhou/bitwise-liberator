@@ -100,30 +100,29 @@ class Syntax(val tokens: List<Token>) {
     //根节点
     private val rootNode = Node<Token>(null)
 
-    var currentKeyNode: Node<Token> = rootNode
+    private var currentKeyNode: Node<Token> = rootNode
+    //主状态 (默认/+key节点)
+    private var mainState = ParsingState.INIT
     //语法树
     private fun genParseTree(): Node<Token> {
-
-        //主状态 (默认/+key节点)
-        var mainState = ParsingState.INIT
-
         for (token in tokens) {
 
             when(mainState){
                 ParsingState.ATTACH_KEY_NODE ->{
                     when(token){
                         ENTITY_DEF ->{
-                            handleEntityDef(tokens)
+                            handleEntityDef(currentKeyNode,tokens)
+                            mainState = ParsingState.INIT
                             continue
                         }
                         FUNC_DEF -> {
-                            handleFuncDef(tokens)
+                            handleFuncDef(currentKeyNode,tokens)
+                            mainState = ParsingState.INIT
                             continue
                         }
                         else ->{}
                     }
                         currentKeyNode += Node(token)
-
                 }
                 else -> {}
             }
@@ -145,14 +144,25 @@ class Syntax(val tokens: List<Token>) {
         rootNode += currentKeyNode
         return rootNode
     }
-
-    private fun handleFuncDef(funcDefNode: Node<Token>,tokens: List<Token>) {
-
-    }
-
+    //处理实体定义部分
     private fun handleEntityDef(entityDefNode: Node<Token>,tokens: List<Token>) {
-
-
+        val entityDefTokens = tokens.dropWhile { it != ENTITY_DEF }.drop(1).takeWhile { it != FUNC_DEF }
+        //dsl代码每一行都是一个实体，所以按照\n分割实体
+        val tokensOfAllEntities = entityDefTokens.fold(mutableListOf(mutableListOf<Token>())) { acc, s ->
+            if (s == SeparatorToken.RET) acc.add(mutableListOf())
+            acc.last().add(s)
+            acc
+        }
+        for(tokensOf1Entity in tokensOfAllEntities){
+            tokensOf1Entity.forEach {  }
+        }
+        entityDefNode.nexts.addAll(tokensOfAllEntities)
     }
+    private fun handleFuncDef(funcDefNode: Node<Token>,tokens: List<Token>) {
+        val funcDefTokens = tokens.dropWhile { it != FUNC_DEF }.drop(1)
+        funcDefTokens
+    }
+
+
 
 }
