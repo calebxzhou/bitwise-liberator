@@ -96,21 +96,41 @@ class Syntax(val tokens: List<Token>) {
         //附加到key节点上
         ATTACH_KEY_NODE,
     }
+
+    //根节点
+    private val rootNode = Node<Token>(null)
+
+    var currentKeyNode: Node<Token> = rootNode
     //语法树
     private fun genParseTree(): Node<Token> {
-        val rootNode = Node<Token>(null)
-        var currentKeyNode: Node<Token> = rootNode
+
         //主状态 (默认/+key节点)
         var mainState = ParsingState.INIT
 
-        //是否将换行（RET）加到节点里，实体定义和功能定义需要加，方便语义分析
-        var addRetToNode = false
         for (token in tokens) {
-            //匹配token内容
+
+            when(mainState){
+                ParsingState.ATTACH_KEY_NODE ->{
+                    when(token){
+                        ENTITY_DEF ->{
+                            handleEntityDef(tokens)
+                            continue
+                        }
+                        FUNC_DEF -> {
+                            handleFuncDef(tokens)
+                            continue
+                        }
+                        else ->{}
+                    }
+                        currentKeyNode += Node(token)
+
+                }
+                else -> {}
+            }
+//匹配token内容
             when(token) {
                 //key节点：项目名称 数据库品牌 用户权限  实体定义 功能定义
                 PJ_NAME,DB_BRAND,USR_GROUP,ENTITY_DEF,FUNC_DEF -> {
-                    addRetToNode = token == ENTITY_DEF || token == FUNC_DEF
                     mainState = ParsingState.ATTACH_KEY_NODE
                     if(currentKeyNode != rootNode)
                         rootNode += currentKeyNode
@@ -121,24 +141,18 @@ class Syntax(val tokens: List<Token>) {
 
                 }
             }
-            when(mainState){
-                ParsingState.ATTACH_KEY_NODE ->{
-                    if(token == SeparatorToken.RET){
-                        if(addRetToNode)
-                            currentKeyNode += Node(token)
-                        else {
-                            //不把换行符加到节点里
-                        }
-                    }else{
-                        currentKeyNode += Node(token)
-                    }
-                }
-                else -> {}
-            }
-
         }
         rootNode += currentKeyNode
         return rootNode
+    }
+
+    private fun handleFuncDef(funcDefNode: Node<Token>,tokens: List<Token>) {
+
+    }
+
+    private fun handleEntityDef(entityDefNode: Node<Token>,tokens: List<Token>) {
+
+
     }
 
 }
