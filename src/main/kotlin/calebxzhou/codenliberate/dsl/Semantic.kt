@@ -1,5 +1,7 @@
 package calebxzhou.codenliberate.dsl
 
+import calebxzhou.codenliberate.dsl.KeywordToken.*
+
 /**
  * Created  on 2023-10-01,7:43.
  */
@@ -16,10 +18,10 @@ object Semantic {
         val entities = mutableListOf<MutableList<String>>()
         for (node in rootNode.nexts) {
             when(node.value){
-                KeywordToken.USR_GROUP -> {
+                USR_GROUP -> {
                     usrGroups.addAll(node.nexts.map { it.value?.literal ?: throw SemanticException("用户权限${it}不可以出现空字符") })
                 }
-                KeywordToken.ENTITY_DEF -> {
+                ENTITY_DEF -> {
                     node.nexts.fold(mutableListOf(mutableListOf<String>())) { acc, s ->
                         if (s.value == SeparatorToken.RET) {
                             acc.add(mutableListOf())
@@ -29,7 +31,7 @@ object Semantic {
                         acc
                     }.run { entities.addAll(this) }
                 }
-                KeywordToken.FUNC_DEF -> {
+                FUNC_DEF -> {
 
                 }
                 else ->{}
