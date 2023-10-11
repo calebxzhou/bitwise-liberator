@@ -13,13 +13,16 @@ import org.jetbrains.annotations.Nullable
 data class Node<T>(
     @Nullable
     val value:T?) {
+    constructor():this(null)
     val nexts = mutableListOf<Node<T>>()
+
+    //添加新的节点
     operator fun plusAssign(node: Node<T>){
         nexts += node
     }
 
-    operator fun plusAssign(tokens: MutableList<T>) {
-        nexts.addAll(tokens.map { Node(it) })
+    operator fun plusAssign(nodes: MutableList<Node<T>>) {
+        nexts.addAll(nodes)
     }
 
 

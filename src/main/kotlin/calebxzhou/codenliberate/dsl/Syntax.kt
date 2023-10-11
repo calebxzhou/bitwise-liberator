@@ -1,6 +1,9 @@
 package calebxzhou.codenliberate.dsl
 
 import calebxzhou.codenliberate.dsl.KeywordToken.*
+import calebxzhou.codenliberate.dsl.SeparatorToken.*
+import calebxzhou.codenliberate.splitList
+import calebxzhou.codenliberate.takeBetween
 import mu.KotlinLogging
 
 /**
@@ -42,7 +45,7 @@ class Syntax(val tokens: List<Token>) {
         var state = CheckState.INIT
         var lineNum = 0
         for (token in tokens) {
-            if (token == SeparatorToken.RET)
+            if (token == RET)
                 ++lineNum
             when (state) {
                 CheckState.TOKEN_AFTER_CHINESE -> {
@@ -101,13 +104,14 @@ class Syntax(val tokens: List<Token>) {
 
 
     //根节点
-    private val rootNode = Node<Token>(null)
+    private val rootNode = Node<Token>()
 
-    private var currentKeyNode = Node<Token>(null)
+    private var currentKeyNode = Node<Token>()
 
     private var attachingKeyNode = false
 
     private var skipTokenIteration = false
+
     //语法树
     private fun genParseTree(): Node<Token> {
         for (token in tokens) {
@@ -131,13 +135,13 @@ class Syntax(val tokens: List<Token>) {
                 continue
             }
             //跳过循环
-            if(skipTokenIteration)
+            if (skipTokenIteration)
                 continue
-            if(attachingKeyNode){
-                if(token != SeparatorToken.RET)
+            if (attachingKeyNode) {
+                if (token != RET)
                     currentKeyNode += Node(token)
             }
-            if (attachingKeyNode && token == SeparatorToken.RET) {
+            if (attachingKeyNode && token == RET) {
                 rootNode += currentKeyNode
                 attachingKeyNode = false
 
@@ -152,44 +156,29 @@ class Syntax(val tokens: List<Token>) {
         val entitiesNodes = mutableListOf<Node<Token>>()
         //dsl代码每一行都是一个实体，所以按照\n分割实体
         tokens
-            .dropWhile { it != ENTITY_DEF }
-            .drop(1)
-            .takeWhile { it != FUNC_DEF }
+            //取“实体定义”到“功能定义”之间的所有token
+            .takeBetween(ENTITY_DEF, FUNC_DEF)
             //按照换行符分割实体+字段列表
-            .fold(mutableListOf(mutableListOf<Token>())) { acc, s ->
-                if (s == SeparatorToken.RET)
-                    acc.add(mutableListOf())
-                acc.last().add(s)
-                acc
-            }.forEachIndexed { _, tokensOf1Entity ->
-                if (tokensOf1Entity.firstOrNull() == SeparatorToken.RET) {
-                    tokensOf1Entity.removeAt(0)
-                }
-                if (tokensOf1Entity.isEmpty()) {
-                    return@forEachIndexed
-                }
-                val entityNode = Node(tokensOf1Entity.first())
-                var prevChineseNode: Node<Token> = Node(null)
-                for ((index, token) in tokensOf1Entity.withIndex()) {
-                    when (index) {
-                        //实体中文名
-                        0 -> continue
-                        //实体英文名
-                        1 -> entityNode += Node(token)
-                        else -> {
-                            if (token is ChineseToken) {
-                                prevChineseNode = Node(token)
-                                entityNode += prevChineseNode
-                            } else {
-                                prevChineseNode += Node(token)
-                            }
-                        }
+            .splitList(RET)
+            //去掉空列表
+            .filter { it.isNotEmpty() }
+            .forEachIndexed { _, tokensOf1Entity ->
+                //实体 [+英文名]
+                val entityNode = Node(tokensOf1Entity.removeFirst())
+                    .also { it += Node(tokensOf1Entity.removeFirst()) }
+                var fieldNode: Node<Token> = Node()
+                for (token in tokensOf1Entity) {
+                    if (token is ChineseToken) {
+                        fieldNode = Node(token)
+                        entityNode += fieldNode
+                    } else {
+                        fieldNode += Node(token)
                     }
                 }
                 entitiesNodes += entityNode
             }
 
-        entityDefNode.nexts.addAll(entitiesNodes)
+        entityDefNode += entitiesNodes
         rootNode += entityDefNode
         attachingKeyNode = false
         skipTokenIteration = true
@@ -198,43 +187,27 @@ class Syntax(val tokens: List<Token>) {
     private fun handleFuncDef(funcDefNode: Node<Token>, tokens: List<Token>) {
         val usersNodes = mutableListOf<Node<Token>>()
         tokens
-            .dropWhile { it != FUNC_DEF }
-            .drop(1)
+            .takeBetween(FUNC_DEF, null)
             //按照"权限要求"分割实体+字段列表
-            .fold(mutableListOf(mutableListOf<Token>())) { acc, s ->
-                if (s == PERM_REQ)
-                    acc.add(mutableListOf())
-                acc.last().add(s)
-                acc
-            }.forEachIndexed { _, tokensOf1User ->
-                if (tokensOf1User.firstOrNull() == SeparatorToken.RET
-                    || tokensOf1User.firstOrNull() == PERM_REQ) {
+            .splitList(PERM_REQ)
+            //去掉空列表和只有换行符的列表
+            .filter { it.size > 1 }
+            .forEachIndexed { _, tokensOf1User ->
+                if (tokensOf1User.firstOrNull() == RET) {
                     tokensOf1User.removeAt(0)
-                }
-                if (tokensOf1User.isEmpty()) {
-                    return@forEachIndexed
                 }
                 val userNode = Node(tokensOf1User.removeFirst())
                 //按照换行符分割用户下属每个实体
-                tokensOf1User.fold(mutableListOf(mutableListOf<Token>())) { acc, s ->
-                    if (s == SeparatorToken.RET){
-                        acc.add(mutableListOf())
-                    }
-                    if(s != SeparatorToken.RET){
-                        acc.last().add(s)
-                    }
-
-                    acc
-                }.forEach { oneEntityTokens ->
+                tokensOf1User.splitList(RET).forEach { oneEntityTokens ->
                     val entityToken = oneEntityTokens.removeFirstOrNull() ?: return@forEach
                     val entityNode = Node(entityToken)
-                    entityNode += oneEntityTokens
+                    oneEntityTokens.map { Node(it) }.forEach { entityNode += it }
                     userNode += entityNode
                 }
 
                 usersNodes += userNode
             }
-        funcDefNode.nexts.addAll(usersNodes)
+        funcDefNode += usersNodes
         rootNode += funcDefNode
         attachingKeyNode = false
         skipTokenIteration = true
