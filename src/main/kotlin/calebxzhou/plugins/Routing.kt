@@ -2,6 +2,7 @@ package calebxzhou.plugins
 
 import calebxzhou.codenliberate.dsl.Lexer
 import calebxzhou.codenliberate.dsl.Node
+import calebxzhou.codenliberate.dsl.Semantic
 import calebxzhou.codenliberate.dsl.Syntax
 import calebxzhou.codenliberate.model.Project
 import calebxzhou.json
@@ -28,7 +29,9 @@ fun Application.configureRouting() {
             //为每个实体添加comment属性（comment：String/nvarchar200）
             val dslCode = call.receiveParameters()["dsl"]?:return@post
             Lexer(dslCode).analyze().let {
-                call.respond(json.encodeToString(Syntax(it).analyze()))
+                val node = Syntax(it).analyze()
+                Semantic.analyze(node)
+                call.respond(json.encodeToString(node))
             }
         }
     }
