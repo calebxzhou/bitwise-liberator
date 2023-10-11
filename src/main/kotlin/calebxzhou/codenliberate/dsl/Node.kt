@@ -18,6 +18,9 @@ data class Node<T>(
         nexts += node
     }
 
+    operator fun plusAssign(tokens: MutableList<T>) {
+        nexts.addAll(tokens.map { Node(it) })
+    }
 
 
 }

@@ -144,7 +144,6 @@ class Syntax(val tokens: List<Token>) {
             }
 
         }
-        rootNode += currentKeyNode
         return rootNode
     }
 
@@ -207,7 +206,7 @@ class Syntax(val tokens: List<Token>) {
                     acc.add(mutableListOf())
                 acc.last().add(s)
                 acc
-            }.forEachIndexed { i, tokensOf1User ->
+            }.forEachIndexed { _, tokensOf1User ->
                 if (tokensOf1User.firstOrNull() == SeparatorToken.RET
                     || tokensOf1User.firstOrNull() == PERM_REQ) {
                     tokensOf1User.removeAt(0)
@@ -215,11 +214,24 @@ class Syntax(val tokens: List<Token>) {
                 if (tokensOf1User.isEmpty()) {
                     return@forEachIndexed
                 }
-                val userNode = Node(tokensOf1User.first())
-                var entityNode :Node<Token> = Node(null)
-                tokensOf1User.forEach { token ->
+                val userNode = Node(tokensOf1User.removeFirst())
+                //按照换行符分割用户下属每个实体
+                tokensOf1User.fold(mutableListOf(mutableListOf<Token>())) { acc, s ->
+                    if (s == SeparatorToken.RET){
+                        acc.add(mutableListOf())
+                    }
+                    if(s != SeparatorToken.RET){
+                        acc.last().add(s)
+                    }
 
+                    acc
+                }.forEach { oneEntityTokens ->
+                    val entityToken = oneEntityTokens.removeFirstOrNull() ?: return@forEach
+                    val entityNode = Node(entityToken)
+                    entityNode += oneEntityTokens
+                    userNode += entityNode
                 }
+
                 usersNodes += userNode
             }
         funcDefNode.nexts.addAll(usersNodes)
