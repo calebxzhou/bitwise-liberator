@@ -1,6 +1,10 @@
 package calebxzhou.codenliberate.model
 
-interface FieldDataType{
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+sealed interface FieldDataType{
     val javaType:String
     val dbType:String
     val name:String

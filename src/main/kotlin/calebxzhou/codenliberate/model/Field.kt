@@ -6,7 +6,10 @@ import kotlinx.serialization.Serializable
  * Created  on 2023-09-20,8:23.
  */
 @Serializable
-data class Field(val id:String, val name:String, val type:FieldDataType){
+data class Field(
+    val id:String,
+    val name:String,
+    val type:FieldDataType){
     val capId = id.capitalize()
 
     //ResultSet getXXX

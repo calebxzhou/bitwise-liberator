@@ -5,15 +5,15 @@ import calebxzhou.codenliberate.dsl.KeywordToken.*
 /**
  * Created  on 2023-10-01,7:43.
  */
-object Semantic {
+class Semantic(private val rootNode: Node<Token>) {
 
     //语义分析
-    fun analyze(rootNode: Node<Token>){
-        check(rootNode)
+    fun analyze(){
+        check()
     }
 
     //检查
-    private fun check(rootNode: Node<Token>) {
+    private fun check() {
         val usrGroups = mutableListOf<Token>()
         val entities = mutableListOf<Token>()
         for (node in rootNode.nexts) {

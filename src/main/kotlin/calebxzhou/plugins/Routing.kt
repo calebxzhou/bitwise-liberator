@@ -1,9 +1,6 @@
 package calebxzhou.plugins
 
-import calebxzhou.codenliberate.dsl.Lexer
-import calebxzhou.codenliberate.dsl.Node
-import calebxzhou.codenliberate.dsl.Semantic
-import calebxzhou.codenliberate.dsl.Syntax
+import calebxzhou.codenliberate.dsl.*
 import calebxzhou.codenliberate.model.Project
 import calebxzhou.json
 import io.ktor.server.application.*
@@ -30,8 +27,9 @@ fun Application.configureRouting() {
             val dslCode = call.receiveParameters()["dsl"]?:return@post
             Lexer(dslCode).analyze().let {
                 val node = Syntax(it).analyze()
-                Semantic.analyze(node)
-                call.respond(json.encodeToString(node))
+                Semantic(node).analyze()
+                val project = CodeGen(node).makeProject()
+                call.respond(json.encodeToString(project))
             }
         }
     }

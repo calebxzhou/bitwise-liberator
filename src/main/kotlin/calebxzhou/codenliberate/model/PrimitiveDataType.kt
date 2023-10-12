@@ -1,9 +1,12 @@
 package calebxzhou.codenliberate.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Created  on 2023-09-23,20:51.
  */
 
+@Serializable
 data class PrimitiveDataType(
     override val javaType:String,
     override val dbType:String,

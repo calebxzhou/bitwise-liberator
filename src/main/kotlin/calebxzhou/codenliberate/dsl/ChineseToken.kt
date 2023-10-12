@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 /**
  * Created  on 2023-10-01,8:03.
  */
+//中文token（实体、字段name用）
 data class ChineseToken(
     override val literal:String
 ):Token{
