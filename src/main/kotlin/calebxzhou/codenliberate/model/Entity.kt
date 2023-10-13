@@ -13,7 +13,7 @@ data class Entity(
     //名称（中文）
     val name:String,
     //字段
-    val fields: List<Field>){
+    val fields: MutableList<Field>){
     //作为变量（id首字母不大写 取前三字母）
     val asVar = id.decapitalize().substring(0,3)
     //update sql中间的set xxx

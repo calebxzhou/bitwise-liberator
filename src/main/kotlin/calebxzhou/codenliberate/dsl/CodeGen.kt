@@ -54,6 +54,8 @@ class CodeGen(val rootNode: Node<Token>) {
             },
             usrGroups,
             entities,
-            funcs)
+            funcs).optimize()
     }
+
+
 }

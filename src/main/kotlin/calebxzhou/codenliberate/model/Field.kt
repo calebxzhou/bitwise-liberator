@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class Field(
     val id:String,
     val name:String,
-    val type:FieldDataType){
+    val type:FieldDataType = PrimitiveDataType.STRING){
     val capId = id.capitalize()
 
     //ResultSet getXXX
