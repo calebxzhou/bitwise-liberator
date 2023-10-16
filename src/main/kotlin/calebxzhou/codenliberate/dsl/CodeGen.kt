@@ -20,7 +20,7 @@ class CodeGen(val rootNode: Node<Token>) {
                     node.nexts.forEach { entityNode->
                         val name = entityNode.value?.literal?:""
                         val id = entityNode.nexts.removeFirst().value?.literal?:""
-                        val fields = entityNode.nexts.map { Field(it.value?.literal?:"",it.nexts.first().value?.literal?:"",PrimitiveDataType.STRING) }
+                        val fields = entityNode.nexts.map { Field(it.nexts.first().value?.literal?:"",it.value?.literal?:"",PrimitiveDataType.STRING) }.toMutableList()
                         entities += Entity(id,name,fields)
                     }
                 }
