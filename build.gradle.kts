@@ -33,6 +33,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     // https://mvnrepository.com/artifact/org.freemarker/freemarker
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    // https://mvnrepository.com/artifact/org.jfree/org.jfree.svg
+    implementation("org.jfree:org.jfree.svg:5.0.5")
     implementation("io.ktor:ktor-server-freemarker:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
 }

@@ -1,57 +1,58 @@
 package calebxzhou.codenliberate.fumodiam
 
-import java.awt.Color
+import calebxzhou.codenliberate.stringMapFirstAsso
+import org.jfree.svg.SVGGraphics2D
 import java.awt.Font
-import java.awt.FontMetrics
-import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import javax.imageio.ImageIO
 
-fun drawPicture(pjName: String,dsl:String): ByteArray {
-    val width = 2000
-    val height = 2000
-    val modFunc = stringToMap(dsl)
-    // Create a new image
-    val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+class Fumodiam(private val pjName: String,private val dsl:String){
+    companion object{
 
-    // Get the graphics context from the image
-    val g = bufferedImage.createGraphics()
+        val width = 1920
+        val height = 1080
+    }
+    private val moduleFunction = stringMapFirstAsso(dsl)
+    private val g = SVGGraphics2D(width.toDouble(),height.toDouble()).apply { font = Font("SimSun",Font.PLAIN, 30) }
+    private val font = g.fontMetrics
+    fun drawPicture(): ByteArray {
+        val titleWidth = font.stringWidth(pjName)
+        val titleStartX: Int = (width - titleWidth) / 2
+        val titleStartY: Int = ((height - font.height) / 3)
 
-    // Set the background color and clear the image
-    g.color = Color.WHITE
-    g.fillRect(0, 0, width, height)
+        drawTextWithRect(pjName,titleStartX,titleStartY)
+        //画标题
+        //g.drawString(pjName, titleX, titleY+ font.ascent)
+        //画标题框
+        //g.drawRect(titleX-15,titleY-15,titleWidth+30,font.height+20)
 
-    // Set the color and font of the text
-    g.color = Color.BLACK
-    g.font = Font("SimSun",Font.PLAIN, 50)
+        //画模块名
+        var baseWidth = 100
+        moduleFunction.forEach { t, u ->
+            drawTextWithRect(t, baseWidth, titleStartY+200)
+            u.forEachIndexed {i,func ->
+                drawTextWithRect(func, baseWidth + i * 55, titleStartY+300,true)
+            }
+            baseWidth += 250
+        }
+        g.dispose()
+//TODO 根据功能数量 分配每个模块的width
+        //TODO 划线
+        return g.svgElement.toByteArray()
+    }
 
-    // Get the FontMetrics for the current font
-    val fm: FontMetrics = g.fontMetrics
+    //绘制文本+外框，rotate=true则竖着画
+    fun drawTextWithRect(text:String,x:Int,y:Int,rotate: Boolean = false){
+        if(!rotate){
+            g.drawString(text, x, y+ font.ascent)
+            g.drawRect(x-15,y-15,font.stringWidth(text)+30,font.height+20)
 
-    // Calculate the x and y coordinates to center the text
-    val titleWidth = fm.stringWidth(pjName)
-    val titleX: Int = (width - titleWidth) / 2
-    val titleY: Int = ((height - fm.height) / 3)
-
-    //画标题
-    g.drawString(pjName, titleX, titleY+ fm.ascent)
-    //画标题框
-    g.color = Color.BLACK;
-    g.drawRect(titleX-5,titleY-5,titleWidth+10,fm.height+5)
-    // Dispose the graphics context to free up system resources
-    g.dispose()
-
-    // Convert BufferedImage to ByteArray
-    val baos = ByteArrayOutputStream()
-    ImageIO.write(bufferedImage, "png", baos)
-
-    return baos.toByteArray()
+        }else{
+            //旋转true，每个汉字占一行
+            val baseH = y + font.ascent
+            text.forEachIndexed { index, c ->
+                g.drawString("$c", x, baseH + index * 40)
+            }
+            g.drawRect(x-10,y-10,50,text.length * 40+10)
+        }
+    }
 }
-/*
-kotlin functional programming, for a string a b c d \n e f g h \n i j k l m \n o p, make the string into a map, the map key is string, value is list<string>. split the string by \n as one entry, for each entry, the first element is key (e.g. a e i o), the remaining elements is value.
- */
-fun stringToMap(input: String): Map<String, List<String>> {
-    return input.split("\n")
-        .map { it.split(" ") }
-        .associate { it.first() to it.drop(1) }
-}
+

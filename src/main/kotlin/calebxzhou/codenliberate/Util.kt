@@ -1,7 +1,5 @@
 package calebxzhou.codenliberate
 
-import calebxzhou.codenliberate.dsl.KeywordToken
-
 //将大列表按 相同分隔符 分成小列表 eg [11102220333].splitList(0) -> [[111],[222],[333]]
 fun <T> List<T>.splitList(separator: T)= this.fold(mutableListOf(mutableListOf<T>())){acc, t ->
         if( t == separator)
@@ -15,3 +13,11 @@ fun <T> List<T>.takeBetween(sep1: T?, sep2: T?) = this
     .dropWhile{ it != sep1 }
     .drop(1)
     .takeWhile { it != sep2 }
+
+//把abcd \n efgh \n ijkl这样的字符串转成map，每个entry里a（第1元素）是key,[bcd] （剩余元素）是value
+fun stringMapFirstAsso(input: String): Map<String, List<String>> {
+    return input.split("\n")
+        .map { it.split(" ") }
+        .associate { it.first() to it.drop(1) }
+}
+

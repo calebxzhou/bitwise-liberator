@@ -2,7 +2,7 @@ package calebxzhou.plugins
 
 import calebxzhou.FM_CONF
 import calebxzhou.codenliberate.dsl.*
-import calebxzhou.codenliberate.fumodiam.drawPicture
+import calebxzhou.codenliberate.fumodiam.Fumodiam
 import calebxzhou.codenliberate.model.CodeTemplate
 import calebxzhou.codenliberate.model.CodeTemplateScope
 import calebxzhou.codenliberate.model.Project
@@ -66,8 +66,8 @@ fun Application.configureRouting() {
             val params = call.receiveParameters()
             val dsl = params["dsl"]?:return@post
             val pjName = params["pjName"]?:return@post
-            val image = drawPicture(pjName,dsl)
-            call.respondBytes(image)
+            val image = Fumodiam(pjName,dsl).drawPicture()
+            call.respondBytes(image,ContentType.Image.SVG)
         }
     }
 }
