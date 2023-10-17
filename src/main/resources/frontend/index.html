@@ -1,51 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>代码解放者 Code 'n' Liberate  by calebxzhou</title>
 </head>
 <body>
 <h1>Code 'n' Liberate</h1>
-<form method="post" action="/generate">
+<hr>
+<h3><a href="/ssm">低代码编写SSM框架项目</a> </h3>
+<h3><a href="/boot">低代码编写SpringBoot框架项目</a> </h3>
+<h3><a href="/mapper">生成 MyBatis Mapper</a></h3>
+<h3><a href="/abstract">生成 摘要+绪论+需求分析+结论</a> </h3>
+<h3><a href="/fumodiam.html">生成 功能模块图</a> </h3>
+<h3><a href="/db-design">生成 数据库设计+Word三线表</a></h3>
+<h3><a href="/src-intro">生成 包文件介绍表</a></h3>
+<h3><a href="/ppt">生成 项目讲解PPT</a></h3>
+<h3><a href="/code-impl">生成 代码的功能实现</a></h3>
+<h3><a href="/test-report">生成 系统测试报告</a></h3>
+<h3><a href="/thank">生成 感谢语</a></h3>
 
-    <textarea cols="100" rows="50" name="dsl">
-        项目名称 教务管理系统
-        数据库品牌 mysql
-        用户权限 游客 学生 教师 管理员
-
-
-        实体定义
-        学院 College
-        教室 Room
-        学期 Semester
-        成绩类型 ScoreCategory
-        学生 Student 学号 id 姓名 name 电话 tel 出生日期 birthdate 学院 college
-        教师 Teacher 工号 id 姓名 name 电话 tel 出生日期 birthdate 学院 college
-        课程 Course 课程名称 name 任课教师 teacher 教室 room 是否考试 isExam
-        选课 Enroll 学生 student 学期 semester 课程 course
-        成绩 Score 所选课程 enroll 成绩类型 scoreCategory 分数 mark
-
-
-
-        功能定义
-        权限要求 管理员
-        全部实体 增 删 改 查
-
-        权限要求 教师
-        课程 查
-        选课 增 删 改 查
-        成绩 增 删 改 查
-
-        权限要求 学生
-        课程 查
-        选课 查
-        成绩 查
-
-        权限要求 游客
-        课程 查
-
-    </textarea><br>
-    <button type="submit"><h4>立刻生成</h4></button>
-</form>
+<h5>更多功能开发中 ， vx: calebxzhou</h5>
 </body>
-</html>

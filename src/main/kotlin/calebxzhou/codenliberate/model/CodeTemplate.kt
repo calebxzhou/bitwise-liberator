@@ -10,12 +10,12 @@ data class CodeTemplate(val name: String, val scope: CodeTemplateScope, val cate
         val WEBROOT_DIR = "WebRoot"
         //所有代码模板
         val all = listOf(
-            CodeTemplate("dao", SINGLE_ENTITY, DAO),
+            /*CodeTemplate("dao", SINGLE_ENTITY, DAO),
             CodeTemplate("dao_factory", ALL_PROJECT, UTIL),
-            CodeTemplate("dao_impl", SINGLE_ENTITY, DAO_IMPL),
+            CodeTemplate("dao_impl", SINGLE_ENTITY, DAO_IMPL),*/
             CodeTemplate("db_connection", ALL_PROJECT, UTIL),
             CodeTemplate("entity", SINGLE_ENTITY, ENTITY),
-            CodeTemplate("jsp_add", SINGLE_ENTITY, JSP),
+            /*CodeTemplate("jsp_add", SINGLE_ENTITY, JSP),
             CodeTemplate("jsp_edit", SINGLE_ENTITY, JSP),
             CodeTemplate("jsp_login", ALL_PROJECT, JSP),
             CodeTemplate("jsp_main", ALL_PROJECT, JSP),
@@ -24,7 +24,7 @@ data class CodeTemplate(val name: String, val scope: CodeTemplateScope, val cate
             CodeTemplate("servlet_add", SINGLE_ENTITY, SERVLET),
             CodeTemplate("servlet_delete", SINGLE_ENTITY, SERVLET),
             CodeTemplate("servlet_edit", SINGLE_ENTITY, SERVLET),
-            CodeTemplate("servlet_queryall", SINGLE_ENTITY, SERVLET),
+            CodeTemplate("servlet_queryall", SINGLE_ENTITY, SERVLET),*/
             CodeTemplate("sql", ALL_PROJECT, SQL),
         )
     }
