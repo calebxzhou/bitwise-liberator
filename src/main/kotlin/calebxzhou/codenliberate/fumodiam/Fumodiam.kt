@@ -4,6 +4,8 @@ import calebxzhou.codenliberate.stringMapFirstAsso
 import org.jfree.svg.SVGGraphics2D
 import java.awt.Font
 import java.awt.Rectangle
+import java.awt.geom.Line2D
+import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
 
 class Fumodiam(private val pjName: String,private val dsl:String){
@@ -37,22 +39,39 @@ class Fumodiam(private val pjName: String,private val dsl:String){
 
     // 画功能
     private fun drawFunctions() {
-
-        moduleFunction.forEach {moduleName,functions ->
+        //画每个模块
+        moduleFunction.forEach { (moduleName, functions) ->
+            //每个竖线所在的起始点
+            val vlineStartPoints = arrayListOf<Point2D>()
             val currentFunctionStartX = x
+            //画每个功能
             functions.forEach{
                 //去掉功能名的两端空格
                 val functionName = it.trim()
-                //画每一个功能
+                //画每一个功能名称
                 val rect = drawTextWithRect(functionName, x , 300,15,15,true)
                 x += rect.width.toInt() + 20
+                //画线,每个功能的竖线
+                val lineX = (rect.maxX+rect.minX)/2
+                val lineStartPoint = Point2D.Double(lineX,rect.minY - 30)
+                val lineEndPoint = Point2D.Double(lineX,rect.minY)
+                drawLine(lineStartPoint,lineEndPoint)
+                vlineStartPoints += lineStartPoint
             }
+            //画大横线，从第一个竖线画到最后一个竖线
+            drawLine(vlineStartPoints.first(),vlineStartPoints.last())
             val currentFunctionEndX = x
-            drawTextWithRect(moduleName,
-                (currentFunctionEndX + currentFunctionStartX)/2-font.stringWidth(moduleName)/2-15*2,
+            //画模块名
+            val moduleStartX = (currentFunctionEndX + currentFunctionStartX)/2 - font.stringWidth(moduleName)/2 - BASE_PADDING*2 + 5
+            val rect = drawTextWithRect(moduleName,
+                moduleStartX,
                 150, BASE_PADDING, BASE_PADDING)
-
+            //画模块名 到 所有功能 的竖线
+            val moduleCenterX = (rect.maxX+rect.minX)/2
+            val moduleMaxY = rect.maxY
+            drawLine(Point2D.Double(moduleCenterX,moduleMaxY),Point2D.Double(moduleCenterX,moduleMaxY +54))
         }
+
     }
 
     //绘制文本+外框，rotate=true则竖着画
@@ -71,42 +90,10 @@ class Fumodiam(private val pjName: String,private val dsl:String){
         g.draw(rect)
         return  rect
     }
-    //绘制带框文本，rotate=true则竖着画
-    private fun drawRectWithText(
-        text:String,
-        x:Int,
-        y:Int,
-        width: Int,
-        height:Int,
-        paddingX: Int,
-        paddingY: Int,
-        rotate: Boolean = false
-    ) : Rectangle {
-        val rect = Rectangle(x,y,width, height)
-
-        return rect
+    //画线
+    private fun drawLine(start:Point2D,end:Point2D){
+        g.draw(Line2D.Double(start,end))
     }
 
-    //绘制单个模块，返回此模块的width
-    private fun drawModule(startX: Int, y: Int, moduleName: String, functions: List<String>): Int{
-        // X轴终止位置
-        val endX = startX + font.stringWidth(moduleName)
-        // X轴中心位置
-        val centerX = (startX + endX)/2
-        //画模块名，功能越多，padding越大
-        val moduleWidth = drawTextWithRect(moduleName, centerX, y, BASE_PADDING * functions.size, BASE_PADDING).width.toInt()
-        //分配位置 X轴
-        val xPoses = mutableListOf<Int>()
-        for (i in functions.indices) {
-            xPoses += (i * moduleWidth) / (functions.size - 1)
-        }
-        var moduleFuncWidth = 0
-        functions.forEachIndexed {i,func ->
-            //画每一个功能
-            drawTextWithRect(func, centerX + xPoses[i]-30 , y+200,BASE_PADDING,BASE_PADDING,true)
-                .also { moduleFuncWidth += it.width.toInt() }
-        }
-        return moduleFuncWidth + moduleWidth
-    }
 }
 
