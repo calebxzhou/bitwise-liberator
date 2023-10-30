@@ -24,14 +24,6 @@ class Fumodiam(private val pjName: String,private val dsl:String){
     private var x = START_X
     fun drawPicture(): ByteArray {
         drawFunctions()
-        /*moduleFunction.forEach { module, functions ->
-            drawModule(baseX,800 ,module,functions)
-                .also {width ->  baseX += 150 + width }
-        }
-*/
-
-
-
         g.dispose()
         //TODO 划线
         return g.svgElement.toByteArray()
