@@ -26,6 +26,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+
     // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation ("com.github.javaparser:javaparser-core:3.25.5")
