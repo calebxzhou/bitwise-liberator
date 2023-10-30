@@ -39,11 +39,13 @@ class Fumodiam(private val pjName: String,private val dsl:String){
 
     // 画功能
     private fun drawFunctions() {
+        //每个模块 竖线所在的起始点
+        val moduleVlineStartPoints = arrayListOf<Point2D>()
         //画每个模块
         moduleFunction.forEach { (moduleName, functions) ->
-            //每个竖线所在的起始点
+            //每个功能 竖线所在的起始点
             val vlineStartPoints = arrayListOf<Point2D>()
-            val currentFunctionStartX = x
+            val functionStartX = x
             //画每个功能
             functions.forEach{
                 //去掉功能名的两端空格
@@ -52,7 +54,7 @@ class Fumodiam(private val pjName: String,private val dsl:String){
                 val rect = drawTextWithRect(functionName, x , 300,15,15,true)
                 x += rect.width.toInt() + 20
                 //画线,每个功能的竖线
-                val lineX = (rect.maxX+rect.minX)/2
+                val lineX = rect.centerX
                 val lineStartPoint = Point2D.Double(lineX,rect.minY - 30)
                 val lineEndPoint = Point2D.Double(lineX,rect.minY)
                 drawLine(lineStartPoint,lineEndPoint)
@@ -60,18 +62,38 @@ class Fumodiam(private val pjName: String,private val dsl:String){
             }
             //画大横线，从第一个竖线画到最后一个竖线
             drawLine(vlineStartPoints.first(),vlineStartPoints.last())
-            val currentFunctionEndX = x
+            val functionEndX = x
+            val functionCenterX = (functionEndX + functionStartX)/2
             //画模块名
-            val moduleStartX = (currentFunctionEndX + currentFunctionStartX)/2 - font.stringWidth(moduleName)/2 - BASE_PADDING*2 + 5
-            val rect = drawTextWithRect(moduleName,
+            val moduleStartX = functionCenterX - font.stringWidth(moduleName)/2 - BASE_PADDING*2 + 5
+            val moduleRect = drawTextWithRect(moduleName,
                 moduleStartX,
-                150, BASE_PADDING, BASE_PADDING)
-            //画模块名 到 所有功能 的竖线
-            val moduleCenterX = (rect.maxX+rect.minX)/2
-            val moduleMaxY = rect.maxY
-            drawLine(Point2D.Double(moduleCenterX,moduleMaxY),Point2D.Double(moduleCenterX,moduleMaxY +54))
+                170, BASE_PADDING, BASE_PADDING)
+            //模块顶部中心点
+            val moduleTopCenterPoint = Point2D.Double(moduleRect.centerX,moduleRect.minY)
+            val moduleVlineStartPoint = Point2D.Double(moduleRect.centerX,moduleRect.minY - 35)
+            //模块底部中心点
+            val moduleButtomCenterPoint = Point2D.Double(moduleRect.centerX,moduleRect.maxY)
+            //画模块名 到 所有功能大横线 的竖线
+            drawLine(moduleButtomCenterPoint,Point2D.Double(moduleRect.centerX,moduleRect.maxY + 34))
+            //画模块名 到 项目名称大横线 的竖线
+            drawLine(moduleVlineStartPoint,moduleTopCenterPoint)
+            moduleVlineStartPoints += moduleVlineStartPoint
         }
 
+        val moduleVline1P = moduleVlineStartPoints.first()
+        val moduleVlineLP = moduleVlineStartPoints.last()
+        //画大横线，从第一个竖线画到最后一个竖线
+        drawLine(moduleVline1P, moduleVlineLP)
+        val allModuleCenterX = (moduleVline1P.x + moduleVlineLP.x) / 2
+        val pjStartX = allModuleCenterX - font.stringWidth(pjName)/2 - BASE_PADDING*2 + 5
+        //画项目名称
+        val rect = drawTextWithRect(pjName,
+            pjStartX.toInt(),
+            20, BASE_PADDING, BASE_PADDING)
+        //画大横线 到 项目名称 的竖线
+        val pjCenterX = rect.centerX
+        drawLine(Point2D.Double(pjCenterX,rect.maxY),Point2D.Double(pjCenterX,rect.maxY+48))
     }
 
     //绘制文本+外框，rotate=true则竖着画
