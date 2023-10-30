@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI帮你写 专业英语论文</title>
+    <style>
+
+        #myProgress {
+            width: 100%;
+            background-color: grey;
+        }
+
+        #myBar {
+            width: 0%;
+            height: 30px;
+            background-color: #0e6700;
+            text-align: center; /* To center it horizontally (if you want) */
+            line-height: 30px; /* To center it vertically */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div id="myProgress">
+    <div id="myBar"></div>
+</div>
+输入你的主题：<input><br><BUTTON id="output">开始写！</BUTTON>
+进度：<label></label>
+<div id="content"></div>
+</body>
+<script src="ai.js"></script>
+</html>
