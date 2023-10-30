@@ -1,6 +1,7 @@
 package calebxzhou.codenliberate.fumodiam
 
 import calebxzhou.codenliberate.stringMapFirstAsso
+import io.ktor.server.application.*
 import org.jfree.svg.SVGGraphics2D
 import java.awt.Font
 import java.awt.Rectangle
@@ -19,7 +20,8 @@ class Fumodiam(private val pjName: String,private val dsl:String){
     //模块功能定义，并去掉空模块
     //模块1 - 【功能1 功能2 功能3】，模块2 - 【功能4 功能5 功能6 】....
     private val moduleFunction = stringMapFirstAsso(dsl).filter { it.key.isNotBlank() }
-    private val g = SVGGraphics2D(WIDTH.toDouble(),HEIGHT.toDouble()).apply { font = Font("SimSun",Font.PLAIN, FONT_SIZE) }
+    private val g = SVGGraphics2D(WIDTH.toDouble(),HEIGHT.toDouble()).apply {
+        font = Font.createFont(Font.TRUETYPE_FONT,Application::class.java.getResourceAsStream("/SIMSUN.ttf")).deriveFont(FONT_SIZE.toFloat()) }
     private val font = g.fontMetrics
     private var x = START_X
     fun drawPicture(): ByteArray {
