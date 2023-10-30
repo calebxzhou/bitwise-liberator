@@ -1,3 +1,4 @@
-function randomElementOfArray(array){
-    return array[Math.floor(Math.random() * array.length)]
-}
+/**
+ * @param {Array} array
+ */
+const randomElementOfArray = array => array[Math.floor(Math.random() * array.length)];

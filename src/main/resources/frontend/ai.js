@@ -16,7 +16,7 @@ function addWords(i) {
     if (i < maxWords) {
         let textNode = document.createTextNode(words[i] + ' ');
         content.appendChild(textNode);
-        setTimeout(() => addWords(i + 1), 100);
+        setTimeout(() => addWords(i + 1), 50);
     }
 }
 
@@ -34,7 +34,7 @@ function shuffleArray(array) {
     return array;
 }
 
-const sentences = document.getElementById("testEssay").split(".")
+const sentences = document.getElementById("testEssay").innerText.split(".")
 
 let i = 0;
 
@@ -43,7 +43,7 @@ function move() {
         i = 1;
         const elem = document.getElementById("myBar");
         let width = 1;
-        const id = setInterval(frame, 500);
+        const id = setInterval(frame, 100);
 
         function frame() {
             if (width >= 100) {
