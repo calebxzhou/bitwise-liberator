@@ -1,23 +1,19 @@
 package calebxzhou.plugins
 
 import calebxzhou.FM_CONF
-import calebxzhou.codenliberate.dsl.*
-import calebxzhou.codenliberate.fumodiam.Fumodiam
-import calebxzhou.codenliberate.model.CodeTemplate
-import calebxzhou.codenliberate.model.CodeTemplateScope
-import calebxzhou.codenliberate.model.Project
-import calebxzhou.json
+import calebxzhou.liberator.db2table.Db2Table
+import calebxzhou.liberator.dsl.*
+import calebxzhou.liberator.fumodiam.Fumodiam
+import calebxzhou.liberator.model.CodeTemplate
+import calebxzhou.liberator.model.CodeTemplateScope
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.freemarker.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.post
-import kotlinx.serialization.encodeToString
 import java.io.ByteArrayOutputStream
-import java.io.FileOutputStream
 import java.io.StringWriter
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -68,6 +64,13 @@ fun Application.configureRouting() {
             val pjName = params["pjName"]?:return@post
             val image = Fumodiam(pjName,dsl).drawPicture()
             call.respondBytes(image,ContentType.Image.SVG)
+        }
+        post("/db2table_do"){
+            val params = call.receiveParameters()
+            val dsl = params["dsl"]?:return@post
+            val tbl = Db2Table.compileDsl(dsl)
+
+            call.respondBytes(Db2Table.outputWord(tbl).toByteArray(), contentType = ContentType.Application.Docx)
         }
     }
 }

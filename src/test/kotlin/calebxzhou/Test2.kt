@@ -1,6 +1,5 @@
 package calebxzhou
 
-import calebxzhou.codenliberate.dsl.TokenType
 import com.github.javaparser.StaticJavaParser
 
 fun main() {

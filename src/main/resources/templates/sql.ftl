@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="project" type="calebxzhou.codenliberate.model.Project" -->
+<#-- @ftlvariable name="project" type="calebxzhou.liberator.model.Project" -->
 create database shixun;
 use shixun;
 

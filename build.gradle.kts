@@ -26,6 +26,14 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+// https://mvnrepository.com/artifact/org.apache.poi/poi
+    implementation("org.apache.poi:poi:5.2.4")
+// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    implementation("org.apache.poi:poi-ooxml:5.2.4")
+// https://mvnrepository.com/artifact/com.deepoove/poi-tl
+    implementation("com.deepoove:poi-tl:1.12.1")
+// https://mvnrepository.com/artifact/org.springframework/spring-expression
+    implementation("org.springframework:spring-expression:6.0.13")
 
     // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")

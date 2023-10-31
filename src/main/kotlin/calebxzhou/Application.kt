@@ -1,6 +1,8 @@
 package calebxzhou
 
 import calebxzhou.plugins.*
+import com.deepoove.poi.config.Configure
+import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -11,6 +13,8 @@ import io.ktor.server.response.*
 import kotlinx.serialization.json.Json
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
+import java.io.InputStream
+
 fun main() {
     embeddedServer(Netty, port = 8899, host = "0.0.0.0", watchPaths = listOf("classes"), module = Application::module)
         .start(wait = true)
@@ -37,3 +41,8 @@ fun Application.module() {
     }
     install(FreeMarker)
 }
+fun getResource(path: String) : InputStream? = Application::class.java.getResourceAsStream(path)
+
+val poiConfigure = LoopRowTableRenderPolicy().let {  Configure.builder().useSpringEL(false)
+    .bind("columnTable", it)
+    .build() }

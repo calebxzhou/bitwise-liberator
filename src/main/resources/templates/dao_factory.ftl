@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="entity" type="calebxzhou.codenliberate.model.Entity" -->
+<#-- @ftlvariable name="entity" type="calebxzhou.liberator.model.Entity" -->
 package com.dao;
 
 import java.sql.*;

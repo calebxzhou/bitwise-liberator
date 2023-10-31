@@ -12,35 +12,35 @@
 <form method="post" action="/db2table_do">
 <textarea cols="50" rows="40" name="dsl">
 用户 users
-用户编号 id varchar 20 主键
-用户昵称 name varchar 30 非空
-密码 pwd varchar 16 非空
-角色编号 role_id int —— 非空
-备注 comment varchar 100 非空
+账号 usid varchar 20 主键
+昵称 name varchar 30 非空
+密码 pawd varchar 16 非空
+角色 role varchar 10 非空
+备注 comm varchar 50 非空
 
 角色 user_role
-角色编号 id int —— 主键
-角色名称 name varchar 20 非空
-备注 comment varchar 50 ——
+编号 rlid varchar 10 主键
+名称 name varchar 20 非空
+备注 comm varchar 50 ——
 
 商品种类 item_type
-类别编号 id int —— 主键
-类别名称 name varchar 30 非空
-上级类别 pid int —— ——
+编号 tpid varchar 10 主键
+名称 name varchar 30 非空
+类别 plid varchar 30 非空
 
 商品单位 item_unit
-单位编号 id int —— 主键
-单位名称 name varchar 10 非空
+编号 iuid varchar 10 主键
+名称 name varchar 10 非空
 
 测试一 test1
-字段一 field1 varchar 50 主键
+字段1 field1 varchar 50 主键
 字段2 field2 varchar 50 非空
 字段3 field3 varchar 50 非空
 字段4 field4 varchar 50 非空
 字段5 field5 varchar 50 ——
 
 测试二 test2
-字段一 field1 varchar 50 主键
+字段1 field1 varchar 50 主键
 字段2 field2 varchar 50 非空
 字段3 field3 varchar 50 非空
 字段4 field4 varchar 50 非空
