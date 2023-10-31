@@ -44,5 +44,4 @@ fun Application.module() {
 fun getResource(path: String) : InputStream? = Application::class.java.getResourceAsStream(path)
 
 val poiConfigure = LoopRowTableRenderPolicy().let {  Configure.builder().useSpringEL(false)
-    .bind("columnTable", it)
     .build() }

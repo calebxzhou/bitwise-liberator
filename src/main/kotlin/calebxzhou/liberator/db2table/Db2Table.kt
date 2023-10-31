@@ -1,10 +1,13 @@
 package calebxzhou.liberator.db2table
 
 import calebxzhou.getResource
+import calebxzhou.liberator.msword.TableOptimizer
 import calebxzhou.poiConfigure
 import com.deepoove.poi.XWPFTemplate
 import com.deepoove.poi.config.Configure
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy
+import com.deepoove.poi.xwpf.NiceXWPFDocument
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 
@@ -38,6 +41,9 @@ data class Db2Table(val tables:List<Table>){
             val tpl = getResource("/templates/db2table.docx")
             val stream = ByteArrayOutputStream()
             XWPFTemplate.compile(tpl, poiConfigure).render(table).write(stream)
+            val niceD = NiceXWPFDocument(ByteArrayInputStream(stream.toByteArray()))
+            stream.reset()
+            TableOptimizer.run(niceD).write(stream)
             return stream
         }
 
