@@ -8,6 +8,7 @@ import calebxzhou.liberator.headfoot.HeadFoot
 import calebxzhou.liberator.model.CodeTemplate
 import calebxzhou.liberator.model.CodeTemplateScope
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
@@ -72,7 +73,11 @@ fun Application.configureRouting() {
             call.respondBytes(Db2Table.outputWord(tbl).toByteArray(), contentType = ContentType.Application.Docx)
         }
         post("/headfoot_do"){
-            call.receive(HeadFoot::class).processDocx().let { call.respondBytes(it,ContentType.Application.Docx) }
+            //TODO receive file from browser
+            /*call.receiveParameters()["dsl"].let { dsl->
+                HeadFoot.fromDsl(dsl).processDocx()
+            }*/
+        //call.receive(HeadFoot::class).processDocx().let { call.respondBytes(it.toByteArray(),ContentType.Application.Docx) }
         }
     }
 }
