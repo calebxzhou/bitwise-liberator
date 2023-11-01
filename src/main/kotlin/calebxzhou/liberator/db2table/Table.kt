@@ -14,7 +14,6 @@ data class Table(val name:String,val id:String,val columns:MutableList<Column> =
         val rowRenderDataList = arrayListOf<RowRenderData>()
         val header: RowRenderData = Rows.of("属性", "列名", "数据类型", "长度", "约束")
             .horizontalCenter()
-            .textBold()
             .textColor("000000")
             .bgColor("FFFFFF").center().create()
         rowRenderDataList.add(header)

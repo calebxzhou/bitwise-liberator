@@ -4,8 +4,6 @@ import calebxzhou.getResource
 import calebxzhou.liberator.msword.TableOptimizer
 import calebxzhou.poiConfigure
 import com.deepoove.poi.XWPFTemplate
-import com.deepoove.poi.config.Configure
-import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy
 import com.deepoove.poi.xwpf.NiceXWPFDocument
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

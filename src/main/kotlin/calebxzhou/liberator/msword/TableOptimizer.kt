@@ -11,7 +11,7 @@ import java.math.BigInteger
  */
 //表格优化器 所有的表格作成标准三线表
 object TableOptimizer {
-    private val cellMargin = 80
+    private val cellMargin = 70
     //空边
     private val emptyBorder: CTBorder = CTBorder.Factory.newInstance().apply {
         `val` = STBorder.NIL

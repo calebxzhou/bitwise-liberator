@@ -4,6 +4,7 @@ import calebxzhou.FM_CONF
 import calebxzhou.liberator.db2table.Db2Table
 import calebxzhou.liberator.dsl.*
 import calebxzhou.liberator.fumodiam.Fumodiam
+import calebxzhou.liberator.headfoot.HeadFoot
 import calebxzhou.liberator.model.CodeTemplate
 import calebxzhou.liberator.model.CodeTemplateScope
 import io.ktor.http.*
@@ -52,7 +53,6 @@ fun Application.configureRouting() {
                         zipOut.write(out.toString().toByteArray())
                         zipOut.closeEntry()
                     }
-
                 }
                 zipOut.close()
                 call.respondBytes(bytes.toByteArray(), contentType = ContentType.Application.Zip)
@@ -69,8 +69,10 @@ fun Application.configureRouting() {
             val params = call.receiveParameters()
             val dsl = params["dsl"]?:return@post
             val tbl = Db2Table.compileDsl(dsl)
-
             call.respondBytes(Db2Table.outputWord(tbl).toByteArray(), contentType = ContentType.Application.Docx)
+        }
+        post("/headfoot_do"){
+            call.receive(HeadFoot::class).processDocx().let { call.respondBytes(it,ContentType.Application.Docx) }
         }
     }
 }
