@@ -12,19 +12,44 @@
     <title>快速加Word页眉页码</title>
 </head>
 <body>
-<form id="myForm" method="post" action="/headfoot_do">
-    <textarea cols="100" rows="15" name="dsl">
+<form id="myForm">
+    <textarea cols="100" rows="5" name="dsl">
 1-2 无页眉 无页码
-3-5 无页眉 页码罗马数字
-6-8 无页眉 页码罗马数字
-9-  沈阳工学院毕业设计（论文） 页码阿拉伯数字
+3-5 无页眉 罗马数字页码
+6-8 无页眉 罗马数字页码
+9-  沈阳工学院毕业设计（论文） 阿拉伯数字页码
     </textarea>
-    请上传word文档
-<input type="file" accept=".docx"/>
     <br>
-    <button type="submit"><h3>提交</h3></button>
+    <br>
+    请上传word文档
+<input type="file" name="file" accept=".docx" onchange="submitForm()"/>
+    <button type="button" onclick="submitForm()"><h1>提交</h1></button>
+    <br>
+    <br>
 </form>
 </body>
 <script>
+    function submitForm() {
+        var form = document.getElementById('myForm');
+        var formData = new FormData(form);
+        submitData(formData)
 
+    }
+    function submitData(formData){
+        fetch('/headfoot_do', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = '1.docx'; // replace with your filename and extension
+                document.body.appendChild(a); // we need to append the element to the dom -> invisible
+                a.click();
+                a.remove();  //afterwards we remove the element again
+            })
+            .catch((error) => console.error('Error:', error));
+    }
 </script>

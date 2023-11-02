@@ -35,15 +35,16 @@ data class Db2Table(val tables:List<Table>){
             }
             return Db2Table(tables)
         }
-        fun outputWord(table:Db2Table): ByteArrayOutputStream {
-            val tpl = getResource("/templates/db2table.docx")
-            val stream = ByteArrayOutputStream()
-            XWPFTemplate.compile(tpl, poiConfigure).render(table).write(stream)
-            val niceD = NiceXWPFDocument(ByteArrayInputStream(stream.toByteArray()))
-            stream.reset()
-            TableOptimizer.run(niceD).write(stream)
-            return stream
-        }
 
+
+    }
+    fun outputDocx(): ByteArrayOutputStream {
+        val tpl = getResource("/templates/db2table.docx")
+        val stream = ByteArrayOutputStream()
+        XWPFTemplate.compile(tpl, poiConfigure).render(this).write(stream)
+        val niceD = NiceXWPFDocument(ByteArrayInputStream(stream.toByteArray()))
+        stream.reset()
+        TableOptimizer.run(niceD).write(stream)
+        return stream
     }
 }

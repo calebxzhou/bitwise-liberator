@@ -7,6 +7,7 @@ import calebxzhou.liberator.fumodiam.Fumodiam
 import calebxzhou.liberator.headfoot.HeadFoot
 import calebxzhou.liberator.model.CodeTemplate
 import calebxzhou.liberator.model.CodeTemplateScope
+import calebxzhou.liberator.respondDocx
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -67,17 +68,34 @@ fun Application.configureRouting() {
             call.respondBytes(image,ContentType.Image.SVG)
         }
         post("/db2table_do"){
-            val params = call.receiveParameters()
-            val dsl = params["dsl"]?:return@post
-            val tbl = Db2Table.compileDsl(dsl)
-            call.respondBytes(Db2Table.outputWord(tbl).toByteArray(), contentType = ContentType.Application.Docx)
+            call.receiveParameters()["dsl"]?.let { dsl->
+                Db2Table.compileDsl(dsl).outputDocx().let { docx->
+                    call.respondDocx(docx)
+                }
+            }
         }
         post("/headfoot_do"){
-            //TODO receive file from browser
-            /*call.receiveParameters()["dsl"].let { dsl->
-                HeadFoot.fromDsl(dsl).processDocx()
-            }*/
-        //call.receive(HeadFoot::class).processDocx().let { call.respondBytes(it.toByteArray(),ContentType.Application.Docx) }
+            val (dsl, fileBytes) = call.receiveMultipart().readAllParts()
+                .fold(String() to ByteArray(0)) { acc, part ->
+                when (part) {
+                    is PartData.FormItem -> {
+                        when (part.name) {
+                            "dsl" -> part.value to acc.second
+                            else -> acc
+                        }
+                    }
+                    is PartData.FileItem -> {
+                        when (part.name) {
+                            "file" -> acc.first to part.streamProvider().readBytes()
+                            else -> acc
+                        }
+                    }
+                    else -> acc
+                }.also { part.dispose() }
+            }
+            HeadFoot.fromDsl(dsl).processDocx(fileBytes).let { bytes ->
+                call.respondDocx(bytes)
+            }
         }
     }
 }

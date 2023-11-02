@@ -1,5 +1,10 @@
 package calebxzhou.liberator
 
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import java.io.ByteArrayOutputStream
+
 //将大列表按 相同分隔符 分成小列表 eg [11102220333].splitList(0) -> [[111],[222],[333]]
 fun <T> List<T>.splitList(separator: T)= this.fold(mutableListOf(mutableListOf<T>())){acc, t ->
         if( t == separator)
