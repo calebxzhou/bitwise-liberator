@@ -61,11 +61,11 @@ fun Application.configureRouting() {
             }
         }
         post("/fumodiam_do"){
-            val params = call.receiveParameters()
-            val dsl = params["dsl"]?:return@post
-            val pjName = params["pjName"]?:return@post
-            val image = Fumodiam(pjName,dsl).drawPicture()
-            call.respondBytes(image,ContentType.Image.SVG)
+            call.receiveParameters()["dsl"]?.let { dsl ->
+                Fumodiam.fromDsl(dsl).drawPicture().let { image->
+                    call.respondBytes(image,ContentType.Image.SVG)
+                }
+            }
         }
         post("/db2table_do"){
             call.receiveParameters()["dsl"]?.let { dsl->

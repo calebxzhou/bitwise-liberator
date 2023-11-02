@@ -1,5 +1,6 @@
 package calebxzhou.liberator.fumodiam
 
+import calebxzhou.liberator.DslInstantiable
 import calebxzhou.liberator.stringMapFirstAsso
 import io.ktor.server.application.*
 import org.jfree.svg.SVGGraphics2D
@@ -9,17 +10,36 @@ import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
 
-class Fumodiam(private val pjName: String,private val dsl:String){
-    companion object{
+data class Module(val name:String,val funcs:List<String>)
+data class Fumodiam(val pjName: String, val modules: List<Module>,val unifyFuncHeight: Boolean){
+    companion object : DslInstantiable<Fumodiam>{
         const val WIDTH = 3840
         const val HEIGHT = 1080
         const val FONT_SIZE = 30
         const val START_X = 100
         const val BASE_PADDING = 15
+        override fun fromDsl(dsl: String): Fumodiam {
+            val rows = dsl.split("\n").toMutableList()
+            val pjName = rows.removeFirst()
+            val modules = arrayListOf<Module>()
+            var unifyFuncHeight = false
+            for (row in rows) {
+                if(row.isBlank())
+                    continue
+                if(row.contains("@功能统一高度")){
+                    unifyFuncHeight = true
+                    continue
+                }
+                val words = row.trim().split(Regex("\\s+")).toMutableList()
+                if(words.size<4){
+                    throw IllegalArgumentException("每个模块至少3个功能")
+                }
+                val moduleName = words.removeFirst()
+                modules += Module(moduleName,words)
+            }
+            return Fumodiam(pjName,modules,unifyFuncHeight)
+        }
     }
-    //模块功能定义，并去掉空模块
-    //模块1 - 【功能1 功能2 功能3】，模块2 - 【功能4 功能5 功能6 】....
-    private val moduleFunction = stringMapFirstAsso(dsl).filter { it.key.isNotBlank() }
     private val g = SVGGraphics2D(WIDTH.toDouble(),HEIGHT.toDouble()).apply {
         font = Font.createFont(Font.TRUETYPE_FONT,Application::class.java.getResourceAsStream("/SIMSUN.ttf")).deriveFont(FONT_SIZE.toFloat()) }
     private val font = g.fontMetrics
@@ -35,17 +55,26 @@ class Fumodiam(private val pjName: String,private val dsl:String){
     private fun drawFunctions() {
         //每个模块 竖线所在的起始点
         val moduleVlineStartPoints = arrayListOf<Point2D>()
+        //TODO
+        //名字最长的那个功能的高度
+        val longestFuncHeight = modules.maxBy { it.funcs.maxBy {f-> f.length } }.length* (FONT_SIZE + 10 ) + BASE_PADDING * 2
         //画每个模块
-        moduleFunction.forEach { (moduleName, functions) ->
+        for ((moduleName, functions) in modules) {
             //每个功能 竖线所在的起始点
             val vlineStartPoints = arrayListOf<Point2D>()
             val functionStartX = x
+
             //画每个功能
-            functions.forEach{
+            for (func in functions) {
                 //去掉功能名的两端空格
-                val functionName = it.trim()
+                val functionName = func.trim()
+                if(functionName.isBlank())
+                    continue
                 //画每一个功能名称
-                val rect = drawTextWithRect(functionName, x , 300,15,15,true)
+                val rect = if(unifyFuncHeight)
+                    drawTextWithRectWH(functionName,x,300, BASE_PADDING, BASE_PADDING,FONT_SIZE + BASE_PADDING * 2,longestFuncHeight,true)
+                else
+                    drawTextWithRect(functionName, x , 300,BASE_PADDING,BASE_PADDING,true)
                 x += rect.width.toInt() + 20
                 //画线,每个功能的竖线
                 val lineX = rect.centerX
@@ -91,7 +120,14 @@ class Fumodiam(private val pjName: String,private val dsl:String){
     }
 
     //绘制文本+外框，rotate=true则竖着画
-    private fun drawTextWithRect(text:String,x:Int,y:Int,paddingX: Int,paddingY:Int,rotate: Boolean = false) : Rectangle2D{
+    private fun drawTextWithRect(
+        text:String,
+        x:Int,
+        y:Int,
+        paddingX: Int,
+        paddingY:Int,
+        rotate: Boolean = false
+    ): Rectangle2D{
         val rect : Rectangle2D = if(!rotate){
             g.drawString(text, x, y+ font.ascent)
             Rectangle(x-paddingX,y-paddingY,font.stringWidth(text)+paddingX*2,font.height+paddingY*2)
@@ -102,6 +138,31 @@ class Fumodiam(private val pjName: String,private val dsl:String){
                 g.drawString("$c", x, baseH + index * 40)
             }
             Rectangle(x-paddingX,y-paddingY, FONT_SIZE + paddingX * 2,text.length * (FONT_SIZE + 10 ) + paddingY * 2)
+        }
+        g.draw(rect)
+        return  rect
+    }
+    //绘制文本+外框（可自定义外框的高度和宽度），rotate=true则竖着画
+    private fun drawTextWithRectWH(
+        text:String,
+        x:Int,
+        y:Int,
+        paddingX: Int,
+        paddingY:Int,
+        rectWidth:Int,
+        rectHeight: Int,
+        useVerticalText: Boolean = false
+    ): Rectangle2D{
+        val rect : Rectangle2D = if(!useVerticalText){
+            g.drawString(text, x, y+ font.ascent)
+            Rectangle(x-paddingX,y-paddingY,rectWidth,rectHeight)
+        }else{
+            //旋转true，每个汉字占一行
+            val baseH = y + font.ascent
+            text.forEachIndexed { index, c ->
+                g.drawString("$c", x, baseH + index * 40)
+            }
+            Rectangle(x-paddingX,y-paddingY, rectWidth,rectHeight)
         }
         g.draw(rect)
         return  rect
