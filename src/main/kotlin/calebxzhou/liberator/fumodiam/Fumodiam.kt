@@ -1,7 +1,8 @@
 package calebxzhou.liberator.fumodiam
 
+import calebxzhou.getResource
 import calebxzhou.liberator.DslInstantiable
-import calebxzhou.liberator.stringMapFirstAsso
+import calebxzhou.liberator.LiberatorException
 import io.ktor.server.application.*
 import org.jfree.svg.SVGGraphics2D
 import java.awt.Font
@@ -18,6 +19,7 @@ data class Fumodiam(val pjName: String, val modules: List<Module>,val unifyFuncH
         const val FONT_SIZE = 30
         const val START_X = 100
         const val BASE_PADDING = 15
+        val simsunFont = Font.createFont(Font.TRUETYPE_FONT, getResource("/simsun.ttf")).deriveFont(FONT_SIZE.toFloat())
         override fun fromDsl(dsl: String): Fumodiam {
             val rows = dsl.split("\n").toMutableList()
             val pjName = rows.removeFirst()
@@ -32,7 +34,7 @@ data class Fumodiam(val pjName: String, val modules: List<Module>,val unifyFuncH
                 }
                 val words = row.trim().split(Regex("\\s+")).toMutableList()
                 if(words.size<4){
-                    throw IllegalArgumentException("每个模块至少3个功能")
+                    throw LiberatorException("每个模块至少3个功能")
                 }
                 val moduleName = words.removeFirst()
                 modules += Module(moduleName,words)
@@ -41,13 +43,13 @@ data class Fumodiam(val pjName: String, val modules: List<Module>,val unifyFuncH
         }
     }
     private val g = SVGGraphics2D(WIDTH.toDouble(),HEIGHT.toDouble()).apply {
-        font = Font.createFont(Font.TRUETYPE_FONT,Application::class.java.getResourceAsStream("/SIMSUN.ttf")).deriveFont(FONT_SIZE.toFloat()) }
+        font = simsunFont
+    }
     private val font = g.fontMetrics
     private var x = START_X
     fun drawPicture(): ByteArray {
         drawFunctions()
         g.dispose()
-        //TODO 划线
         return g.svgElement.toByteArray()
     }
 
@@ -57,7 +59,7 @@ data class Fumodiam(val pjName: String, val modules: List<Module>,val unifyFuncH
         val moduleVlineStartPoints = arrayListOf<Point2D>()
         //TODO
         //名字最长的那个功能的高度
-        val longestFuncHeight = modules.maxBy { it.funcs.maxBy {f-> f.length } }.length* (FONT_SIZE + 10 ) + BASE_PADDING * 2
+        val longestFuncHeight = modules.flatMap { it.funcs }.maxBy { it.length }.length* (FONT_SIZE + 10 ) + BASE_PADDING * 2
         //画每个模块
         for ((moduleName, functions) in modules) {
             //每个功能 竖线所在的起始点
