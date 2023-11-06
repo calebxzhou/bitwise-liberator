@@ -9,17 +9,25 @@
 </script>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数据库设计</title>
 </head>
-<p>请按以下格式填入表+字段信息。</p>
-<hr>
-<p>表名&emsp;表英文名</p>
-<p>列名1&emsp;列英文名1&emsp;类型&emsp;长度&emsp;主键或者非空</p>
-<p>列名2&emsp;列英文名2&emsp;类型&emsp;长度&emsp;主键或者非空</p>
-<p>......</p>
-<hr>
 <form method="post" action="/db2table_do">
 <textarea cols="50" rows="40" name="dsl">
+表一 table1
+字段1 field1 varchar 50 主键
+字段2 field2 varchar 50 非空
+字段3 field3 varchar 50 非空
+字段4 field4 varchar 50 非空
+字段5 field5 varchar 50 ——
+
+表二 test2
+字段1 field1 varchar 50 主键
+字段2 field2 varchar 50 非空
+字段3 field3 varchar 50 非空
+字段4 field4 varchar 50 非空
+字段5 field5 varchar 50 ——
+
 用户 users
 账号 usid varchar 20 主键
 昵称 name varchar 30 非空
@@ -41,19 +49,6 @@
 编号 iuid varchar 10 主键
 名称 name varchar 10 非空
 
-测试一 test1
-字段1 field1 varchar 50 主键
-字段2 field2 varchar 50 非空
-字段3 field3 varchar 50 非空
-字段4 field4 varchar 50 非空
-字段5 field5 varchar 50 ——
-
-测试二 test2
-字段1 field1 varchar 50 主键
-字段2 field2 varchar 50 非空
-字段3 field3 varchar 50 非空
-字段4 field4 varchar 50 非空
-字段5 field5 varchar 50 ——
 
 </textarea><br>
 <button type="submit"><h4>立刻生成</h4></button>
