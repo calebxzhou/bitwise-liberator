@@ -26,3 +26,5 @@ fun stringMapFirstAsso(input: String): Map<String, List<String>> {
         .associate { it.first() to it.drop(1) }
 }
 
+fun String.splitBySpace()= this.trim().split(Regex("\\s+")).filter { it.isNotBlank() }.toMutableList()
+fun String.splitByReturn()=this.trim().split("\n").filter { it.isNotBlank() }.toMutableList()

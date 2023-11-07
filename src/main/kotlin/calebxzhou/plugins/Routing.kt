@@ -3,7 +3,7 @@ package calebxzhou.plugins
 import calebxzhou.FM_CONF
 import calebxzhou.liberator.db2table.Db2Table
 import calebxzhou.liberator.dsl.*
-import calebxzhou.liberator.fumodiam.Fumodiam
+import calebxzhou.liberator.diagram.fumodiam.Fumodiam
 import calebxzhou.liberator.headfoot.HeadFoot
 import calebxzhou.liberator.model.CodeTemplate
 import calebxzhou.liberator.model.CodeTemplateScope
