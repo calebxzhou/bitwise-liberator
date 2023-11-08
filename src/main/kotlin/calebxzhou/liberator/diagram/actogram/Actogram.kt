@@ -5,6 +5,7 @@ import calebxzhou.liberator.diagram.*
 import calebxzhou.liberator.splitByReturn
 import calebxzhou.liberator.splitBySpace
 import java.awt.geom.Point2D
+import java.util.SortedMap
 
 //
 data class ActFunc(val actor: String, val funcs:List<String>)
@@ -28,10 +29,10 @@ data class Actogram(val pjName:String,val acts: List<ActFunc>) :DiagramDrawable{
         drawFunctions()
         // 画2~6个角色
         /*
-         2:     3:      4:      5:      6:
-         x  x   1   x   1   3   1   4   1   2
-         1  2   x   3   x   x   2   x   3   4
-         x  x   2   x   2   4   3   5   5   6
+         2:         3:          4:          5:          6:
+         x  x       x   2       1   3       1   2       1   2
+         1  2       1   x       x   x       x   3       3   4
+         x  x       x   3       2   4       5   4       5   6
          */
         drawActors()
         //连线
@@ -41,11 +42,12 @@ data class Actogram(val pjName:String,val acts: List<ActFunc>) :DiagramDrawable{
         diam.done()
         return diam.data
     }
-    private fun drawFunctions() : Map<String,Point2D> {
-        val funcPos = hashMapOf<String,Point2D>()
+    private fun drawFunctions() : SortedMap<String,Point2D> {
+        val funcPos = sortedMapOf<String,Point2D>()
         val funcs = acts.flatMap { it.funcs }
         val x = WIDTH/3
         var y = 200
+        //先画共有功能
         for (funcName in funcs) {
             //已经有的功能就不画了
             if(funcPos.containsKey(funcName))
@@ -57,7 +59,9 @@ data class Actogram(val pjName:String,val acts: List<ActFunc>) :DiagramDrawable{
         }
         return funcPos
     }
-
+    private fun drawActors() {
+        diam.drawActor("啊多少啊多少啊",400,400)
+    }
     private fun drawFrame() {
 
     }
@@ -66,9 +70,7 @@ data class Actogram(val pjName:String,val acts: List<ActFunc>) :DiagramDrawable{
 
     }
 
-    private fun drawActors() {
 
-    }
 
 
 }

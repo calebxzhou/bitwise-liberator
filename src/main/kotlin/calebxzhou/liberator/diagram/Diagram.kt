@@ -5,7 +5,6 @@ import org.jfree.svg.SVGGraphics2D
 import java.awt.Font
 import java.awt.Point
 import java.awt.Rectangle
-import java.awt.SystemColor
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
@@ -98,6 +97,46 @@ class DiagramDrawer{
         val textY: Int = y + (oralH - textHeight) / 2 + textAscent
         g.drawOval(x,y,oralW,oralH)
         g.drawString(text,textX,textY)
+    }
+    //画系统角色小人
+    fun drawActor(text: String,x:Int,y:Int){
+        // Draw the head
+        // Draw the head
+        val headDiameter = 60
+
+        val headX: Int = (x - headDiameter/2)
+        val headY = y
+        g.drawOval(headX, headY, headDiameter, headDiameter)
+
+        // Draw the body
+
+        // Draw the body
+        val bodyHeight = 80
+        val bodyX = x
+        val bodyY = headY + headDiameter
+        g.drawLine(bodyX, bodyY, bodyX, bodyY + bodyHeight)
+
+
+        // Draw the arms
+        val armLength = 75
+
+        val leftArmLegX = bodyX - armLength / 2
+        val armY = bodyY + bodyHeight / 3
+        val rightArmLegX = bodyX + armLength / 2
+
+        val armP1 = pointOf(leftArmLegX,armY)
+        val armP2 = pointOf(rightArmLegX,armY)
+        drawLine(armP1,armP2)
+
+        // Draw the legs
+        val legY = bodyY + bodyHeight + armLength / 2
+        val legP1 = pointOf(bodyX,bodyY + bodyHeight)
+        val leftLegP2 = pointOf(leftArmLegX, legY)
+        val rightLegP2 =  pointOf(rightArmLegX, legY)
+        drawLine(legP1,leftLegP2)
+        drawLine(legP1,rightLegP2)
+
+        g.drawString(text,bodyX - getTextWidth(text)/2,bodyY + bodyHeight+armLength)
     }
     fun done(){
         g.dispose()
