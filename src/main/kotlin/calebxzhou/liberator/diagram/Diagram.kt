@@ -3,29 +3,43 @@ package calebxzhou.liberator.diagram
 import calebxzhou.getResource
 import org.jfree.svg.SVGGraphics2D
 import java.awt.Font
+import java.awt.Point
 import java.awt.Rectangle
+import java.awt.SystemColor
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
 
+
 const val WIDTH = 3840
-const val HEIGHT = 1080
+const val HEIGHT = 3840
 const val FONT_SIZE = 30
 const val START_X = 100
 const val BASE_PADDING = 15
 val SIMSUN_FONT = Font.createFont(Font.TRUETYPE_FONT, getResource("/simsun.ttf")).deriveFont(FONT_SIZE.toFloat())
 
+//创建Point2D 点对象
+fun pointOf(x: Double,y:Double) = Point2D.Double(x,y)
+fun pointOf(x:Int,y:Int): Point2D = Point(x,y)
+//坐标中心
+fun centerOf(d1:Double, d2:Double) = (d1+d2)/2
+fun centerOf(p1:Point2D,p2:Point2D) = pointOf(centerOf(p1.x , p2.x), centerOf(p1.y , p2.y))
 //画矢量图
 class DiagramDrawer{
-    private val g = SVGGraphics2D(WIDTH.toDouble(), HEIGHT.toDouble()).apply {
+    val g = SVGGraphics2D(WIDTH.toDouble(), HEIGHT.toDouble()).apply {
         font = SIMSUN_FONT
     }
     private val font = g.fontMetrics
     //  文字宽度
     fun getTextWidth(text:String)=font.stringWidth(text)
+    val textHeight=font.height
+    val textAscent = font.ascent
     //画线
     fun drawLine(start: Point2D, end: Point2D){
         g.draw(Line2D.Double(start,end))
+    }
+    fun drawString(str:String,x:Int,y:Int){
+        g.drawString(str,x,y)
     }
     //绘制文本+外框，rotate=true则竖着画
     fun drawTextWithRect(
@@ -75,7 +89,16 @@ class DiagramDrawer{
         g.draw(rect)
         return  rect
     }
-    //
+    //绘制文本+椭圆
+    fun drawTextWithOral(text: String,x: Int,y: Int){
+        val textW = getTextWidth(text)
+        val oralW = textW + BASE_PADDING *4
+        val oralH = 100
+        val textX: Int = x + (oralW - textW) / 2
+        val textY: Int = y + (oralH - textHeight) / 2 + textAscent
+        g.drawOval(x,y,oralW,oralH)
+        g.drawString(text,textX,textY)
+    }
     fun done(){
         g.dispose()
     }

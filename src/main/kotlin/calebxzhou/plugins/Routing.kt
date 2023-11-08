@@ -2,6 +2,7 @@ package calebxzhou.plugins
 
 import calebxzhou.FM_CONF
 import calebxzhou.liberator.db2table.Db2Table
+import calebxzhou.liberator.diagram.actogram.Actogram
 import calebxzhou.liberator.dsl.*
 import calebxzhou.liberator.diagram.fumodiam.Fumodiam
 import calebxzhou.liberator.headfoot.HeadFoot
@@ -60,9 +61,16 @@ fun Application.configureRouting() {
                 call.respondBytes(bytes.toByteArray(), contentType = ContentType.Application.Zip)
             }
         }
-        post("/fumodiam_do"){
+        post("/fumogram_do"){
             call.receiveParameters()["dsl"]?.let { dsl ->
-                Fumodiam.fromDsl(dsl).drawPicture().let { image->
+                Fumodiam.fromDsl(dsl).draw().let { image->
+                    call.respondBytes(image,ContentType.Image.SVG)
+                }
+            }
+        }
+        post("/actogram_do"){
+            call.receiveParameters()["dsl"]?.let { dsl ->
+                Actogram.fromDsl(dsl).draw().let { image->
                     call.respondBytes(image,ContentType.Image.SVG)
                 }
             }
