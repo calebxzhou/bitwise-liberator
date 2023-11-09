@@ -22,6 +22,7 @@ fun pointOf(x: Double,y:Double) = Point2D.Double(x,y)
 fun pointOf(x:Int,y:Int): Point2D = Point(x,y)
 //坐标中心
 fun centerOf(d1:Double, d2:Double) = (d1+d2)/2
+fun centerOf(d1:Int, d2:Int) = (d1+d2)/2
 fun centerOf(p1:Point2D,p2:Point2D) = pointOf(centerOf(p1.x , p2.x), centerOf(p1.y , p2.y))
 //画矢量图
 class DiagramDrawer{
@@ -98,49 +99,46 @@ class DiagramDrawer{
         g.drawOval(x,y,oralW,oralH)
         g.drawString(text,textX,textY)
     }
-    //画系统角色小人
-    fun drawActor(text: String,x:Int,y:Int){
-        // Draw the head
-        // Draw the head
-        val headDiameter = 60
+    //画系统角色小人带名字 返回左右两条胳膊的点
 
-        val headX: Int = (x - headDiameter/2)
+    fun drawActor(text: String,x:Int,y:Int) : Pair<Point2D,Point2D>{
+        // Draw the head
+        val headX: Int = (x - ACTOR_HEAD_DIAMETER/2)
         val headY = y
-        g.drawOval(headX, headY, headDiameter, headDiameter)
-
+        g.drawOval(headX, headY, ACTOR_HEAD_DIAMETER, ACTOR_HEAD_DIAMETER)
         // Draw the body
-
-        // Draw the body
-        val bodyHeight = 80
         val bodyX = x
-        val bodyY = headY + headDiameter
-        g.drawLine(bodyX, bodyY, bodyX, bodyY + bodyHeight)
-
-
+        val bodyY = headY + ACTOR_HEAD_DIAMETER
+        g.drawLine(bodyX, bodyY, bodyX, bodyY + ACTOR_BODY_HEIGHT)
         // Draw the arms
-        val armLength = 75
-
-        val leftArmLegX = bodyX - armLength / 2
-        val armY = bodyY + bodyHeight / 3
-        val rightArmLegX = bodyX + armLength / 2
+        val leftArmLegX = bodyX - ACTOR_ARM_LEN / 2
+        val armY = bodyY + ACTOR_BODY_HEIGHT / 3
+        val rightArmLegX = bodyX + ACTOR_ARM_LEN / 2
 
         val armP1 = pointOf(leftArmLegX,armY)
         val armP2 = pointOf(rightArmLegX,armY)
         drawLine(armP1,armP2)
 
         // Draw the legs
-        val legY = bodyY + bodyHeight + armLength / 2
-        val legP1 = pointOf(bodyX,bodyY + bodyHeight)
+        val legY = bodyY + ACTOR_BODY_HEIGHT + ACTOR_ARM_LEN / 2
+        val legP1 = pointOf(bodyX,bodyY + ACTOR_BODY_HEIGHT)
         val leftLegP2 = pointOf(leftArmLegX, legY)
         val rightLegP2 =  pointOf(rightArmLegX, legY)
         drawLine(legP1,leftLegP2)
         drawLine(legP1,rightLegP2)
 
-        g.drawString(text,bodyX - getTextWidth(text)/2,bodyY + bodyHeight+armLength)
+        g.drawString(text,bodyX - getTextWidth(text)/2,bodyY + ACTOR_BODY_HEIGHT+ACTOR_ARM_LEN)
+        return  armP1 to armP2
     }
     fun done(){
         g.dispose()
     }
     val data
     get() = g.svgElement.toByteArray()
+
+    companion object{
+        const val ACTOR_BODY_HEIGHT = 80
+        const val ACTOR_HEAD_DIAMETER = 60
+        const val ACTOR_ARM_LEN = 75
+    }
 }

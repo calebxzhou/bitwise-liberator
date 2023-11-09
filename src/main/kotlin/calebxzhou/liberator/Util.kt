@@ -28,3 +28,4 @@ fun stringMapFirstAsso(input: String): Map<String, List<String>> {
 
 fun String.splitBySpace()= this.trim().split(Regex("\\s+")).filter { it.isNotBlank() }.toMutableList()
 fun String.splitByReturn()=this.trim().split("\n").filter { it.isNotBlank() }.toMutableList()
+fun Int.isEven() = this % 2 == 0
