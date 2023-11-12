@@ -35,7 +35,7 @@ data class Fumodiam(val pjName: String, val modules: List<Module>, val unifyFunc
 
 
     private var x = START_X
-    private val diam = DiagramDrawer()
+    private val diam = DiagramPainter()
     override fun draw(): ByteArray {
         drawFunctions()
         diam.done()

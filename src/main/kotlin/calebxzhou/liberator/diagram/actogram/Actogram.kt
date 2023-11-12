@@ -11,7 +11,7 @@ import java.util.SortedMap
 //
 data class ActorFunc(val actorName: String, val funcNames:List<String>)
 data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawable{
-    private val diam = DiagramDrawer()
+    private val diam = DiagramPainter()
     companion object : DslInstantiable<Actogram>{
         override fun fromDsl(dsl: String): Actogram {
             val rows = dsl.splitByReturn()
@@ -35,54 +35,69 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
         //连线
         drawLine(funcPoses,actorPoses)
         //功能画框
-        drawFrame()
+        drawFrame(funcPoses)
         diam.done()
         return diam.data
     }
-    private fun drawFunctions() : Map<String,Point2D> {
+    private fun drawFunctions() : SortedMap<String,EllipseShape> {
         val x = WIDTH/3
         var y = startY
-        val funcPoses = hashMapOf<String,Point2D>()
+        val funcPoses = sortedMapOf<String,EllipseShape>()
         //先画共有功能
         for (funcName in funcs) {
             //已经有的功能就不画了
             if(funcPoses.containsKey(funcName))
                 continue
-            diam.drawTextWithOral(funcName,x,y)
+            val shape = EllipseShape.draw(diam,funcName,x,y)
             y+=150
-            funcPoses += funcName to pointOf(x,y)
+            funcPoses += funcName to shape
         }
         return funcPoses
     }
 
     //入功能位置 出角色名to位置
-    private fun drawActors(funcPoses : Map<String,Point2D>) : Map<String,Point2D>{
+    private fun drawActors(funcPoses : Map<String,EllipseShape>) : Map<String, ActorShape>{
         val leftX = WIDTH/5
         val rightX = WIDTH/2
         //  最后一个功能Y
-        val endY = funcPoses.maxBy { it.value.y }.value.y.toInt()
-        val actorNamePoints= hashMapOf<String,Point2D>()
+        val endY = funcPoses.maxBy { it.value.yDown.y }.value.yDown.y
+        val actorNamePoints= hashMapOf<String, ActorShape>()
         //确定角色点
-        val actorPoints = getActorDrawPoints(actors.size,leftX, rightX, endY)
+        val actorPoints = getActorDrawPoints(actors.size,leftX, rightX, endY.toInt())
         for ((index, act) in actors.withIndex()) {
             actorPoints[index].let {
-                diam.drawActor(act.actorName,it.x.toInt(),it.y.toInt())
-                actorNamePoints += act.actorName to it
+                val actorShape = ActorShape.draw(diam,act.actorName,it.x.toInt(),it.y.toInt())
+                actorNamePoints += act.actorName to actorShape
             }
         }
         return  actorNamePoints
     }
-    private fun drawLine(funcPoses: Map<String, Point2D>, actorPoses: Map<String, Point2D>) {
+    private fun drawLine(funcPoses: Map<String, EllipseShape>, actorPoses: Map<String, ActorShape>) {
         for (actorFunc in actors) {
-            val p1 = actorPoses[actorFunc.actorName]?:continue
+            val actorShape = actorPoses[actorFunc.actorName]?:continue
             for (funcName in actorFunc.funcNames) {
-                val p2 = funcPoses[funcName]?:continue
-                diam.drawLine(p1,p2)
+                val funcShape = funcPoses[funcName]?:continue
+                //人在功能左边
+                if(actorShape.armR.x < funcShape.xLeft.x)
+                    diam.drawLine(actorShape.armR,funcShape.xLeft)
+                else //人在功能右边
+                    diam.drawLine(funcShape.xRight,actorShape.armL)
             }
         }
     }
-    private fun drawFrame() {
 
+    //画最后的外框
+    private fun drawFrame(funcPoses: SortedMap<String, EllipseShape>) {
+        val firstFunc = funcPoses[funcPoses.firstKey()]!!
+        val lastFunc = funcPoses[funcPoses.lastKey()]!!
+        val x1 = firstFunc.xLeft.x-150
+        val x2 = lastFunc.xRight.x + 150
+        val y1 = 50
+        val y2 = lastFunc.yDown.y+200
+        val width = x2-x1
+        val height = y2-y1
+        diam.drawString(pjName, (firstFunc.xLeft.x).toInt(),80)
+        diam.g.drawRect(x1.toInt(),y1.toInt(),width.toInt(),height.toInt())
     }
 
 
