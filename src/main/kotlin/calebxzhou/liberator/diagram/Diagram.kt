@@ -8,6 +8,9 @@ import java.awt.Rectangle
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 const val WIDTH = 3840
@@ -41,6 +44,24 @@ class DiagramPainter{
     //画线
     fun drawLine(start: Point2D, end: Point2D){
         g.draw(Line2D.Double(start,end))
+    }
+    fun drawArrowLine(start: Point2D,end: Point2D,hollow:Boolean){
+        val arrowSize = 20
+        val angle = atan2(end.y - start.y, end.x - start.x)
+        val x2 = end.x.toInt()
+        val y2 = end.y.toInt()
+        //箭头三角点1
+        val tx1 = x2 - arrowSize * cos(angle - Math.PI / 6)
+        val ty1 = y2 - arrowSize * sin(angle - Math.PI / 6)
+        val tp1 = pointOf(tx1,ty1)
+        //箭头三角点2
+        val tx2 = x2 - arrowSize * cos(angle + Math.PI / 6)
+        val ty2 = y2 - arrowSize * sin(angle + Math.PI / 6)
+        val tp2 = pointOf(tx2,ty2)
+        drawLine(start, centerPosOf(tp1,tp2))
+        drawLine(end,tp1)
+        drawLine(end,tp2)
+        drawLine(tp1,tp2)
     }
     fun drawString(str:String,x:Int,y:Int){
         g.drawString(str,x,y)
