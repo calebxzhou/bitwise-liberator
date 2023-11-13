@@ -21,10 +21,13 @@ val SIMSUN_FONT = Font.createFont(Font.TRUETYPE_FONT, getResource("/simsun.ttf")
 fun pointOf(x: Double,y:Double) = Point2D.Double(x,y)
 fun pointOf(x:Int,y:Int): Point2D = Point(x,y)
 //坐标中心
-fun centerOf(d1:Double, d2:Double) = (d1+d2)/2
-fun centerOf(d1:Int, d2:Int) = (d1+d2)/2
-fun centerOf(p1:Point2D,p2:Point2D) = pointOf(centerOf(p1.x , p2.x), centerOf(p1.y , p2.y))
-
+fun centerPosOf(d1:Double, d2:Double) = (d1+d2)/2
+fun centerPosOf(d1:Int, d2:Int) = (d1+d2)/2
+//两点中心
+fun centerPosOf(p1:Point2D, p2:Point2D) = pointOf(centerPosOf(p1.x , p2.x), centerPosOf(p1.y , p2.y))
+//让文本居中的坐标值
+fun centerTextPosOf(painter: DiagramPainter, text: String, d1:Int, d2:Int) = centerTextPosOf(painter,text, centerPosOf(d1, d2))
+fun centerTextPosOf(painter: DiagramPainter, text: String, centerPos:Int) = centerPos - painter.getTextWidth(text)/2
 //画矢量图
 class DiagramPainter{
     val g = SVGGraphics2D(WIDTH.toDouble(), HEIGHT.toDouble()).apply {

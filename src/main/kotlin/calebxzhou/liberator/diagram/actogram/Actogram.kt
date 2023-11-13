@@ -26,6 +26,7 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
         }
     }
 
+    //全部功能
     val funcs = actors.flatMap { it.funcNames }
     val startY = 200
     override fun draw(): ByteArray {
@@ -39,17 +40,16 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
         diam.done()
         return diam.data
     }
-    private fun drawFunctions() : SortedMap<String,EllipseShape> {
-        val x = WIDTH/3
+    private fun drawFunctions() : Map<String,EllipseShape> {
+        var x = WIDTH/3
         var y = startY
-        val funcPoses = sortedMapOf<String,EllipseShape>()
-        //先画共有功能
-        for (funcName in funcs) {
+        val funcPoses = linkedMapOf<String,EllipseShape>()
+        for ((index, funcName) in funcs.withIndex()) {
             //已经有的功能就不画了
             if(funcPoses.containsKey(funcName))
                 continue
-            val shape = EllipseShape.draw(diam,funcName,x,y)
-            y+=150
+            val shape = EllipseShape.draw(diam,funcName, centerTextPosOf(diam,funcName,x),y)
+            y+= 110
             funcPoses += funcName to shape
         }
         return funcPoses
@@ -66,7 +66,7 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
         val actorPoints = getActorDrawPoints(actors.size,leftX, rightX, endY.toInt())
         for ((index, act) in actors.withIndex()) {
             actorPoints[index].let {
-                val actorShape = ActorShape.draw(diam,act.actorName,it.x.toInt(),it.y.toInt())
+                val actorShape = ActorShape.drawAtCenter(diam,act.actorName,it.x.toInt(),it.y.toInt())
                 actorNamePoints += act.actorName to actorShape
             }
         }
@@ -87,17 +87,17 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
     }
 
     //画最后的外框
-    private fun drawFrame(funcPoses: SortedMap<String, EllipseShape>) {
-        val firstFunc = funcPoses[funcPoses.firstKey()]!!
-        val lastFunc = funcPoses[funcPoses.lastKey()]!!
-        val x1 = firstFunc.xLeft.x-150
-        val x2 = lastFunc.xRight.x + 150
+    private fun drawFrame(funcPoses: Map<String, EllipseShape>) {
+        val firstFunc = funcPoses.entries.first().value
+        val lastFunc = funcPoses.entries.last().value
+        val x1 = firstFunc.xLeft.x - 250
+        val x2 = lastFunc.xRight.x + 250
         val y1 = 50
         val y2 = lastFunc.yDown.y+200
         val width = x2-x1
         val height = y2-y1
-        diam.drawString(pjName, (firstFunc.xLeft.x).toInt(),80)
-        diam.g.drawRect(x1.toInt(),y1.toInt(),width.toInt(),height.toInt())
+        diam.drawString(pjName, centerTextPosOf(diam,pjName, x1.toInt(),x2.toInt()),80)
+        diam.g.drawRect(x1.toInt(), y1,width.toInt(),height.toInt())
     }
 
 
@@ -113,11 +113,11 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
         val actorDrawPoints = arrayListOf<Point2D>()
         when(actorAmount){
             2 -> {
-                actorDrawPoints += pointOf(leftX,centerOf(startY,endY))
-                actorDrawPoints += pointOf(rightX, centerOf(startY,endY))
+                actorDrawPoints += pointOf(leftX,centerPosOf(startY,endY))
+                actorDrawPoints += pointOf(rightX, centerPosOf(startY,endY))
             }
             3 -> {
-                actorDrawPoints += pointOf(leftX,centerOf(startY,endY))
+                actorDrawPoints += pointOf(leftX,centerPosOf(startY,endY))
                 actorDrawPoints += pointOf(rightX,startY)
                 actorDrawPoints += pointOf(rightX,endY)
             }
@@ -132,15 +132,15 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
                 actorDrawPoints += pointOf(rightX,startY)
                 actorDrawPoints += pointOf(leftX,endY)
                 actorDrawPoints += pointOf(rightX,endY)
-                actorDrawPoints += pointOf(rightX,centerOf(startY,endY))
+                actorDrawPoints += pointOf(rightX,centerPosOf(startY,endY))
             }
             6 -> {
                 actorDrawPoints += pointOf(leftX,startY)
                 actorDrawPoints += pointOf(rightX,startY)
                 actorDrawPoints += pointOf(leftX,endY)
                 actorDrawPoints += pointOf(rightX,endY)
-                actorDrawPoints += pointOf(leftX,centerOf(startY,endY))
-                actorDrawPoints += pointOf(rightX,centerOf(startY,endY))
+                actorDrawPoints += pointOf(leftX,centerPosOf(startY,endY))
+                actorDrawPoints += pointOf(rightX,centerPosOf(startY,endY))
             }
             else ->{
                 val yStep = (endY - startY)/actorAmount
