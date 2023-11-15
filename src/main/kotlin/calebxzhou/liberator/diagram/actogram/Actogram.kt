@@ -14,6 +14,8 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
     private val diam = DiagramPainter()
     companion object : DslInstantiable<Actogram>{
         override fun fromDsl(dsl: String): Actogram {
+            if(dsl.isBlank())
+                return Actogram("", arrayListOf())
             val rows = dsl.splitByReturn()
             val pjName = rows.removeFirst()
             val acts = arrayListOf<ActorFunc>()
@@ -31,12 +33,17 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
     val startY = 200
     override fun draw(): ByteArray {
         // 所有的功能画在中间 一竖列    产生map：功能名 to point（连线用）
-        val funcPoses = drawFunctions()
-        val actorPoses = drawActors(funcPoses)
-        //连线
-        drawLine(funcPoses,actorPoses)
-        //功能画框
-        drawFrame(funcPoses)
+        try{
+            val funcPoses = drawFunctions()
+            val actorPoses = drawActors(funcPoses)
+            //连线
+            drawLine(funcPoses,actorPoses)
+            //功能画框
+            drawFrame(funcPoses)
+        }catch (e: NoSuchElementException){
+            diam.drawString("输入不能为空",100,100);
+        }
+
         diam.done()
         return diam.data
     }
@@ -57,11 +64,12 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
 
     //入功能位置 出角色名to位置
     private fun drawActors(funcPoses : Map<String,EllipseShape>) : Map<String, ActorShape>{
+        val actorNamePoints= hashMapOf<String, ActorShape>()
         val leftX = WIDTH/5
         val rightX = WIDTH/2
         //  最后一个功能Y
         val endY = funcPoses.maxBy { it.value.yDown.y }.value.yDown.y
-        val actorNamePoints= hashMapOf<String, ActorShape>()
+
         //确定角色点
         val actorPoints = getActorDrawPoints(actors.size,leftX, rightX, endY.toInt())
         for ((index, act) in actors.withIndex()) {
