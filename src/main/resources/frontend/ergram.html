@@ -1,0 +1,34 @@
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?97653e22175b6597a0db85ab2dab22d1";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<head>
+    <meta charset="UTF-8">
+
+    <title>快速画ER图</title>
+</head>
+<body>
+<form method="post" action="/ergram_do">
+    <textarea id="dsl" cols="100" rows="15" name="dsl1">
+教务管理系统
+学院 ~编号 ~名称
+学期 ~编号 ~名称
+成绩类型 ~编号 ~名称
+教室 ~编号 ~名称 所属学院
+学生 学号 姓名 电话 出生日期 学院
+教师 工号 姓名 电话 出生日期 学院
+课程 ~编号 ~名称 任课教师 教室 是否考试
+选课 ~编号 学生 学期 课程
+成绩 ~编号 所选课程 成绩类型 分数
+    </textarea><br>
+    <textarea id="dsl" cols="100" rows="15" name="dsl2">
+
+    </textarea><br>
+    <button type="submit"><h4>立刻生成</h4></button>
+</form>
+</body>
