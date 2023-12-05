@@ -24,7 +24,7 @@ val json = Json {
     useArrayPolymorphism  = true
     prettyPrint = true
 }
-val FM_CONF = Configuration(Configuration.VERSION_2_3_30).apply {
+val FREEMARKER_CONF = Configuration(Configuration.VERSION_2_3_30).apply {
     setClassForTemplateLoading(this::class.java, "/templates")
     defaultEncoding = "UTF-8"
     templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER

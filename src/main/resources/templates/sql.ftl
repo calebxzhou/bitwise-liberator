@@ -5,12 +5,11 @@ use shixun;
 <#list project.entities as entity>
     create table ${entity.id} (
     <#list entity.fields as field>
-        ${field.id} varchar(50)
+        ${field.id} varchar(100)
     </#list>
     )
-    go
 </#list>
-insert into Usr values('admin','123456','123');
+insert into User values('admin','123456','0');
 
 
 

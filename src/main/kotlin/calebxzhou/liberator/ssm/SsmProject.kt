@@ -1,6 +1,8 @@
 package calebxzhou.liberator.ssm
 
+import calebxzhou.FREEMARKER_CONF
 import calebxzhou.liberator.*
+import java.io.StringWriter
 
 /**
  * Created  on 2023-12-05,15:55.
@@ -20,8 +22,10 @@ open class Base(
 
 data class Field(
     override val id: String,
-    override val name: String
-) : Base(id, name)
+    override val name: String,
+) : Base(id, name){
+    var type = "String"
+}
 
 data class Entity(
     override val id: String,
@@ -45,6 +49,18 @@ data class SsmProject(
     val entities: List<Entity>,
     val actors: List<Actor>
 ){
+
+    //生成全部实体代码（实体id to 代码）
+    fun genEntityCodes():Map<String,String>{
+        val map = hashMapOf<String,String>()
+        for (entity in entities) {
+            val tl = FREEMARKER_CONF.getTemplate("entity.ftl")
+            val out = StringWriter()
+            tl.process(mapOf("entity" to entity),out)
+            map += entity.id to out.toString()
+        }
+        return map
+    }
     companion object{
         fun fromDsl(pjName:String?, entityDsl:String?, permDsl:String?):SsmProject{
             if(pjName.isNullOrBlank() || entityDsl.isNullOrBlank() || permDsl.isNullOrBlank())
@@ -52,7 +68,7 @@ data class SsmProject(
             //中文to英文
             val nameToId = hashMapOf<String,String>()
             val entities = handleEntityDsl(nameToId,entityDsl)
-            optimizeEntities(entities)
+            optimizeEntities(nameToId,entities)
             val actors = handlePermDsl(entities, nameToId, permDsl)
             return SsmProject(pjName,entities,actors)
         }
@@ -78,20 +94,28 @@ data class SsmProject(
             }
             return entities
         }
-        private fun optimizeEntities(oldEntities: List<Entity>):List<Entity>{
+        private fun optimizeEntities(nameToId: Map<String, String>, oldEntities: List<Entity>):List<Entity>{
             val entities = oldEntities.toMutableList()
             //为全项目加上系统角色和系统用户实体
             entities += Entity("role", "角色", mutableListOf())
             entities += Entity("user","用户", mutableListOf(
                 Field("id", "用户名"),
                 Field("pwd", "密码"),
-                Field("role", "权限")
+                Field("role", "角色")
             ))
-            //实体0属性，自动加上id name属性（xx编号，xx名称）
+
             entities.forEach { entity ->
+                //实体0属性，自动加上id name属性（xx编号，xx名称）
                 if(entity.fields.isEmpty()){
                     entity.fields += Field("id",entity.name+"编号")
                     entity.fields += Field("name",entity.name+"名称")
+                }
+                //字段是实体，更改类型
+                entity.fields.forEach { field ->
+                    val asso = entities.find { it.name == field.name }
+                    if(asso != null){
+                        field.type = asso.capId
+                    }
                 }
             }
 

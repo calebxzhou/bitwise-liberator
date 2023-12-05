@@ -1,9 +1,8 @@
-<#-- @ftlvariable name="entity" type="calebxzhou.liberator.model.Entity" -->
 
-package com.entity;
+package com.ssm.entity;
 
 //${entity.name}
-public class ${entity.id} implements java.io.Serializable{
+public class ${entity.capId} implements java.io.Serializable{
 
 <#list entity.fields as field>
     //${field.name}
@@ -15,7 +14,7 @@ public class ${entity.id} implements java.io.Serializable{
     public ${field.type} get${field.capId}(){
         return this.${field.id};
     }
-    public void set${field.capId}(${field.type} ${field.id}){
+    public void set${field.capId}(String ${field.id}){
         this.${field.id} = ${field.id};
     }
 </#list>

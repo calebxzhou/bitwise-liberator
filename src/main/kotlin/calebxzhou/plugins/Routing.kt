@@ -1,12 +1,9 @@
 package calebxzhou.plugins
 
-import calebxzhou.FM_CONF
 import calebxzhou.liberator.db2table.Db2Table
 import calebxzhou.liberator.diagram.actogram.Actogram
 import calebxzhou.liberator.diagram.fumodiam.Fumodiam
 import calebxzhou.liberator.headfoot.HeadFoot
-import calebxzhou.liberator.model.CodeTemplate
-import calebxzhou.liberator.model.CodeTemplateScope
 import calebxzhou.liberator.respondDocx
 import calebxzhou.liberator.ssm.SsmProject
 import io.ktor.http.*
@@ -16,11 +13,6 @@ import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.routing.post
-import java.io.ByteArrayOutputStream
-import java.io.StringWriter
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 fun Application.configureRouting() {
 
@@ -31,7 +23,8 @@ fun Application.configureRouting() {
             val pjName = params["pjName"]
             val entities = params["entities"]
             val perm = params["perm"]
-            call.respond(SsmProject.fromDsl(pjName, entities, perm).toString())
+            val pj = SsmProject.fromDsl(pjName, entities, perm)
+            call.respond(pj.genEntityCodes().toString())
            /* Lexer(dslCode).analyze().let {
                 val node = Syntax(it).analyze()
                 Semantic(node).analyze()
