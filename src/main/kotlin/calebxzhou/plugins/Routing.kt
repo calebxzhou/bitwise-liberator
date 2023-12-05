@@ -9,6 +9,7 @@ import calebxzhou.liberator.headfoot.HeadFoot
 import calebxzhou.liberator.model.CodeTemplate
 import calebxzhou.liberator.model.CodeTemplateScope
 import calebxzhou.liberator.respondDocx
+import calebxzhou.liberator.ssm.SsmProject
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -26,10 +27,13 @@ fun Application.configureRouting() {
 
     routing {
         staticResources("/","frontend")
-        post("/generate") {
-
-            val dslCode = call.receiveParameters()["dsl"]?:return@post
-            Lexer(dslCode).analyze().let {
+        post("/ssm_do") {
+            val params = call.receiveParameters()
+            val pjName = params["pjName"]
+            val entities = params["entities"]
+            val perm = params["perm"]
+            call.respond(SsmProject.fromDsl(pjName, entities, perm).toString())
+           /* Lexer(dslCode).analyze().let {
                 val node = Syntax(it).analyze()
                 Semantic(node).analyze()
                 val pj = CodeGen(node).makeProject()
@@ -59,7 +63,7 @@ fun Application.configureRouting() {
                 }
                 zipOut.close()
                 call.respondBytes(bytes.toByteArray(), contentType = ContentType.Application.Zip)
-            }
+            }*/
         }
         post("/fumogram_do"){
             call.receiveParameters()["dsl"]?.let { dsl ->

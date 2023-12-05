@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<form method="post" action="/ssm_do">
+
+    <input name="pjName" value="教务管理系统"><br>
+    <textarea cols="100" rows="50" name="entities">
+        学院college
+        教室room
+        学期semester
+        成绩类型scoretype
+        学生student 学号id 学院 姓名name 电话tel 出生日期birthdate
+        教师teacher 工号id 学院 姓名name 电话tel 出生日期birthdate
+        课程course 课程名称name 教师 教室 是否考试isexam
+        选课enroll 学生 学期 课程
+        成绩score 选课 成绩类型 分数mark
+        </textarea><br>
+    <textarea cols="50" rows="25" name="perm">
+        管理员admin
+        全部 增删改查
+
+        教务处老师teacher
+        课程 查
+        选课 增删改查
+        成绩 增删改查
+
+        选课学生student
+        课程 查
+        选课 查
+        成绩 查
+
+        游客guest
+        课程 查
+    </textarea>
+
+
+
+    <button type="submit"><h4>立刻生成</h4></button>
+</form>
+</body>
+</html>

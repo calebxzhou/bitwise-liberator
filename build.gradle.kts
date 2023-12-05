@@ -3,9 +3,9 @@ val kotlin_version: String by project
 val logback_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.10"
-    kotlin("plugin.serialization") version "1.9.10"
-    id("io.ktor.plugin") version "2.3.4"
+    kotlin("jvm") version "1.9.20"
+    kotlin("plugin.serialization") version "1.9.20"
+    id("io.ktor.plugin") version "2.3.6"
 }
 
 group = "calebxzhou"
@@ -34,6 +34,8 @@ dependencies {
     implementation("com.deepoove:poi-tl:1.12.1")
 // https://mvnrepository.com/artifact/org.springframework/spring-expression
     implementation("org.springframework:spring-expression:6.0.13")
+// https://mvnrepository.com/artifact/com.github.houbb/pinyin
+    implementation("com.github.houbb:pinyin:0.4.0")
 
     // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")

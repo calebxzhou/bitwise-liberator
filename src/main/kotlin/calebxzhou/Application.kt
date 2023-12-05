@@ -16,7 +16,7 @@ import freemarker.template.TemplateExceptionHandler
 import java.io.InputStream
 
 fun main() {
-    embeddedServer(Netty, port = 8899, host = "0.0.0.0", watchPaths = listOf("classes"), module = Application::module)
+    embeddedServer(Netty, port = 19000, host = "0.0.0.0", watchPaths = listOf("classes"), module = Application::module)
         .start(wait = true)
 }
 val json = Json {
