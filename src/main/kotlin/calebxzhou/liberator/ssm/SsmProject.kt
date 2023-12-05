@@ -26,7 +26,7 @@ data class Field(
 data class Entity(
     override val id: String,
     override val name: String,
-    val fields: List<Field>
+    val fields: MutableList<Field>
 ) : Base(id, name)
 
 data class EntityPermission(
@@ -52,6 +52,7 @@ data class SsmProject(
             //中文to英文
             val nameToId = hashMapOf<String,String>()
             val entities = handleEntityDsl(nameToId,entityDsl)
+            optimizeEntities(entities)
             val actors = handlePermDsl(entities, nameToId, permDsl)
             return SsmProject(pjName,entities,actors)
         }
@@ -77,6 +78,25 @@ data class SsmProject(
             }
             return entities
         }
+        private fun optimizeEntities(oldEntities: List<Entity>):List<Entity>{
+            val entities = oldEntities.toMutableList()
+            //为全项目加上系统角色和系统用户实体
+            entities += Entity("role", "角色", mutableListOf())
+            entities += Entity("user","用户", mutableListOf(
+                Field("id", "用户名"),
+                Field("pwd", "密码"),
+                Field("role", "权限")
+            ))
+            //实体0属性，自动加上id name属性（xx编号，xx名称）
+            entities.forEach { entity ->
+                if(entity.fields.isEmpty()){
+                    entity.fields += Field("id",entity.name+"编号")
+                    entity.fields += Field("name",entity.name+"名称")
+                }
+            }
+
+            return entities
+        }
         private fun handlePermDsl(entities: List<Entity>, nameToId: MutableMap<String,String>, dsl:String): List<Actor>{
             val permLines = dsl.splitByReturn()
             val actors = arrayListOf<Actor>()
@@ -96,17 +116,20 @@ data class SsmProject(
                 if(actorNow !=null){
                     val permTokens = permLine.splitBySpace()
                     val entityName = permTokens[0]
-                    val entity = entities.find { it.name==entityName }
-                        ?:throw SsmException("无效的权限设定！找不到实体“$entityName”")
-                    val entityPermission = EntityPermission(entity.id)
                     val permissionStr = permTokens[1]
-                    when {
-                        permissionStr.contains("增") -> entityPermission.perms += Permission.INSERT
-                        permissionStr.contains("删") -> entityPermission.perms += Permission.DELETE
-                        permissionStr.contains("改") -> entityPermission.perms += Permission.UPDATE
-                        permissionStr.contains("查") -> entityPermission.perms += Permission.SELECT
+                    //处理全部实体权限
+                    if(entityName == "全部"){
+                        entities.forEach { entity ->
+                            handleActorPerms(permissionStr,entity,actorNow)
+                        }
                     }
-                    actorNow.perms += entityPermission
+                    //处理单个实体权限
+                    else{
+                        val entity = entities.find { it.name==entityName }
+                            ?:throw SsmException("无效的权限设定！找不到实体“$entityName”")
+                        handleActorPerms(permissionStr,entity,actorNow)
+                    }
+
                 }
                 //下一个是新的角色 就保存当前角色
                 if((permLines.getOrNull(i + 1)?.extractEnglish()) != null){
@@ -117,6 +140,16 @@ data class SsmProject(
 
             }
             return actors
+        }
+        private fun handleActorPerms(perm:String,entity: Entity,actorNow: Actor){
+            val entityPermission = EntityPermission(entity.id)
+            when {
+                perm.contains("增") -> entityPermission.perms += Permission.INSERT
+                perm.contains("删") -> entityPermission.perms += Permission.DELETE
+                perm.contains("改") -> entityPermission.perms += Permission.UPDATE
+                perm.contains("查") -> entityPermission.perms += Permission.SELECT
+            }
+            actorNow.perms += entityPermission
         }
     }
 }
