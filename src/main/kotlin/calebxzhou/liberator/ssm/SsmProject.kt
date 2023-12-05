@@ -12,8 +12,10 @@ open class Base(
     open val id: String,
     open val name: String
 ) {
-    val capId = id.capitalize()
-    val uncapId = id.decapitalize()
+    val capId
+    get() = id.capitalize()
+    val uncapId
+    get() = id.decapitalize()
 }
 
 data class Field(
@@ -28,7 +30,7 @@ data class Entity(
 ) : Base(id, name)
 
 data class EntityPermission(
-    val entity: Entity,
+    val entityId: String,
     val perms: MutableSet<Permission> = hashSetOf()
 )
 
@@ -44,32 +46,49 @@ data class SsmProject(
     val actors: List<Actor>
 ){
     companion object{
-        fun fromDsl(pjName:String?,entities:String?,perm:String?):SsmProject{
-            if(pjName.isNullOrBlank() || entities.isNullOrBlank() || perm.isNullOrBlank())
+        fun fromDsl(pjName:String?, entityDsl:String?, permDsl:String?):SsmProject{
+            if(pjName.isNullOrBlank() || entityDsl.isNullOrBlank() || permDsl.isNullOrBlank())
                 throw SsmException("输入不能为空")
-            val entityLines = entities.splitByReturn()
+            //中文to英文
+            val nameToId = hashMapOf<String,String>()
+            val entities = handleEntityDsl(nameToId,entityDsl)
+            val actors = handlePermDsl(entities, nameToId, permDsl)
+            return SsmProject(pjName,entities,actors)
+        }
+        private fun handleEntityDsl( nameToId: MutableMap<String,String>, dsl:String) : List<Entity>{
+            val entityLines = dsl.splitByReturn()
             val entities = arrayListOf<Entity>()
             for ((i, entityLine) in entityLines.withIndex()) {
                 val fieldTokens = entityLine.splitBySpace().toMutableList()
                 val entityToken = fieldTokens.removeFirst()
                 val entityName = entityToken.extractChinese()?:"实体${i}"
                 val entityId = entityToken.extractEnglish()?:entityName.toPinyin()
+                nameToId += entityName to entityId
                 val fields = arrayListOf<Field>()
                 for ((j, token) in fieldTokens.withIndex()) {
                     val fieldName = token.extractChinese()?:"字段${j}"
-                    val fieldId = token.extractEnglish()?:fieldName.toPinyin()
+                    val fieldId = nameToId[fieldName]
+                        ?:token.extractEnglish()
+                        ?:fieldName.toPinyin()
+                            .also { nameToId += fieldName to it }
                     fields += Field(fieldId,fieldName)
                 }
                 entities += Entity(entityId,entityName,fields)
             }
-            val permLines = perm.splitByReturn()
+            return entities
+        }
+        private fun handlePermDsl(entities: List<Entity>, nameToId: MutableMap<String,String>, dsl:String): List<Actor>{
+            val permLines = dsl.splitByReturn()
             val actors = arrayListOf<Actor>()
             var actorNow:Actor?=null
             for ((i, permLine) in permLines.withIndex()) {
                 //创建新的角色
                 if(permLine.extractEnglish()!=null){
                     val actorName = permLine.extractChinese()?:"角色$i"
-                    val actorId = permLine.extractEnglish()?:actorName.toPinyin()
+                    val actorId = nameToId[actorName]
+                        ?:permLine.extractEnglish()
+                        ?:actorName.toPinyin()
+                            .also { nameToId += actorName to it }
                     actorNow = Actor(actorId,actorName)
                     continue
                 }
@@ -78,21 +97,16 @@ data class SsmProject(
                     val permTokens = permLine.splitBySpace()
                     val entityName = permTokens[0]
                     val entity = entities.find { it.name==entityName }
-                        ?:throw SsmException("无效的权限设定！找不到实体$entityName")
-                    val entityPermission = EntityPermission(entity)
+                        ?:throw SsmException("无效的权限设定！找不到实体“$entityName”")
+                    val entityPermission = EntityPermission(entity.id)
                     val permissionStr = permTokens[1]
-                    if(permissionStr.contains("增")){
-                        entityPermission.perms += Permission.INSERT
+                    when {
+                        permissionStr.contains("增") -> entityPermission.perms += Permission.INSERT
+                        permissionStr.contains("删") -> entityPermission.perms += Permission.DELETE
+                        permissionStr.contains("改") -> entityPermission.perms += Permission.UPDATE
+                        permissionStr.contains("查") -> entityPermission.perms += Permission.SELECT
                     }
-                    if(permissionStr.contains("删")){
-                        entityPermission.perms += Permission.DELETE
-                    }
-                    if(permissionStr.contains("改")){
-                        entityPermission.perms += Permission.UPDATE
-                    }
-                    if(permissionStr.contains("查")){
-                        entityPermission.perms += Permission.SELECT
-                    }
+                    actorNow.perms += entityPermission
                 }
                 //下一个是新的角色 就保存当前角色
                 if((permLines.getOrNull(i + 1)?.extractEnglish()) != null){
@@ -102,7 +116,7 @@ data class SsmProject(
                 }
 
             }
-            return SsmProject(pjName,entities,actors)
+            return actors
         }
     }
 }

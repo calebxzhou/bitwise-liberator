@@ -1,5 +1,6 @@
 package calebxzhou.liberator
 
+import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum
 import com.github.houbb.pinyin.util.PinyinHelper
 
 //将大列表按 相同分隔符 分成小列表 eg [11102220333].splitList(0) -> [[111],[222],[333]]
@@ -33,5 +34,5 @@ fun String.extractEnglish() =
     Regex("([A-Za-z]+)")
         .find(this)?.value
 fun String.toPinyin()=
-    PinyinHelper.toPinyin(this)
+    PinyinHelper.toPinyin(this, PinyinStyleEnum.NORMAL,"")
 fun Int.isEven() = this % 2 == 0
