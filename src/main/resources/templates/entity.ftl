@@ -14,7 +14,7 @@ public class ${entity.capId} implements java.io.Serializable{
     public ${field.type} get${field.capId}(){
         return this.${field.id};
     }
-    public void set${field.capId}(String ${field.id}){
+    public void set${field.capId}(${field.type} ${field.id}){
         this.${field.id} = ${field.id};
     }
 </#list>

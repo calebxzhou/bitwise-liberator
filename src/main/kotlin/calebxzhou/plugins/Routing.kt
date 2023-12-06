@@ -13,6 +13,9 @@ import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.io.ByteArrayOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 fun Application.configureRouting() {
 
@@ -24,7 +27,25 @@ fun Application.configureRouting() {
             val entities = params["entities"]
             val perm = params["perm"]
             val pj = SsmProject.fromDsl(pjName, entities, perm)
-            call.respond(pj.genEntityCodes().toString())
+            val bytes = ByteArrayOutputStream()
+            val zipOut = ZipOutputStream(bytes)
+            pj.genCodeForEntities().forEach { (entity, codes) ->
+                codes.forEach { code ->
+                    if(!code.codeType.forGlobal){
+                        zipOut.putNextEntry(ZipEntry(code.codeType.getOutPath(entity.capId)))
+                        zipOut.write(code.code.toByteArray())
+                        zipOut.closeEntry()
+                    }
+                }
+            }
+            pj.genCodeForProject().forEach { (type, gen) ->
+                zipOut.putNextEntry(ZipEntry(type.getOutPath("")))
+                zipOut.write(gen.code.toByteArray())
+                zipOut.closeEntry()
+            }
+
+            zipOut.close()
+            call.respondBytes(bytes.toByteArray(), contentType = ContentType.Application.Zip)
            /* Lexer(dslCode).analyze().let {
                 val node = Syntax(it).analyze()
                 Semantic(node).analyze()

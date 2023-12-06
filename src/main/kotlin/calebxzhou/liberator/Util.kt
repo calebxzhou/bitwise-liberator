@@ -1,5 +1,6 @@
 package calebxzhou.liberator
 
+import calebxzhou.FREEMARKER_CONF
 import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum
 import com.github.houbb.pinyin.util.PinyinHelper
 
@@ -35,4 +36,8 @@ fun String.extractEnglish() =
         .find(this)?.value
 fun String.toPinyin()=
     PinyinHelper.toPinyin(this, PinyinStyleEnum.NORMAL,"")
+
+
 fun Int.isEven() = this % 2 == 0
+
+fun templateOf(name:String)=FREEMARKER_CONF.getTemplate(name)

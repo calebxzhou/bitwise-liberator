@@ -5,23 +5,25 @@
 <table>
     <thead>
     <tr>
-        <th>学院编号</th>
-        <th>学院名称</th>
+        <#list entity.fields as field>
+        <th>${field.name}</th>
+        </#list>
     </tr>
     </thead>
     <tbody>
 
-    <c:forEach items="${items}" var="var">
+    <c:forEach items="${r"$"}{items}" var="var">
         <tr>
-            <td>${var.id}</td>
-            <td>${var.name}</td>
+            <#list entity.fields as field>
+                <td>${r"$"}{var.${field.id}}</td>
+            </#list>
             <td>
-                <a href="college_edit?id=${var.id}&name=${var.name}">
+                <a href="college_edit?${entity.jspHrefParam}">
                     <button>编辑</button>
                 </a>
             </td>
             <td>
-                <a href="college_delete?id=${var.id}&name=${var.name}">
+                <a href="college_delete?${entity.jspHrefParam}">
                     <button>删除</button>
                 </a>
             </td>

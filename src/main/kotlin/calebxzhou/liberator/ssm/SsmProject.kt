@@ -1,6 +1,5 @@
 package calebxzhou.liberator.ssm
 
-import calebxzhou.FREEMARKER_CONF
 import calebxzhou.liberator.*
 import java.io.StringWriter
 
@@ -10,28 +9,14 @@ import java.io.StringWriter
 enum class Permission{
     SELECT,UPDATE,INSERT,DELETE
 }
-open class Base(
-    open val id: String,
-    open val name: String
-) {
-    val capId
-    get() = id.capitalize()
-    val uncapId
-    get() = id.decapitalize()
-}
 
-data class Field(
-    override val id: String,
-    override val name: String,
-) : Base(id, name){
-    var type = "String"
-}
+const val JAVA_OUT_PATH = "src/main/java"
+const val SSM_OUT_PATH = "$JAVA_OUT_PATH/com/ssm"
+const val WEB_OUT_PATH = "src/main/webapp"
+const val WEB_INF_OUT_PATH = "$WEB_OUT_PATH/WEB-INF"
 
-data class Entity(
-    override val id: String,
-    override val name: String,
-    val fields: MutableList<Field>
-) : Base(id, name)
+
+
 
 data class EntityPermission(
     val entityId: String,
@@ -44,23 +29,48 @@ data class Actor(
     val perms: MutableList<EntityPermission> = arrayListOf()
 ) : Base(id, name)
 
+data class CodeGen(
+    val codeType: CodeType,
+    val code:String,
+)
+
 data class SsmProject(
     val pjName:String,
     val entities: List<Entity>,
     val actors: List<Actor>
 ){
 
-    //生成全部实体代码（实体id to 代码）
-    fun genEntityCodes():Map<String,String>{
-        val map = hashMapOf<String,String>()
+    //生成全部实体的代码（实体id to 代码）
+    fun genCodeForEntities():Map<Entity,List<CodeGen>>{
+        val map = hashMapOf<Entity,List<CodeGen>>()
         for (entity in entities) {
-            val tl = FREEMARKER_CONF.getTemplate("entity.ftl")
-            val out = StringWriter()
-            tl.process(mapOf("entity" to entity),out)
-            map += entity.id to out.toString()
+            val code = arrayListOf<CodeGen>()
+            CodeType.entries.filter { !it.forGlobal }
+                .forEach { codeType ->
+                    StringWriter().use { out->
+                        templateOf(codeType.templatePath)
+                            .process(mapOf("entity" to entity),out)
+                        code += CodeGen(codeType,out.toString())
+                    }
+            }
+            map += entity to code
         }
         return map
     }
+    //生成整个项目的代码
+    fun genCodeForProject():Map<CodeType,CodeGen>{
+        val map = hashMapOf<CodeType,CodeGen>()
+        CodeType.entries.filter { it.forGlobal }
+            .forEach { codeType ->
+                StringWriter().use { out->
+                    templateOf(codeType.templatePath)
+                        .process(mapOf("project" to this),out)
+                    map += codeType to CodeGen(codeType,out.toString())
+                }
+            }
+        return map
+    }
+
     companion object{
         fun fromDsl(pjName:String?, entityDsl:String?, permDsl:String?):SsmProject{
             if(pjName.isNullOrBlank() || entityDsl.isNullOrBlank() || permDsl.isNullOrBlank())
@@ -82,15 +92,16 @@ data class SsmProject(
                 val entityId = entityToken.extractEnglish()?:entityName.toPinyin()
                 nameToId += entityName to entityId
                 val fields = arrayListOf<Field>()
+                val entity = Entity(entityId,entityName,fields)
                 for ((j, token) in fieldTokens.withIndex()) {
                     val fieldName = token.extractChinese()?:"字段${j}"
                     val fieldId = nameToId[fieldName]
                         ?:token.extractEnglish()
                         ?:fieldName.toPinyin()
                             .also { nameToId += fieldName to it }
-                    fields += Field(fieldId,fieldName)
+                    fields += Field(fieldId,fieldName,entity)
                 }
-                entities += Entity(entityId,entityName,fields)
+                entities += entity
             }
             return entities
         }
@@ -98,24 +109,33 @@ data class SsmProject(
             val entities = oldEntities.toMutableList()
             //为全项目加上系统角色和系统用户实体
             entities += Entity("role", "角色", mutableListOf())
-            entities += Entity("user","用户", mutableListOf(
-                Field("id", "用户名"),
-                Field("pwd", "密码"),
-                Field("role", "角色")
-            ))
+            val userEntity =Entity("user","用户")
+            userEntity.fields += mutableListOf(
+                Field("id", "用户名" ,userEntity),
+                Field("pwd", "密码",userEntity),
+                Field("role", "角色",userEntity)
+            )
+            entities += userEntity
 
             entities.forEach { entity ->
                 //实体0属性，自动加上id name属性（xx编号，xx名称）
                 if(entity.fields.isEmpty()){
-                    entity.fields += Field("id",entity.name+"编号")
-                    entity.fields += Field("name",entity.name+"名称")
+                    entity.fields += Field("id",entity.name+"编号",entity)
+                    entity.fields += Field("name",entity.name+"名称",entity)
                 }
-                //字段是实体，更改类型
-                entity.fields.forEach { field ->
-                    val asso = entities.find { it.name == field.name }
-                    if(asso != null){
-                        field.type = asso.capId
+                //字段是实体，更改类型并设定关联
+                entity.fields.forEachIndexed { index, field ->
+                    //默认第一个字段是主键
+                    if(index==0){
+                        field.isPrimaryKey=true
                     }
+                    //关联
+                    val asso = entities.find { it.name == field.name }
+                    if (asso != null) {
+                        field.type = asso.capId
+                        field.ref = asso.primaryKey
+                    }
+
                 }
             }
 
