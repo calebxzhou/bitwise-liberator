@@ -5,7 +5,7 @@
         <#list entity.fields as field>
             <#if field.primaryKey>
                 <id property="${field.id}" column="${field.id}"/>
-            <#elseif field.ref != null>
+            <#elseif field.ref??>
                 <association property="${field.id}"
                              column="${field.ref.parent.id}_${field.ref.id}" javaType="com.ssm.entity.${field.ref.parent.capId}" select="com.ssm.entity.${field.ref.parent.capId}Mapper.selectOne"/>
             <#else >

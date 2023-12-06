@@ -7,7 +7,7 @@ package calebxzhou.liberator.ssm
 data class Field(
     override val id: String,
     override val name: String,
-    val parent: Entity,
+    val parent: Entity, //TODO ID
     var isPrimaryKey: Boolean = false,
     var ref: Field? = null
 ) : Base(id, name){
