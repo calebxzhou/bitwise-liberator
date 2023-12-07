@@ -4,13 +4,13 @@ package com.ssm.entity;
 //${entity.name}
 public class ${entity.capId} implements java.io.Serializable{
 
-<#list entity.fields as field>
+<#list entity.fields?values as field>
     //${field.name}
     private ${field.type} ${field.id};
 </#list>
 
 
-<#list entity.fields as field>
+<#list entity.fields?values as field>
     public ${field.type} get${field.capId}(){
         return this.${field.id};
     }
@@ -20,7 +20,7 @@ public class ${entity.capId} implements java.io.Serializable{
 </#list>
 
     public String toString(){
-        return <#list entity.fields as field>
+        return <#list entity.fields?values as field>
             ${field.id} + "," +
         </#list>
         ".";

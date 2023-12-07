@@ -3,7 +3,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <form method="post" action="${entity.id}_edit_do">
-    <#list entity.fields as field>
+    <#list entity.fields?values as field>
         ${field.name}
         <input name="${field.id}" value="${r"$"}{${entity.id}_old.${field.id}}">
         <br>

@@ -1,15 +1,8 @@
-<#-- @ftlvariable name="project" type="calebxzhou.liberator.model.Project" -->
-create database shixun;
-use shixun;
-
-<#list project.entities as entity>
-    create table ${entity.id} (
-    <#list entity.fields as field>
-        ${field.id} varchar(100)
-    </#list>
-    )
+<#list project.entities?values as entity>
+    CREATE TABLE IF NOT EXISTS ${entity.id}(
+    ${entity.getSqlCreateTableColumns(project)}
+    );
 </#list>
-insert into User values('admin','123456','0');
 
 
 
