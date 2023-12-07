@@ -7,12 +7,12 @@ package calebxzhou.liberator.ssm
 data class Field(
     override val id: String,
     override val name: String,
-    val parent: Entity, //TODO ID
+    private val parentEntityId: String,
     var isPrimaryKey: Boolean = false,
-    var ref: Field? = null
-) : Base(id, name){
+    var ref: FieldRef? = null
+) : IdNameBase(id, name){
     var type = DEFAULT_TYPE
-
+    fun getParentEntity(project: SsmProject) = project.entities[parentEntityId]
     companion object{
         const val DEFAULT_TYPE = "String"
     }

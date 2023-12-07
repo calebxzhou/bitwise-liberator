@@ -27,7 +27,7 @@ data class Actor(
     override val id: String,
     override val name: String,
     val perms: MutableList<EntityPermission> = arrayListOf()
-) : Base(id, name)
+) : IdNameBase(id, name)
 
 data class CodeGen(
     val codeType: CodeType,
@@ -36,14 +36,24 @@ data class CodeGen(
 
 data class SsmProject(
     val pjName:String,
-    val entities: List<Entity>,
-    val actors: List<Actor>
-){
+    val entities: LinkedHashMap<String,Entity> = linkedMapOf(),
+    val actors: LinkedHashMap<String,Actor> = linkedMapOf(),
+):NameIdStorable{
 
+    override val nameToId = hashMapOf<String,String>()
+    //添加实体
+    operator fun plusAssign(entity: Entity){
+        entities += entity.id to entity
+        nameToId += entity.name to entity.id
+    }
+    operator fun plusAssign(actor: Actor){
+        actors += actor.id to actor
+        nameToId += actor.name to actor.id
+    }
     //生成全部实体的代码（实体id to 代码）
     fun genCodeForEntities():Map<Entity,List<CodeGen>>{
         val map = hashMapOf<Entity,List<CodeGen>>()
-        for (entity in entities) {
+        for ((id,entity) in entities) {
             val code = arrayListOf<CodeGen>()
             CodeType.entries.filter { !it.forGlobal }
                 .forEach { codeType ->
@@ -75,71 +85,58 @@ data class SsmProject(
         fun fromDsl(pjName:String?, entityDsl:String?, permDsl:String?):SsmProject{
             if(pjName.isNullOrBlank() || entityDsl.isNullOrBlank() || permDsl.isNullOrBlank())
                 throw SsmException("输入不能为空")
-            //中文to英文
-            val nameToId = hashMapOf<String,String>()
-            val entities = handleEntityDsl(nameToId,entityDsl)
-            optimizeEntities(nameToId,entities)
-            val actors = handlePermDsl(entities, nameToId, permDsl)
-            return SsmProject(pjName,entities,actors)
+            //项目
+            val project = SsmProject(pjName)
+            initEntitiesFromDsl(project,entityDsl)
+            optimizeEntities(project)
+            handlePermDsl(project, permDsl)
+            return project
         }
-        private fun handleEntityDsl( nameToId: MutableMap<String,String>, dsl:String) : List<Entity>{
+        private fun initEntitiesFromDsl(project: SsmProject, dsl:String){
             val entityLines = dsl.splitByReturn()
-            val entities = arrayListOf<Entity>()
-            for ((i, entityLine) in entityLines.withIndex()) {
+            for (entityLine in entityLines) {
                 val fieldTokens = entityLine.splitBySpace().toMutableList()
-                val entityToken = fieldTokens.removeFirst()
-                val entityName = entityToken.extractChinese()?:"实体${i}"
-                val entityId = entityToken.extractEnglish()?:entityName.toPinyin()
-                nameToId += entityName to entityId
-                val fields = arrayListOf<Field>()
-                val entity = Entity(entityId,entityName,fields)
-                for ((j, token) in fieldTokens.withIndex()) {
-                    val fieldName = token.extractChinese()?:"字段${j}"
-                    val fieldId = nameToId[fieldName]
-                        ?:token.extractEnglish()
-                        ?:fieldName.toPinyin()
-                            .also { nameToId += fieldName to it }
-                    fields += Field(fieldId,fieldName,entity)
+                //每行第一个token是实体
+                val entity = IdNameBase.fromToken(project,fieldTokens.removeFirst()).run {
+                    Entity(id,name)
                 }
-                entities += entity
+                for (fieldToken in fieldTokens) {
+                    entity += IdNameBase.fromToken(project,fieldToken).run {
+                        Field(id,name,entity.id)
+                    }
+                }
+                project += entity
             }
-            return entities
         }
-        private fun optimizeEntities(nameToId: Map<String, String>, oldEntities: List<Entity>):List<Entity>{
-            val entities = oldEntities.toMutableList()
+        private fun optimizeEntities(project: SsmProject){
             //为全项目加上系统角色和系统用户实体
-            entities += Entity("role", "角色", mutableListOf())
-            val userEntity =Entity("user","用户")
-            userEntity.fields += mutableListOf(
-                Field("id", "用户名" ,userEntity),
-                Field("pwd", "密码",userEntity),
-                Field("role", "角色",userEntity)
-            )
-            entities += userEntity
-
-            entities.forEach { entity ->
+            project += Entity("role", "角色")
+            project += Entity("user","用户").apply {
+                this += Field("id", "用户名" ,"user")
+                this += Field("pwd", "密码","user")
+                this += Field("role", "角色","user")
+            }
+            project.entities.values.forEach { entity ->
                 //实体0属性，自动加上id name属性（xx编号，xx名称）
                 if(entity.fields.isEmpty()){
-                    entity.fields += Field("id",entity.name+"编号",entity)
-                    entity.fields += Field("name",entity.name+"名称",entity)
+                    entity += Field("id",entity.name+"编号",entity.id)
+                    entity += Field("name",entity.name+"名称",entity.id)
                 }
-                //字段是实体，更改类型并设定关联
-                entity.fields.forEachIndexed { index, field ->
-                    //默认第一个字段是主键
-                    if(index==0){
-                        field.isPrimaryKey=true
-                    }
-                    //关联
-                    val asso = entities.find { it.name == field.name }
-                    if (asso != null) {
-                        field.type = asso.capId
-                        field.ref = asso.primaryKey
-                    }
+                //默认第一个字段是主键
+                entity.fields.values.first().isPrimaryKey=true
 
-                }
             }
 
-            return entities
+//字段是实体，更改类型并设定关联
+            entity.fields.values.forEach { field ->
+                //关联
+                val asso = entities.find { it.name == field.name }
+                if (asso != null) {
+                    field.type = asso.capId
+                    field.ref = asso.primaryKey
+                }
+
+            }
         }
         private fun handlePermDsl(entities: List<Entity>, nameToId: MutableMap<String,String>, dsl:String): List<Actor>{
             val permLines = dsl.splitByReturn()
