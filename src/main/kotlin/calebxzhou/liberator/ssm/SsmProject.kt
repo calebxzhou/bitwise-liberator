@@ -1,14 +1,13 @@
 package calebxzhou.liberator.ssm
 
 import calebxzhou.liberator.*
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.StringWriter
 
 /**
  * Created  on 2023-12-05,15:55.
  */
-enum class Permission{
-    SELECT,UPDATE,INSERT,DELETE
-}
+
 
 const val JAVA_OUT_PATH = "src/main/java"
 const val SSM_OUT_PATH = "$JAVA_OUT_PATH/com/ssm"
@@ -17,7 +16,7 @@ const val WEB_INF_OUT_PATH = "$WEB_OUT_PATH/WEB-INF"
 
 
 
-
+val logger = KotlinLogging.logger{}
 data class EntityPermission(
     val entityId: String,
     val perms: MutableSet<Permission> = hashSetOf()
@@ -36,24 +35,27 @@ data class CodeGen(
 
 data class SsmProject(
     val pjName:String,
-    val entities: LinkedHashMap<String,Entity> = linkedMapOf(),
-    val actors: LinkedHashMap<String,Actor> = linkedMapOf(),
+    private val entityMap: LinkedHashMap<String,Entity> = linkedMapOf(),
+    private val actorMap: LinkedHashMap<String,Actor> = linkedMapOf(),
 ):NameIdStorable{
 
     override val nameToId = hashMapOf<String,String>()
+    val entities = entityMap.values
+    val actors = actorMap.values
     //添加实体
     operator fun plusAssign(entity: Entity){
-        entities += entity.id to entity
+        entityMap += entity.id to entity
         nameToId += entity.name to entity.id
     }
     operator fun plusAssign(actor: Actor){
-        actors += actor.id to actor
+        actorMap += actor.id to actor
         nameToId += actor.name to actor.id
     }
+    operator fun get(entityId: String) : Entity? = entityMap[entityId]
     //生成全部实体的代码（实体id to 代码）
     fun genCodeForEntities():Map<Entity,List<CodeGen>>{
         val map = hashMapOf<Entity,List<CodeGen>>()
-        for ((id,entity) in entities) {
+        for (entity in entities) {
             val code = arrayListOf<CodeGen>()
             CodeType.entries.filter { !it.forGlobal }
                 .forEach { codeType ->
@@ -82,6 +84,7 @@ data class SsmProject(
     }
 
     companion object{
+        //从dsl代码创建项目
         fun fromDsl(pjName:String?, entityDsl:String?, permDsl:String?):SsmProject{
             if(pjName.isNullOrBlank() || entityDsl.isNullOrBlank() || permDsl.isNullOrBlank())
                 throw SsmException("输入不能为空")
@@ -93,17 +96,26 @@ data class SsmProject(
             return project
         }
         private fun initEntitiesFromDsl(project: SsmProject, dsl:String){
-            val entityLines = dsl.splitByReturn()
-            for (entityLine in entityLines) {
+            for (entityLine in dsl.splitByReturn()) {
                 val fieldTokens = entityLine.splitBySpace().toMutableList()
                 //每行第一个token是实体
                 val entity = IdNameBase.fromToken(project,fieldTokens.removeFirst()).run {
                     Entity(id,name)
                 }
+                logger.info { "处理实体 ${entity.id}" }
+                //先给实体加上主键（xxx id，xxx编号）
+                entity += Field("${entity.id}Id","${entity.name}编号",entity.id)
+                //再添加其他字段
                 for (fieldToken in fieldTokens) {
                     entity += IdNameBase.fromToken(project,fieldToken).run {
-                        Field(id,name,entity.id)
+                        Field(id,name,entity.id).also {
+                            logger.info { "处理字段 ${it.id}" }
+                        }
                     }
+                }
+                //若没有其他字段，加上"xxx名称"字段
+                if(fieldTokens.isEmpty()){
+                    entity += Field("${entity.id}Name",entity.name+"名称",entity.id)
                 }
                 project += entity
             }
@@ -112,28 +124,14 @@ data class SsmProject(
             //为全项目加上系统角色和系统用户实体
             project += Entity("role", "角色")
             project += Entity("systemuser","用户").apply {
-                this += Field("id", "用户名" ,"systemuser")
                 this += Field("pwd", "密码","systemuser")
                 this += Field("role", "角色","systemuser")
             }
-            project.entities.values.forEach { entity ->
-                //实体0属性，自动加上id name属性（xx编号，xx名称）
-                if(entity.fields.isEmpty()){
-                    entity += Field("id",entity.name+"编号",entity.id)
-                    entity += Field("name",entity.name+"名称",entity.id)
-                }
-                //默认第一个字段是主键
-                entity.fields.values.first().isPrimaryKey=true
-
-            }
             //字段是实体，更改类型并设定关联
-            project.entities.forEach { (_, entity) ->
-                entity.fields.forEach { (_, field) ->
-                    project.entities[field.id]?.let { matchedEntity ->
-                        val firstFieldId = matchedEntity.fields.entries.firstOrNull()?.key
-                        if (firstFieldId != null) {
-                            field.ref = FieldRef(matchedEntity.id, firstFieldId)
-                        }
+            project.entityMap.forEach { (_, entity) ->
+                entity.fields.forEach { field ->
+                    project.entityMap[field.id]?.let { matchedEntity ->
+                        entity.fieldRefMap += field to matchedEntity
                     }
                 }
             }
@@ -157,13 +155,13 @@ data class SsmProject(
                     val permissionStr = permTokens[1]
                     //处理全部实体权限
                     if(entityName == "全部"){
-                        project.entities.forEach { (_, entity) ->
+                        project.entityMap.forEach { (_, entity) ->
                             handleActorPerms(permissionStr,entity,actorNow)
                         }
                     }
                     //处理单个实体权限
                     else{
-                        val entity = project.entities.values.find { it.name==entityName }
+                        val entity = project.entityMap.values.find { it.name==entityName }
                             ?:throw SsmException("无效的权限设定！找不到实体“$entityName”")
                         handleActorPerms(permissionStr,entity,actorNow)
                     }

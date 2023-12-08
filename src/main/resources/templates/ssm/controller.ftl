@@ -15,6 +15,10 @@ public class ${entity.capId}Controller {
 
     @Autowired
     ${entity.capId}Service service;
+<#list entity.refEntites as refEntity>
+    @Autowired
+    ${refEntity.capId}Service ${refEntity.id}Service;
+</#list>
 
     @GetMapping("/${entity.capId}_selectAll")
     public ModelAndView selectAll(){
@@ -22,10 +26,14 @@ public class ${entity.capId}Controller {
         modelAndView.addObject("items",service.selectAll());
         return modelAndView;
     }
+
     @GetMapping("/${entity.capId}_edit")
     public ModelAndView edit(HttpSession session,${entity.capId} value){
         ModelAndView modelAndView = new ModelAndView("${entity.capId}_edit");
-        session.setAttribute("${entity.id}_old",value);
+        modelAndView.addObject("${entity.id}_old",value);
+<#list entity.refEntites as refEntity>
+        modelAndView.addObject("all${refEntity.capId}",${refEntity.id}Service.selectAll());
+</#list>
         return modelAndView;
     }
     @PostMapping("/${entity.capId}_edit_do")
@@ -37,7 +45,9 @@ public class ${entity.capId}Controller {
     @GetMapping("/${entity.capId}_insert")
     public ModelAndView insert(){
         ModelAndView modelAndView = new ModelAndView("${entity.capId}_insert");
-        //关联...
+<#list entity.refEntites as refEntity>
+        modelAndView.addObject("all${refEntity.capId}",${refEntity.id}Service.selectAll());
+</#list>
         return modelAndView;
     }
     @PostMapping("/${entity.capId}_insert_do")

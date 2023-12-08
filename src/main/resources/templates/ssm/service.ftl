@@ -8,12 +8,20 @@ import java.util.List;
 @Service
 public class ${entity.capId}Service {
     @Autowired ${entity.capId}Mapper mapper;
-    public List<${entity.capId}> selectAll(){
+
+    public List<${entity.voId}> selectAll(){
         return mapper.selectAll();
     }
-    public List<${entity.capId}> selectBy(String where){
-        return mapper.selectBy(where);
+<#list entity.voFields as field>
+    public
+    <#if entity.primaryKey == field>
+    ${entity.voId}
+<#else>
+    List<${entity.voId}>
+</#if> selectBy${field.capId}(${field.type} ${field.id}){
+        return mapper.selectBy${field.capId}(${field.id});
     }
+</#list>
     public boolean insert(${entity.capId} ${entity.uncapId}){
         return 1 >= mapper.insert(${entity.id});
     }

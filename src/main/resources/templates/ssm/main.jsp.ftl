@@ -25,6 +25,7 @@
       body {
         min-height: 100vh;
         min-height: -webkit-fill-available;
+        color: black;
       }
 
       html {
@@ -66,16 +67,16 @@
 
 <main>
   <div class="d-flex flex-column flex-shrink-0 p-3" id="navbar" style="width: 280px;">
-    <a href="${DLR}{pageContext.request.contextPath}/main.jsp" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <a href="${DLR}{pageContext.request.contextPath}/main.jsp" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-black text-decoration-none">
 
-      <span class="fs-4" id="title">${project.name}</span>
+      <span class="fs-4" id="title">${project.pjName}</span>
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-      <#list project.entityMap as entity>
+      <#list project.entityMap?values as entity>
         <li class="nav-item">
-          <a href="#" class="nav-link text-white" onclick="jump('${entity.id}QueryAllServlet')"  aria-current="page">
-            #*<svg class="bi me-2" width="16" height="16"><use xlink:href="#home"/></svg>*#
+          <a href="#" class="nav-link text-black" onclick="jump('${entity.capId}_selectAll')"  aria-current="page">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"/></svg>
             <span>${entity.name}管理</span>
           </a>
         </li>
@@ -84,7 +85,7 @@
     </ul>
     <hr>
     <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+      <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
         <svg class="bi me-2" width="32" height="32"><use xlink:href="#people-circle"></use></svg>
         <strong>Admin</strong>
       </a>
@@ -92,7 +93,7 @@
   </div>
 
   <div class="b-example-divider"></div>
-  <iframe src="welcome.jsp" scrolling="no"></iframe>
+  <iframe src=" " scrolling="no"></iframe>
 
 </main>
   </body>

@@ -48,4 +48,7 @@ dependencies {
     implementation("org.jfree:org.jfree.svg:5.0.5")
     implementation("io.ktor:ktor-server-freemarker:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+    // https://mvnrepository.com/artifact/io.github.oshai/kotlin-logging-jvm
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.1")
+    implementation("ch.qos.logback:logback-classic:1.4.8")
 }

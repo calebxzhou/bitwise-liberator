@@ -7,29 +7,83 @@ package calebxzhou.liberator.ssm
 data class Entity(
     override val id: String,
     override val name: String,
-    val fields: LinkedHashMap<String,Field> = linkedMapOf()
-) : IdNameBase(id, name){
+    private val fieldMap: LinkedHashMap<String, Field> = linkedMapOf()
+) : IdNameBase(id, name) {
+    //所有字段（有关联的放在最后）
+    val fields
+        get() = fieldMap.values//.sortedBy { fieldRefMap[it] != null }
+    //vo字段（查询用 关联的实体 除对方主键 全部展开）
+    val voFields
+        get() = fieldMap.values.filter(fieldRefMap::containsKey)
+            .flatMap { field -> fieldRefMap[field]?.let { refEntity ->
+                refEntity.fields.filter { refEntity.primaryKey == it }
+            } ?: listOf() }
+
+    //实体类字段（插入用 字段有关联实体的 = 对方主键）
+    val classFields
+        get() = fieldMap.values.map { field ->
+            fieldRefMap[field]?.primaryKey ?: field
+        }
+
+    //主键
+    val primaryKey: Field
+        get() = fieldMap.values.first()
+
+    //外键表(field to entity)
+    val fieldRefMap = hashMapOf<Field, Entity>()
+    //所有被关联实体
+    val refEntites
+        get() = fieldRefMap.values
+
+    //是否无关联实体
+    val hasNoEntityRef
+    get() = fieldRefMap.isEmpty()
+    //是否有关联实体
+    val hasEntityRef
+    get() = fieldRefMap.isNotEmpty()
+    //指定字段是否有关联实体
+    fun fieldHasEntityRef(field: Field) = fieldRefMap[field] != null
+
+    //vo视图对象id
+    val voId
+    get() = if (hasEntityRef) capId else "$capId.Vo"
+    //vo视图表名
+    val voTable
+        get() = if(hasEntityRef) id else "${id}_view"
 
     val mybatisSqlUpdateSet
-        get() = fields.values.joinToString(",") { " ${it.id}=#{new${capId}.${it.id}} " }
+        get() = classFields.joinToString(",") { " ${it.id}=#{new${capId}.${it.id}} " }
     val mybatisSqlUpdateWhere
-        get() = fields.values.joinToString("and"){ " ${it.id}=#{old${capId}.${it.id}} " }
-    val mybatisSqlInsertValues get() =  fields.values.joinToString(",") {" #{${it.id}} "}
-    val mybatisSqlDeleteWhere get() =  fields.values.joinToString(" and "){ "${it.id}=#{${it.id}} " }
-    val jspHrefParam get() =  fields.values.joinToString("&") {"${it.id}=\${var.${it.id}}"}
-    val primaryKey
-        get() = fields.values.find { it.isPrimaryKey }
+        get() = classFields.joinToString("and") { " ${it.id}=#{old${capId}.${it.id}} " }
+    val mybatisSqlInsertColumns get() = classFields.filter { primaryKey!=it }.joinToString(",") { it.id }
+    val mybatisSqlInsertValues get() = classFields.filter { primaryKey!=it }.joinToString(",") { " #{${it.id}} " }
+    val mybatisSqlDeleteWhere get() = classFields.joinToString(" and ") { "${it.id}=#{${it.id}} " }
+    val jspHrefParam get() = fieldMap.values.joinToString("&") { "${it.id}=\${var.${it.id}}" }
 
-    operator fun plusAssign(field: Field){
-        fields += field.id to field
-    }
-    val mybatisFields
-        get() = fields.values.sortedBy { it.ref != null }
-    fun getSqlCreateTableColumns(project: SsmProject) : String{
-        return fields.values.joinToString(",\n"){field ->
-            (field.ref?.let { ref ->
-                "${ref.getRefEntity(project)?.capId}_${ref.getRefEntity(project)?.primaryKey?.id}"
-            }?: field.id)+" VARCHAR(256)"
+    //建表语句
+    fun getSqlCreateTableColumns(): String {
+        val lines = arrayListOf<String>()
+        for (field in fields) {
+            if (field == primaryKey) {
+                lines += "${field.id} ${Field.ID_DTYPE} PRIMARY KEY"
+            } else {
+                if (!fieldHasEntityRef(field)) {
+                    lines += "${field.id} ${Field.NORMAL_DTYPE}"
+                } else {
+                    fieldRefMap[field]?.let { refEntity ->
+                        lines += "${refEntity.id}_${refEntity.primaryKey.id} ${Field.NORMAL_DTYPE} " +
+                                "REFERENCES ${refEntity.id}(${refEntity.primaryKey.id})"
+                    }
+                }
+            }
         }
+        return lines.joinToString(",\n")
     }
+
+    // +=field 是添加字段
+    operator fun plusAssign(field: Field) {
+        fieldMap += field.id to field
+    }
+
+
 }

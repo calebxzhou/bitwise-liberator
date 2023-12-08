@@ -8,14 +8,19 @@ data class Field(
     override val id: String,
     override val name: String,
     private val parentEntityId: String,
-    var isPrimaryKey: Boolean = false,
-    var ref: FieldRef? = null
 ) : IdNameBase(id, name){
-    var type = DEFAULT_TYPE
-    val hasRef
-        get() = ref!=null
-    fun getParentEntity(project: SsmProject) = project.entities[parentEntityId]
+    var type = NORMAL_JTYPE
+    val mybatisParamType
+        get() = if(type == NORMAL_JTYPE)
+            "java.lang.String"
+    else "com.ssm.entity.$type"
+
+    //fun getParentEntity(project: SsmProject) = project.entityMap[parentEntityId]
+
     companion object{
-        const val DEFAULT_TYPE = "String"
+        const val NORMAL_JTYPE = "String"
+        const val NORMAL_DTYPE = "VARCHAR(255)"
+        const val ID_JTYPE = "Integer"
+        const val ID_DTYPE = "INT"
     }
 }

@@ -1,6 +1,6 @@
-<#list project.entities?values as entity>
+<#list project.entities as entity>
     CREATE TABLE IF NOT EXISTS ${entity.id}(
-    ${entity.getSqlCreateTableColumns(project)}
+        ${entity.getSqlCreateTableColumns()}
     );
 </#list>
 

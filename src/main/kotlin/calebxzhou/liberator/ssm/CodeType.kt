@@ -17,14 +17,16 @@ enum class CodeType(
     EDIT_JSP("ssm/edit.jsp.ftl","$WEB_INF_OUT_PATH/jsp","_edit","jsp"),
     INSERT_JSP("ssm/insert.jsp.ftl","$WEB_INF_OUT_PATH/jsp","_insert","jsp"),
     SELECT_ALL_JSP("ssm/select_all.jsp.ftl","$WEB_INF_OUT_PATH/jsp","_select_all","jsp"),
+    LOGIN_JSP("ssm/login.jsp.ftl","$WEB_INF_OUT_PATH/jsp","login","jsp",true),
+    MAIN_JSP("ssm/main.jsp.ftl","$WEB_INF_OUT_PATH/jsp","main","jsp",true),
 
     POJO("entity.ftl", "$SSM_OUT_PATH/entity"),
     SERVICE("ssm/service.ftl","$SSM_OUT_PATH/service","Service"),
     MAPPER("ssm/mapper.ftl","$SSM_OUT_PATH/mapper","Mapper"),
-    MAPPER_XML("ssm/mapper_xml.ftl","$SSM_OUT_PATH/mapper/xml","Mapper","xml"),
     WEB_XML("ssm/web.xml.ftl", WEB_INF_OUT_PATH,"web","xml",true),
     APP_CONFIG("ssm/appconfig.ftl", SSM_OUT_PATH,"AppConfig","java",true),
-    SQL("sql.ftl", JAVA_OUT_PATH,"init","sql",true)
+    SQL("sql.ftl", JAVA_OUT_PATH,"init","sql",true),
+    LOGIN_CONTROLLER("ssm/loginController.ftl", "$JAVA_OUT_PATH/controller","LoginController","java",true),
     ;
 
 
