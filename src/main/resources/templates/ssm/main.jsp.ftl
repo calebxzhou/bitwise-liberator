@@ -73,7 +73,7 @@
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-      <#list project.entityMap?values as entity>
+      <#list project.entities as entity>
         <li class="nav-item">
           <a href="#" class="nav-link text-black" onclick="jump('${entity.capId}_selectAll')"  aria-current="page">
             <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"/></svg>

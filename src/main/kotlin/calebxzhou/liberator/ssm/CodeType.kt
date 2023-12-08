@@ -26,7 +26,7 @@ enum class CodeType(
     WEB_XML("ssm/web.xml.ftl", WEB_INF_OUT_PATH,"web","xml",true),
     APP_CONFIG("ssm/appconfig.ftl", SSM_OUT_PATH,"AppConfig","java",true),
     SQL("sql.ftl", JAVA_OUT_PATH,"init","sql",true),
-    LOGIN_CONTROLLER("ssm/loginController.ftl", "$JAVA_OUT_PATH/controller","LoginController","java",true),
+    LOGIN_CONTROLLER("ssm/loginController.ftl", "$SSM_OUT_PATH/controller","LoginController","java",true),
     ;
 
 

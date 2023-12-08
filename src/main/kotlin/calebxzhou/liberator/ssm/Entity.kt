@@ -13,11 +13,26 @@ data class Entity(
     val fields
         get() = fieldMap.values//.sortedBy { fieldRefMap[it] != null }
     //vo字段（查询用 关联的实体 除对方主键 全部展开）
-    val voFields
-        get() = fieldMap.values.filter(fieldRefMap::containsKey)
+    val voFields: List<Field>
+        get() {
+            val voFields = mutableListOf<Field>()
+            for (f in fields) {
+                if (fieldRefMap.containsKey(f)) {
+                    val entity = fieldRefMap[f]
+                    entity?.fields?.filter { it != primaryKey }.let {
+                        if (it != null) {
+                            voFields.addAll(it)
+                        }
+                    }
+                }else{
+                    voFields += f
+                }
+            }
+            return voFields
+        }/*fieldMap.values.filter(fieldRefMap::containsKey)
             .flatMap { field -> fieldRefMap[field]?.let { refEntity ->
-                refEntity.fields.filter { refEntity.primaryKey == it }
-            } ?: listOf() }
+                refEntity.fields.filter { refEntity.primaryKey != it }
+            } ?: listOf() }*/
 
     //实体类字段（插入用 字段有关联实体的 = 对方主键）
     val classFields
@@ -46,10 +61,10 @@ data class Entity(
 
     //vo视图对象id
     val voId
-    get() = if (hasEntityRef) capId else "$capId.Vo"
+    get() = if (hasEntityRef) "$capId.Vo" else   capId
     //vo视图表名
     val voTable
-        get() = if(hasEntityRef) id else "${id}_view"
+        get() = if(hasEntityRef) "${id}_view"  else id
 
     val mybatisSqlUpdateSet
         get() = classFields.joinToString(",") { " ${it.id}=#{new${capId}.${it.id}} " }
@@ -65,7 +80,7 @@ data class Entity(
         val lines = arrayListOf<String>()
         for (field in fields) {
             if (field == primaryKey) {
-                lines += "${field.id} ${Field.ID_DTYPE} PRIMARY KEY"
+                lines += "${field.id} ${Field.ID_DTYPE} IDENTITY PRIMARY KEY"
             } else {
                 if (!fieldHasEntityRef(field)) {
                     lines += "${field.id} ${Field.NORMAL_DTYPE}"

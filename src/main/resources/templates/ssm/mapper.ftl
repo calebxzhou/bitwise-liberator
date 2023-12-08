@@ -9,11 +9,11 @@ import java.util.List;
 @Repository
 @Mapper
 public interface ${entity.capId}Mapper {
-    @Select("select * from ${entity.voTable}"
+    @Select("select * from ${entity.voTable}")
     List<${entity.voId}> selectAll();
 
     <#list entity.voFields as field>
-        @Select("select * from ${entity.voTable} where ${field.id} = ${"#"}{${field.id}")
+        @Select("select * from ${entity.voTable} where ${field.id} = ${"#"}{${field.id}}")
         <#if entity.primaryKey == field>
             ${entity.voId}
         <#else>

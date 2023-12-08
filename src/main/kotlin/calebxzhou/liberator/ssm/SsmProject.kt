@@ -122,7 +122,10 @@ data class SsmProject(
         }
         private fun optimizeEntities(project: SsmProject){
             //为全项目加上系统角色和系统用户实体
-            project += Entity("role", "角色")
+            project += Entity("role", "角色").apply {
+                this += Field("roid", "角色编号","role")
+                this += Field("roname", "角色名称","role")
+            }
             project += Entity("systemuser","用户").apply {
                 this += Field("pwd", "密码","systemuser")
                 this += Field("role", "角色","systemuser")
