@@ -1,6 +1,5 @@
 package calebxzhou.liberator.ssm
 
-import calebxzhou.liberator.NameIdStorable
 import calebxzhou.liberator.extractChinese
 import calebxzhou.liberator.extractEnglish
 import calebxzhou.liberator.toPinyin
@@ -18,12 +17,10 @@ open class IdNameBase(
     val uncapId
         get() = id.replaceFirstChar { it.lowercase(Locale.getDefault()) }
     companion object{
-        fun fromToken(project: NameIdStorable, token:String):IdNameBase{
+        fun fromToken(token:String):IdNameBase{
             val name = token.extractChinese()?:throw IllegalArgumentException("无效的token：$token，此token必须是中文英文的组合")
-            val id = project.nameToId[name]
-                ?:token.extractEnglish()
+            val id = token.extractEnglish()
                 ?:name.toPinyin()
-                    .also { project.nameToId += name to it }
             return IdNameBase(id,name)
         }
     }

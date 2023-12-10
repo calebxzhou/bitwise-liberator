@@ -20,10 +20,10 @@
                                 <form method="POST" action="${entity.capId}_edit_do">
                                         <div class="row g-3">
                                                 <#list entity.fields as field>
-                                                        <div class="col-12">
+                                                        <div class="col-12 <#if entity.primaryKey == field>d-none</#if>">
                                                                 <label for="${field.id}" class="form-label">${field.name}</label>
                                                                 <input type="text" class="form-control" id="${field.id}" name="${field.id}"
-                                                                       placeholder="${field.name}" value="${S}{${entity.id}_old.${field.id}}" required
+                                                                       placeholder="${field.name}" value="${S}{${entity.id}.${field.id}}" required
                                                                 >
                                                         </div>
                                                 </#list>

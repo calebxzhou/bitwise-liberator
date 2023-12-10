@@ -37,19 +37,16 @@ data class SsmProject(
     val pjName:String,
     private val entityMap: LinkedHashMap<String,Entity> = linkedMapOf(),
     private val actorMap: LinkedHashMap<String,Actor> = linkedMapOf(),
-):NameIdStorable{
+)  {
 
-    override val nameToId = hashMapOf<String,String>()
     val entities = entityMap.values
     val actors = actorMap.values
     //添加实体
     operator fun plusAssign(entity: Entity){
         entityMap += entity.id to entity
-        nameToId += entity.name to entity.id
     }
     operator fun plusAssign(actor: Actor){
         actorMap += actor.id to actor
-        nameToId += actor.name to actor.id
     }
     operator fun get(entityId: String) : Entity? = entityMap[entityId]
     //生成全部实体的代码（实体id to 代码）
@@ -99,18 +96,27 @@ data class SsmProject(
             for (entityLine in dsl.splitByReturn()) {
                 val fieldTokens = entityLine.splitBySpace().toMutableList()
                 //每行第一个token是实体
-                val entity = IdNameBase.fromToken(project,fieldTokens.removeFirst()).run {
+                val entity = IdNameBase.fromToken(fieldTokens.removeFirst()).run {
                     Entity(id,name)
                 }
-                logger.info { "处理实体 ${entity.id}" }
+                logger.info { "处理实体 ${entity.name}${entity.id}" }
                 //先给实体加上主键（xxx id，xxx编号）
                 entity += Field("${entity.id}Id","${entity.name}编号",entity.id)
                 //再添加其他字段
                 for (fieldToken in fieldTokens) {
-                    entity += IdNameBase.fromToken(project,fieldToken).run {
-                        Field(id,name,entity.id).also {
-                            logger.info { "处理字段 ${it.id}" }
+                    entity += IdNameBase.fromToken(fieldToken).run {
+
+                        Field(id,name,entity.id).let {field ->
+                            //如果字段name是已经存在的实体name，设定关联
+                            val refEntity = project.entities.find { it.name == field.name }
+                            if(refEntity != null){
+                                field.id = entity.id +"_"+refEntity.primaryKey.id
+                                entity.fieldRefMap += field to refEntity
+                                field.type = Field.ID_JTYPE
+                            }
+                            field
                         }
+
                     }
                 }
                 //若没有其他字段，加上"xxx名称"字段
@@ -129,15 +135,17 @@ data class SsmProject(
             project += Entity("systemuser","用户").apply {
                 this += Field("pwd", "密码","systemuser")
                 this += Field("role", "角色","systemuser")
-            }
+            }/*
             //字段是实体，更改类型并设定关联
-            project.entityMap.forEach { (_, entity) ->
-                entity.fields.forEach { field ->
-                    project.entityMap[field.id]?.let { matchedEntity ->
-                        entity.fieldRefMap += field to matchedEntity
+            project.entities.forEach { entity ->
+                entity.classFields.forEach { field ->
+                    val refEntity = project[field.id]
+                    if(refEntity!=null){
+                        entity.fieldRefMap += field to refEntity
+                        logger.info { "${entity.id} 的${field.id} 关联 ${refEntity.id}" }
                     }
                 }
-            }
+            }*/
         }
         private fun handlePermDsl(project: SsmProject, dsl:String): List<Actor>{
             val permLines = dsl.splitByReturn()
@@ -146,7 +154,7 @@ data class SsmProject(
             for ((i, permLine) in permLines.withIndex()) {
                 //创建新的角色
                 if(permLine.extractEnglish()!=null){
-                    actorNow = IdNameBase.fromToken(project,permLine).run {
+                    actorNow = IdNameBase.fromToken(permLine).run {
                         Actor(id,name)
                     }
                     continue

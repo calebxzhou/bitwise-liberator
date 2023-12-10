@@ -1,4 +1,4 @@
-<#assign DLR = "$">
+<#assign $ = "$">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -12,14 +12,14 @@
 <form class="row" method="GET" action="${entity.id}_selectAll">
 
     <div class="col-2">
-        <a href="${DLR}{pageContext.request.contextPath}/${entity.capId}_insert">
+        <a href="${$}{pageContext.request.contextPath}/${entity.capId}_insert">
             <button type="button" class="btn addBtn">添加${entity.name}</button>
         </a>
     </div>
 
     <div class="col-2">
         <select class="form-select" name="condition">
-            <#list entity.fields as field>
+            <#list entity.voFields as field>
                 <option value="${field.id}">${field.name}</option>
             </#list>
         </select>
@@ -38,26 +38,26 @@
     <table class="table table-striped table-sm">
         <thead>
         <tr>
-            <#list entity.fields as field>
+            <#list entity.voFields as field>
                 <th scope="col">${field.name}</th>
             </#list>
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${DLR}{items}" var="var">
+        <c:forEach items="${$}{items}" var="var">
             <tr>
-                <#list entity.fields as field>
-                    <td>${DLR}{var.${field.id}}</td>
+                <#list entity.voFields as field>
+                    <td>${$}{var.${field.id}}</td>
                 </#list>
                 <td>
-                    <a href="${entity.capId}_edit?${entity.jspHrefParam}">
+                    <a href="${entity.capId}_edit?${entity.primaryKey.id}=${$}{var.${entity.primaryKey.id}">
                         <button class="btn editBtn">
                             编辑
                         </button>
 
                     </a>
                     &emsp;
-                    <a href="${entity.capId}_delete?${entity.jspHrefParam}">
+                    <a href="${entity.capId}_delete?${entity.primaryKey.id}=${$}{var.${entity.primaryKey.id}">
                         <button class="btn delBtn">
                             删除
                         </button>

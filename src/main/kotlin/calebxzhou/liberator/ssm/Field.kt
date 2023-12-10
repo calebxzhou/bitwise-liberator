@@ -5,9 +5,9 @@ package calebxzhou.liberator.ssm
  */
 
 data class Field(
-    override val id: String,
+    override var id: String,
     override val name: String,
-    private val parentEntityId: String,
+    val parentEntityId: String,
 ) : IdNameBase(id, name){
     var type = NORMAL_JTYPE
     val mybatisParamType

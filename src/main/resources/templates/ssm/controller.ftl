@@ -30,7 +30,7 @@ public class ${entity.capId}Controller {
     @GetMapping("/${entity.capId}_edit")
     public ModelAndView edit(HttpSession session,${entity.capId} value){
         ModelAndView modelAndView = new ModelAndView("${entity.capId}_edit");
-        modelAndView.addObject("${entity.id}_old",value);
+        modelAndView.addObject("${entity.id}",value);
 <#list entity.refEntites as refEntity>
         modelAndView.addObject("all${refEntity.capId}",${refEntity.id}Service.selectAll());
 </#list>

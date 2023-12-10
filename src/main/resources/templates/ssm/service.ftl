@@ -13,22 +13,17 @@ public class ${entity.capId}Service {
         return mapper.selectAll();
     }
 <#list entity.voFields as field>
-    public
-    <#if entity.primaryKey == field>
-    ${entity.voId}
-<#else>
-    List<${entity.voId}>
-</#if> selectBy${field.capId}(${field.type} ${field.id}){
+    public <#if entity.primaryKey == field>${entity.voId}<#else>List<${entity.voId}></#if> selectBy${field.capId}(${field.type} ${field.id}){
         return mapper.selectBy${field.capId}(${field.id});
     }
 </#list>
-    public boolean insert(${entity.capId} ${entity.uncapId}){
+    public boolean insert(${entity.capId} ${entity.id}){
         return 1 >= mapper.insert(${entity.id});
     }
-    public boolean update(${entity.capId} old${entity.capId},${entity.capId} new${entity.capId}){
-        return 1 >= mapper.update(old${entity.capId}, new${entity.capId});
+    public boolean update(${entity.capId} ${entity.id}){
+        return 1 >= mapper.update(${entity.id});
     }
-    public boolean delete(${entity.capId} ${entity.uncapId}){
+    public boolean delete(${entity.capId} ${entity.id}){
         return 1 >= mapper.delete(${entity.id});
     }
 }
