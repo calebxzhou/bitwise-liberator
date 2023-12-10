@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!doctype html>
-<#assign S = "$"/>
+<#assign S="$"/>
 <html lang="en">
 <head>
         <meta charset="utf-8">
@@ -27,8 +27,8 @@
                                                                         <select  class="form-control" id="${field.id}" name="${field.id}">
                                                                                 <option value="0">请选择</option>
                                                                                 <#assign refEntity=entity.fieldRefEntity(field)/>
-                                                                                <c:forEach items="${$}{all${refEntity.capId}}" var="var">
-                                                                                        <option value="${$}{var.${refEntity.primaryKey.id}}">${$}{var.toString()}</option>
+                                                                                <c:forEach items="${S}{all${refEntity.capId}}" var="var">
+                                                                                        <option value="${S}{var.${refEntity.primaryKey.id}}">${S}{var.toString()}</option>
                                                                                 </c:forEach>
                                                                         </select>
                                                                 <#else>
