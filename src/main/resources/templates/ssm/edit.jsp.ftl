@@ -1,7 +1,8 @@
-<#assign S = "$">
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!doctype html>
+<#assign S = "$"/>
 <html lang="en">
 <head>
         <meta charset="utf-8">
@@ -22,9 +23,19 @@
                                                 <#list entity.fields as field>
                                                         <div class="col-12 <#if entity.primaryKey == field>d-none</#if>">
                                                                 <label for="${field.id}" class="form-label">${field.name}</label>
-                                                                <input type="text" class="form-control" id="${field.id}" name="${field.id}"
-                                                                       placeholder="${field.name}" value="${S}{${entity.id}.${field.id}}" required
-                                                                >
+                                                                <#if entity.fieldHasEntityRef(field)>
+                                                                        <select  class="form-control" id="${field.id}" name="${field.id}">
+                                                                                <option value="0">请选择</option>
+                                                                                <#assign refEntity=entity.fieldRefEntity(field)/>
+                                                                                <c:forEach items="${$}{all${refEntity.capId}}" var="var">
+                                                                                        <option value="${$}{var.${refEntity.primaryKey.id}}">${$}{var.toString()}</option>
+                                                                                </c:forEach>
+                                                                        </select>
+                                                                <#else>
+                                                                        <input type="text" class="form-control" id="${field.id}" name="${field.id}"
+                                                                               placeholder="${field.name}" value="${S}{${entity.id}.${field.id}}" required
+                                                                </#if>
+
                                                         </div>
                                                 </#list>
 

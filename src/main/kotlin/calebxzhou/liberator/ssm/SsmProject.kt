@@ -101,23 +101,22 @@ data class SsmProject(
                 }
                 logger.info { "处理实体 ${entity.name}${entity.id}" }
                 //先给实体加上主键（xxx id，xxx编号）
-                entity += Field("${entity.id}Id","${entity.name}编号",entity.id)
+                val idField = Field("${entity.id}Id", "${entity.name}编号", entity.id).apply { type = Field.ID_JTYPE }
+                entity += idField
                 //再添加其他字段
                 for (fieldToken in fieldTokens) {
-                    entity += IdNameBase.fromToken(fieldToken).run {
-
-                        Field(id,name,entity.id).let {field ->
-                            //如果字段name是已经存在的实体name，设定关联
-                            val refEntity = project.entities.find { it.name == field.name }
-                            if(refEntity != null){
-                                field.id = entity.id +"_"+refEntity.primaryKey.id
-                                entity.fieldRefMap += field to refEntity
-                                field.type = Field.ID_JTYPE
-                            }
-                            field
+                    val idname = IdNameBase.fromToken(fieldToken)
+                    val refEntity = project.entities.find { it.name == idname.name }
+                    val field = if (refEntity != null){
+                        Field(entity.id +"_"+refEntity.primaryKey.id,idname.name,entity.id).apply { type = Field.ID_JTYPE }.also {
+                            entity.fieldRefMap += it to refEntity
                         }
 
+                    } else{
+                        Field(idname.id,idname.name,entity.id)
                     }
+                    logger.info { "创建字段 ${field.name}${field.id}" }
+                    entity += field
                 }
                 //若没有其他字段，加上"xxx名称"字段
                 if(fieldTokens.isEmpty()){
@@ -129,11 +128,12 @@ data class SsmProject(
         private fun optimizeEntities(project: SsmProject){
             //为全项目加上系统角色和系统用户实体
             project += Entity("role", "角色").apply {
-                this += Field("roid", "角色编号","role")
-                this += Field("roname", "角色名称","role")
+                this += Field("roleId", "角色编号","role")
+                this += Field("roleName", "角色名称","role")
             }
             project += Entity("systemuser","用户").apply {
-                this += Field("pwd", "密码","systemuser")
+                this += Field("userid", "用户名","systemuser")
+                this += Field("password", "密码","systemuser")
                 this += Field("role", "角色","systemuser")
             }/*
             //字段是实体，更改类型并设定关联

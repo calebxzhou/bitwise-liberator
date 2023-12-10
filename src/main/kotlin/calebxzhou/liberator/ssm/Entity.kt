@@ -36,13 +36,12 @@ data class Entity(
 
     //实体类字段（插入用 字段有关联实体的 = 对方主键）
     val classFields
-        get() = fieldMap.values.map { field ->
+        get() = fieldMap.values/*.map { field ->
             fieldRefMap[field]?.primaryKey ?: field
-        }
+        }*/
 
     //主键
-    val primaryKey: Field
-        get() = fieldMap.values.first()
+    var primaryKey: Field = Field("","","")
 
     //外键表(field to entity)
     val fieldRefMap = hashMapOf<Field, Entity>()
@@ -58,7 +57,7 @@ data class Entity(
     get() = fieldRefMap.isNotEmpty()
     //指定字段是否有关联实体
     fun fieldHasEntityRef(field: Field) = fieldRefMap[field] != null
-
+    fun fieldRefEntity(field: Field) = fieldRefMap[field]
     //vo视图对象id
     val voId
     get() = if (hasEntityRef) "$capId.Vo" else   capId
@@ -67,13 +66,13 @@ data class Entity(
         get() = if(hasEntityRef) "${id}_view"  else id
 
     val mybatisSqlUpdateSet
-        get() = classFields.joinToString(",") { " ${it.id}=#{new${capId}.${it.id}} " }
+        get() = classFields.joinToString(",") { " ${it.id}=#{${it.id}} " }
     val mybatisSqlUpdateWhere
         get() = classFields.joinToString("and") { " ${it.id}=#{old${capId}.${it.id}} " }
     val mybatisSqlInsertColumns get() = classFields.filter { primaryKey!=it }.joinToString(",") { it.id }
     val mybatisSqlInsertValues get() = classFields.filter { primaryKey!=it }.joinToString(",") { " #{${it.id}} " }
     val mybatisSqlDeleteWhere get() = classFields.joinToString(" and ") { "${it.id}=#{${it.id}} " }
-    val jspHrefParam get() = fieldMap.values.joinToString("&") { "${it.id}=\${var.${it.id}}" }
+    val jspHrefParam get() = voFields.joinToString("&") { "${it.id}=\${var.${it.id}}" }
 
     //建表语句
     fun getSqlCreateTableColumns(): String {
@@ -97,6 +96,8 @@ data class Entity(
 
     // +=field 是添加字段
     operator fun plusAssign(field: Field) {
+        if(fieldMap.size==0)
+            primaryKey = field
         fieldMap += field.id to field
     }
 

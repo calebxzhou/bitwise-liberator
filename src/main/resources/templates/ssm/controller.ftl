@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-
+//${entity.name}的控制器类
 @Controller
 public class ${entity.capId}Controller {
 
@@ -28,18 +28,17 @@ public class ${entity.capId}Controller {
     }
 
     @GetMapping("/${entity.capId}_edit")
-    public ModelAndView edit(HttpSession session,${entity.capId} value){
+    public ModelAndView edit(${entity.capId} ${entity.id}){
         ModelAndView modelAndView = new ModelAndView("${entity.capId}_edit");
-        modelAndView.addObject("${entity.id}",value);
+        modelAndView.addObject("${entity.id}",${entity.id});
 <#list entity.refEntites as refEntity>
         modelAndView.addObject("all${refEntity.capId}",${refEntity.id}Service.selectAll());
 </#list>
         return modelAndView;
     }
     @PostMapping("/${entity.capId}_edit_do")
-    public ModelAndView editDo(HttpSession session,${entity.capId} new${entity.capId}){
-        ${entity.capId} old${entity.capId} = ((${entity.capId}) session.getAttribute("${entity.id}_old"));
-        service.update(old${entity.capId},new${entity.capId});
+    public ModelAndView editDo(${entity.capId} ${entity.id}){
+        service.update(${entity.id});
         return selectAll();
     }
     @GetMapping("/${entity.capId}_insert")
@@ -56,8 +55,8 @@ public class ${entity.capId}Controller {
         return selectAll();
     }
     @GetMapping("/${entity.capId}_delete")
-    public ModelAndView delete(${entity.capId} ${entity.id}){
-        service.delete(${entity.id});
+    public ModelAndView delete(${entity.primaryKey.type} ${entity.primaryKey.id}){
+        service.delete(${entity.primaryKey.id});
         return selectAll();
     }
 }

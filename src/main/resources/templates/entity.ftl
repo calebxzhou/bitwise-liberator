@@ -31,7 +31,7 @@ public class ${entity.capId}{
 
 
     //${entity.name}视图类
-    public class Vo{
+    public static class Vo{
 
         <#list entity.voFields as field>
             //${field.name}
@@ -42,11 +42,11 @@ public class ${entity.capId}{
         <#list entity.voFields as field>
             //获取${field.name}
             public ${field.type} get${field.capId}(){
-            return this.${field.id};
+                return this.${field.id};
             }
             //设置${field.name}
             public void set${field.capId}(${field.type} ${field.id}){
-            this.${field.id} = ${field.id};
+                this.${field.id} = ${field.id};
             }
         </#list>
 

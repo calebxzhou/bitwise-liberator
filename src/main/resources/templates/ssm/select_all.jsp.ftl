@@ -13,10 +13,11 @@
 
     <div class="col-2">
         <a href="${$}{pageContext.request.contextPath}/${entity.capId}_insert">
-            <button type="button" class="btn addBtn">添加${entity.name}</button>
+            <button type="button" class="btn btn-primary">添加${entity.name}</button>
         </a>
     </div>
 
+<!-- 搜索功能
     <div class="col-2">
         <select class="form-select" name="condition">
             <#list entity.voFields as field>
@@ -29,7 +30,7 @@
     </div>
     <div class="col">
         <button type="submit" class="btn editBtn">搜索${entity.name}</button>
-    </div>
+    </div>-->
 
 </form>
 
@@ -50,15 +51,14 @@
                     <td>${$}{var.${field.id}}</td>
                 </#list>
                 <td>
-                    <a href="${entity.capId}_edit?${entity.primaryKey.id}=${$}{var.${entity.primaryKey.id}">
-                        <button class="btn editBtn">
+                    <a href="${entity.capId}_edit?${entity.jspHrefParam}">
+                        <button class="btn btn-primary">
                             编辑
                         </button>
 
                     </a>
-                    &emsp;
-                    <a href="${entity.capId}_delete?${entity.primaryKey.id}=${$}{var.${entity.primaryKey.id}">
-                        <button class="btn delBtn">
+                    <a href="${entity.capId}_delete?${entity.primaryKey.id}=${$}{var.${entity.primaryKey.id}}">
+                        <button class="btn btn-danger">
                             删除
                         </button>
                     </a>

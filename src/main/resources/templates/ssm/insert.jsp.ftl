@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<#assign $="$"/>
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,8 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        button[type=submit]{
-        }
     </style>
 
 
@@ -26,14 +25,25 @@
                 <form method="POST" action="${entity.capId}_insert_do">
                     <div class="row g-3">
                         <#list entity.fields as field>
-                            <div class="col-12">
+                            <div class="col-12 <#if entity.primaryKey == field>d-none</#if>">
                                 <label for="${field.id}" class="form-label">${field.name}</label>
-                                <input type="text" class="form-control" id="${field.id}" name="${field.id}"
-                                       placeholder="${field.name}" required>
+                                <#if entity.fieldHasEntityRef(field)>
+                                    <select  class="form-control" id="${field.id}" name="${field.id}">
+                                        <option value="0">请选择</option>
+                                        <#assign refEntity=entity.fieldRefEntity(field)/>
+                                        <c:forEach items="${$}{all${refEntity.capId}}" var="var">
+                                            <option value="${$}{var.${refEntity.primaryKey.id}}">${$}{var.toString()}</option>
+                                        </c:forEach>
+                                    </select>
+                                    <#else>
+                                        <input type="text" class="form-control" id="${field.id}" name="${field.id}"
+                                               placeholder="${field.name}"  >
+                                </#if>
+
                             </div>
                         </#list>
                     </div>
-                    <button class="w-100 btn btn-lg" type="submit" >提交</button>
+                    <button class="w-100 btn btn-lg btn-primary" type="submit" >提交</button>
                 </form>
             </div>
         </div>
