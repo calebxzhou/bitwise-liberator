@@ -20,16 +20,7 @@ const val WEB_INF_OUT_PATH = "$WEB_OUT_PATH/WEB-INF"
 
 
 val logger = KotlinLogging.logger{}
-data class EntityPermission(
-    val entityId: String,
-    val perms: MutableSet<Permission> = hashSetOf()
-)
 
-data class Actor(
-    override val id: String,
-    override val name: String,
-    val perms: MutableList<EntityPermission> = arrayListOf()
-) : IdNameBase(id, name)
 
 data class CodeGen(
     val codeType: CodeType,
@@ -117,7 +108,6 @@ data class SsmProject(
                 用户systemuser 密码pwd 角色                   
             """.trimIndent()+entityDsl
             initEntitiesFromDsl(project,entityDsl)
-            optimizeEntities(project)
             handlePermDsl(project, permDsl)
             return project
         }
@@ -129,7 +119,7 @@ data class SsmProject(
                 val entity = IdNameBase.fromToken(fieldTokens.removeFirst()).run {
                     Entity(id,name)
                 }
-                logger.info { "处理实体 ${entity.name}${entity.id}" }
+                //logger.info { "处理实体 ${entity.name}${entity.id}" }
                 //先给实体加上主键（xxx id，xxx编号）
                 val idField = Field("${entity.id}Id", "${entity.name}编号", entity.id).apply { type = Field.ID_JTYPE }
                 entity += idField
@@ -145,7 +135,7 @@ data class SsmProject(
                     } else{
                         Field(idname.id,idname.name,entity.id)
                     }
-                    logger.info { "创建字段 ${field.name}${field.id}" }
+                    //logger.info { "创建字段 ${field.name}${field.id}" }
                     entity += field
                 }
                 //若没有其他字段，加上"xxx名称"字段
@@ -155,81 +145,30 @@ data class SsmProject(
                 project += entity
             }
         }
-        private fun optimizeEntities(project: SsmProject){
-            //为全项目加上系统角色和系统用户实体
-            /*project += Entity("role", "角色").apply {
-                this += Field("roleId", "角色编号","role")
-                this += Field("roleName", "角色名称","role")
-            }
-            project += Entity("systemuser","用户").apply {
-                this += Field("userid", "用户名","systemuser")
-                this += Field("password", "密码","systemuser")
-                this += Field("role", "角色","systemuser")
-            }
-            //字段是实体，更改类型并设定关联
-            project.entities.forEach { entity ->
-                entity.classFields.forEach { field ->
-                    val refEntity = project[field.id]
-                    if(refEntity!=null){
-                        entity.fieldRefMap += field to refEntity
-                        logger.info { "${entity.id} 的${field.id} 关联 ${refEntity.id}" }
-                    }
-                }
-            }*/
-        }
+
         private fun handlePermDsl(project: SsmProject, dsl:String): List<Actor>{
-            val permLines = dsl.splitByReturn()
             val actors = arrayListOf<Actor>()
             //添加管理员
-            actors += Actor("管理员",)
-            var actorNow:Actor?=null
-            for ((i, permLine) in permLines.withIndex()) {
-                //创建新的角色
-                if(permLine.extractEnglish()!=null){
-                    actorNow = IdNameBase.fromToken(permLine).run {
-                        Actor(id,name)
-                    }
-                    continue
-                }
-                //处理当前角色
-                if(actorNow !=null){
-                    val permTokens = permLine.splitBySpace()
-                    val entityName = permTokens[0]
-                    val permissionStr = permTokens[1]
-                    //处理全部实体权限
-                    if(entityName == "全部"){
-                        project.entityMap.forEach { (_, entity) ->
-                            handleActorPerms(permissionStr,entity,actorNow)
-                        }
-                    }
-                    //处理单个实体权限
-                    else{
-                        val entity = project.entityMap.values.find { it.name==entityName }
-                            ?:throw SsmException("无效的权限设定！找不到实体“$entityName”")
-                        handleActorPerms(permissionStr,entity,actorNow)
-                    }
-
-                }
-                //下一个是新的角色 就保存当前角色
-                if((permLines.getOrNull(i + 1)?.extractEnglish()) != null){
-                    if(actorNow !=null){
-                        actors += actorNow
-                    }
-                }
-
+            actors += Actor("管理员").apply {
+                project.entities.forEach { perms += it to Permission.all }
             }
+            for (actorLine in dsl.splitByReturn()) {
+                val actorTokens = actorLine.splitBySpace().toMutableList()
+                val actor = Actor(actorTokens.removeFirst())
+                for (actorToken in actorTokens) {
+                    val idname = IdNameBase.fromToken(actorToken)
+                    val entityName = idname.name
+                    val perms = Permission.match(idname.id)
+                    val entity = project.entities.find { it.name==entityName }
+                        ?:throw SsmException("无效的权限设定！找不到实体“$entityName”")
+                    actor.perms += entity to perms
+                }
+                project += actor
+            }
+
             return actors
         }
-        private fun handleActorPerms(perm:String,entity: Entity,actorNow: Actor){
-            val entityPermission = EntityPermission(entity.id)
-            when {
-                perm.contains("增") -> entityPermission.perms += Permission.INSERT
-                perm.contains("删") -> entityPermission.perms += Permission.DELETE
-                perm.contains("改") -> entityPermission.perms += Permission.UPDATE
-                perm.contains("查") -> entityPermission.perms += Permission.SELECT
-            }
-            actorNow.perms += entityPermission
-        }
+
     }
 }
 class SsmException(reason:String) :Exception(reason){
