@@ -27,25 +27,7 @@ fun Application.configureRouting() {
             val entities = params["entities"]
             val perm = params["perm"]
             val pj = SsmProject.fromDsl(pjName, entities, perm)
-            val bytes = ByteArrayOutputStream()
-            val zipOut = ZipOutputStream(bytes)
-            pj.genCodeForEntities().forEach { (entity, codes) ->
-                codes.forEach { code ->
-                    if(!code.codeType.forGlobal){
-                        zipOut.putNextEntry(ZipEntry(code.codeType.getOutPath(entity.capId)))
-                        zipOut.write(code.code.toByteArray())
-                        zipOut.closeEntry()
-                    }
-                }
-            }
-            pj.genCodeForProject().forEach { (type, gen) ->
-                zipOut.putNextEntry(ZipEntry(type.getOutPath("")))
-                zipOut.write(gen.code.toByteArray())
-                zipOut.closeEntry()
-            }
-
-            zipOut.close()
-            call.respondBytes(bytes.toByteArray(), contentType = ContentType.Application.Zip)
+            call.respondBytes(pj.genCodeZip(), contentType = ContentType.Application.Zip)
            /* Lexer(dslCode).analyze().let {
                 val node = Syntax(it).analyze()
                 Semantic(node).analyze()

@@ -2,7 +2,10 @@ package calebxzhou.liberator.ssm
 
 import calebxzhou.liberator.*
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.io.ByteArrayOutputStream
 import java.io.StringWriter
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 /**
  * Created  on 2023-12-05,15:55.
@@ -79,7 +82,29 @@ data class SsmProject(
             }
         return map
     }
+    //生成全部代码并打包
+    fun genCodeZip() : ByteArray{
+        val bytes = ByteArrayOutputStream()
+        val zipOut = ZipOutputStream(bytes)
+        genCodeForEntities().forEach { (entity, codes) ->
+            codes.forEach { code ->
+                if(!code.codeType.forGlobal){
+                    zipOut.putNextEntry(ZipEntry(code.codeType.getOutPath(entity.capId)))
+                    zipOut.write(code.code.toByteArray())
+                    zipOut.closeEntry()
+                }
+            }
+        }
+        genCodeForProject().forEach { (type, gen) ->
+            zipOut.putNextEntry(ZipEntry(type.getOutPath("")))
+            logger.info { "正在写入文件${type.name}" }
+            zipOut.write(gen.code.toByteArray())
+            zipOut.closeEntry()
+        }
 
+        zipOut.close()
+        return  bytes.toByteArray()
+    }
     companion object{
         //从dsl代码创建项目
         fun fromDsl(pjName:String?, entityDsl:String?, permDsl:String?):SsmProject{
@@ -87,11 +112,16 @@ data class SsmProject(
                 throw SsmException("输入不能为空")
             //项目
             val project = SsmProject(pjName)
+            val entityDsl = """
+                角色role
+                用户systemuser 密码pwd 角色                   
+            """.trimIndent()+entityDsl
             initEntitiesFromDsl(project,entityDsl)
             optimizeEntities(project)
             handlePermDsl(project, permDsl)
             return project
         }
+
         private fun initEntitiesFromDsl(project: SsmProject, dsl:String){
             for (entityLine in dsl.splitByReturn()) {
                 val fieldTokens = entityLine.splitBySpace().toMutableList()
@@ -127,7 +157,7 @@ data class SsmProject(
         }
         private fun optimizeEntities(project: SsmProject){
             //为全项目加上系统角色和系统用户实体
-            project += Entity("role", "角色").apply {
+            /*project += Entity("role", "角色").apply {
                 this += Field("roleId", "角色编号","role")
                 this += Field("roleName", "角色名称","role")
             }
@@ -135,7 +165,7 @@ data class SsmProject(
                 this += Field("userid", "用户名","systemuser")
                 this += Field("password", "密码","systemuser")
                 this += Field("role", "角色","systemuser")
-            }/*
+            }
             //字段是实体，更改类型并设定关联
             project.entities.forEach { entity ->
                 entity.classFields.forEach { field ->
@@ -150,6 +180,8 @@ data class SsmProject(
         private fun handlePermDsl(project: SsmProject, dsl:String): List<Actor>{
             val permLines = dsl.splitByReturn()
             val actors = arrayListOf<Actor>()
+            //添加管理员
+            actors += Actor("管理员",)
             var actorNow:Actor?=null
             for ((i, permLine) in permLines.withIndex()) {
                 //创建新的角色

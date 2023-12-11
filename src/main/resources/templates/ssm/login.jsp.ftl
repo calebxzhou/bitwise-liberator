@@ -41,17 +41,18 @@
 <body class="text-center">
 
 <main class="form-signin">
-        <h1 class="h3 mb-3 fw-normal">欢迎登录${project.pjName}系统</h1>
+        <h1 class="h3 mb-3 fw-normal">欢迎登录${project.pjName}</h1>
 
         <div class="form-floating">
             <input name="id" type="text" class="form-control" id="id" placeholder="用户名" required >
-            <label for="id"><b>用户名：</b></label>
+            <label for="id"><b>用户名</b></label>
         </div>
         <div class="form-floating">
             <input name="pwd" type="password" class="form-control" id="pwd" placeholder="密码" required >
             <label for="pwd"><b>密码</b></label>
         </div>
 
+    ${"$"}{msg}
         <button class="w-100 btn btn-lg btn-primary" id="login" onclick="login()">登录</button>
 </main>
 
