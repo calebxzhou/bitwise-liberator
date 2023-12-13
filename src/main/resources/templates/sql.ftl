@@ -1,3 +1,6 @@
+DROP ALL OBJECTS;
+DROP ALL OBJECTS DELETE FILES;
+
 <#list project.entities as entity>
     CREATE TABLE IF NOT EXISTS ${entity.id}(
         ${entity.getSqlCreateTableColumns()}
@@ -20,10 +23,11 @@ INSERT INTO role (roleName)
 SELECT '系统管理员'
 WHERE NOT EXISTS (
 SELECT * FROM role
-WHERE roleName = '系统管理员'
+WHERE roleName = '系统管理员')
 ;
-MERGE INTO systemuser (uname, pwd, systemuser_roleId)
-KEY (systemuserId)
-VALUES ('admin', '123456', 0);
+INSERT INTO systemuser (uname, pwd, systemuser_roleId)
+SELECT 'admin', 'password', 1
+WHERE NOT EXISTS (SELECT * FROM systemuser WHERE uname = 'admin');
+
 
 

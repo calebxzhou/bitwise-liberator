@@ -79,14 +79,14 @@ data class Entity(
         val lines = arrayListOf<String>()
         for (field in fields) {
             if (field == primaryKey) {
-                lines += "${field.id} IDENTITY PRIMARY KEY"
+                lines += "${field.id} IDENTITY PRIMARY KEY not null"
             } else {
                 if (!fieldHasEntityRef(field)) {
-                    lines += "${field.id} ${Field.NORMAL_DTYPE}"
+                    lines += "${field.id} ${Field.NORMAL_DTYPE} not null"
                 } else {
                     fieldRefMap[field]?.let { refEntity ->
                         lines += "${field.parentEntityId}_${refEntity.primaryKey.id} ${Field.ID_DTYPE} " +
-                                "REFERENCES ${refEntity.id}(${refEntity.primaryKey.id})"
+                                "REFERENCES ${refEntity.id}(${refEntity.primaryKey.id}) not null"
                     }
                 }
             }

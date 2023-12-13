@@ -9,28 +9,32 @@
 </head>
 <body>
 <h2 class="m-3">${entity.name}管理</h2>
-    <div class="col-2">
-        <a href="${$}{pageContext.request.contextPath}/${entity.capId}_insert">
-            <button type="button" class="btn btn-primary">添加${entity.name}</button>
-        </a>
-    </div>
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <a href="${$}{pageContext.request.contextPath}/${entity.capId}_insert">
+                <button type="button" class="btn btn-primary">添加${entity.name}</button>
+            </a>
+        </div>
+        <form method="get" action="${entity.capId}_selectAll">
+            <div class="col-2">
+                <select class="form-select" name="by">
+                    <#list entity.voFields as field>
+                        <option value="${field.id}">${field.name}</option>
+                    </#list>
+                </select>
+            </div>
+            <div class="col">
+                <input name="value" class="form-control">
+            </div>
+            <div class="col">
+                <button type="submit" class="btn editBtn">搜索${entity.name}</button>
+            </div>
 
-    <form method="get" action="${entity.capId}_selectAll">
-    <div class="col-2">
-        <select class="form-select" name="by">
-            <#list entity.voFields as field>
-                <option value="${field.id}">${field.name}</option>
-            </#list>
-        </select>
-    </div>
-    <div class="col">
-        <input name="value" class="form-control">
-    </div>
-    <div class="col">
-        <button type="submit" class="btn editBtn">搜索${entity.name}</button>
-    </div>
+        </form>
 
-    </form>
+    </div>
+</div>
 
 
 <div class="table-responsive">
