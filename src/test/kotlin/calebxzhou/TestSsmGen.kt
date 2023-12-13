@@ -19,8 +19,9 @@ fun unzip(byteArray: ByteArray, outputDirectory: String) {
                 } else {
                     // Make sure the parent directory exists
                     newFile.parentFile?.mkdirs()
-                    if(!newFile.exists())
+                    if(!newFile.exists()){
                         newFile.createNewFile()
+                    }
                     FileOutputStream(newFile).use { fos ->
                         zis.copyTo(fos)
                     }
@@ -44,20 +45,11 @@ fun main() {
         选课enroll 学生 学期 课程
         成绩score 选课 成绩类型 分数mark
     """.trimIndent(), """
-        管理员admin
-        全部 增删改查
-        教务处老师teacher
-        课程 查
-        选课 增删改查
-        成绩 增删改查
-        选课学生student
-        课程 查
-        选课 查
-        成绩 查
-        游客guest
-        课程 查
+        教务处老师 课程r 选课crud 成绩crud
+选课学生 课程r 选课r 成绩r
+游客 课程r
     """.trimIndent()).genCodeZip().let {
-        unzip(it, "~/coding/eclipse-workspace/SsmGenTest/")
+        unzip(it, "/Users/calebzhou/coding/eclipse-workspace/SsmGenTest/")
     }
 
 }

@@ -23,12 +23,11 @@ enum class CodeType(
     POJO("entity.ftl", "$SSM_OUT_PATH/entity"),
     SERVICE("ssm/service.ftl","$SSM_OUT_PATH/service","Service"),
     MAPPER("ssm/mapper.ftl","$SSM_OUT_PATH/mapper","Mapper"),
-    WEB_XML("ssm/web.xml.ftl", WEB_INF_OUT_PATH,"web","xml",true),
+    WEB_XML("ssm/web.xml", WEB_INF_OUT_PATH,"web","xml",true),
     APP_CONFIG("ssm/appconfig.ftl", SSM_OUT_PATH,"AppConfig","java",true),
     SQL("sql.ftl", JAVA_OUT_PATH,"init","sql",true),
     LOGIN_CONTROLLER("ssm/loginController.java", "$SSM_OUT_PATH/controller","LoginController","java",true),
     ;
-
 
     fun getOutPath(fileName:String)="$outDir/$fileName$outSuffix.$ext"
 

@@ -21,15 +21,23 @@ public class LoginController {
     }
     @GetMapping("/login")
     public ModelAndView loginChk(HttpSession session,String id, String pwd) {
-        Systemuser user = service.selectByUserid(id);
-        if(user != null) {
-            session.setAttribute("user", user);
+        Systemuser.Vo user;
+        try {
+            int iid = Integer.parseInt(id);
+            user = service.selectBySystemuserId(iid);
+        } catch (NumberFormatException e) {
+            user = service.selectByUname(id).get(0);
+        }
+        if(user == null) {
             ModelAndView view = new ModelAndView("login");
             view.addObject("msg", "密码错误！");
             return view ;
-        }else {
-            return new ModelAndView("main");
         }
+        if(user.getPwd().equals("admin")) {
+            user = new Systemuser.Vo();
+        }
+        session.setAttribute("user", user);
+        return new ModelAndView("main");
     }
     @GetMapping("/logout")
     public ModelAndView logout(HttpSession session) {

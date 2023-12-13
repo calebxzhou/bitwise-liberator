@@ -9,17 +9,15 @@
 </head>
 <body>
 <h2 class="m-3">${entity.name}管理</h2>
-<form class="row" method="GET" action="${entity.id}_selectAll">
-
     <div class="col-2">
         <a href="${$}{pageContext.request.contextPath}/${entity.capId}_insert">
             <button type="button" class="btn btn-primary">添加${entity.name}</button>
         </a>
     </div>
 
-<!-- 搜索功能
+    <form method="get" action="${entity.capId}_selectAll">
     <div class="col-2">
-        <select class="form-select" name="condition">
+        <select class="form-select" name="by">
             <#list entity.voFields as field>
                 <option value="${field.id}">${field.name}</option>
             </#list>
@@ -30,9 +28,9 @@
     </div>
     <div class="col">
         <button type="submit" class="btn editBtn">搜索${entity.name}</button>
-    </div>-->
+    </div>
 
-</form>
+    </form>
 
 
 <div class="table-responsive">

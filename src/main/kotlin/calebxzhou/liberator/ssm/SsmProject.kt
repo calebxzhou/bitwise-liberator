@@ -1,6 +1,8 @@
 package calebxzhou.liberator.ssm
 
-import calebxzhou.liberator.*
+import calebxzhou.liberator.splitByReturn
+import calebxzhou.liberator.splitBySpace
+import calebxzhou.liberator.templateOf
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.io.StringWriter
@@ -21,11 +23,6 @@ const val WEB_INF_OUT_PATH = "$WEB_OUT_PATH/WEB-INF"
 
 val logger = KotlinLogging.logger{}
 
-
-data class CodeGen(
-    val codeType: CodeType,
-    val code:String,
-)
 
 data class SsmProject(
     val pjName:String,
@@ -105,11 +102,23 @@ data class SsmProject(
             val project = SsmProject(pjName)
             val entityDsl = """
                 角色role
-                用户systemuser 密码pwd 角色                   
-            """.trimIndent()+entityDsl
+                用户systemuser 用户名uname 密码pwd 角色
+                """.trimIndent()+"\n"+entityDsl
+            logger.info { entityDsl }
             initEntitiesFromDsl(project,entityDsl)
             handlePermDsl(project, permDsl)
+            printProject(project)
             return project
+        }
+
+        private fun printProject(project: SsmProject) {
+            val entities = project.entities.map { entity -> "\n${entity.name}${entity.id}: ${entity.fields.map { field -> "${field.name}${field.id}"}.joinToString(" ")}" }
+            val actors = project.actors.map { actor -> "\n${actor.id}-${actor.perms.map { entry -> "\n${entry.key.name}${entry.key.id}-${entry.value}" }.joinToString  (" ")}" }
+            logger.info { """
+                ${project.pjName}
+                $entities
+                $actors
+            """.trimIndent() }
         }
 
         private fun initEntitiesFromDsl(project: SsmProject, dsl:String){
@@ -119,7 +128,6 @@ data class SsmProject(
                 val entity = IdNameBase.fromToken(fieldTokens.removeFirst()).run {
                     Entity(id,name)
                 }
-                //logger.info { "处理实体 ${entity.name}${entity.id}" }
                 //先给实体加上主键（xxx id，xxx编号）
                 val idField = Field("${entity.id}Id", "${entity.name}编号", entity.id).apply { type = Field.ID_JTYPE }
                 entity += idField
@@ -135,7 +143,6 @@ data class SsmProject(
                     } else{
                         Field(idname.id,idname.name,entity.id)
                     }
-                    //logger.info { "创建字段 ${field.name}${field.id}" }
                     entity += field
                 }
                 //若没有其他字段，加上"xxx名称"字段
@@ -149,7 +156,7 @@ data class SsmProject(
         private fun handlePermDsl(project: SsmProject, dsl:String): List<Actor>{
             val actors = arrayListOf<Actor>()
             //添加管理员
-            actors += Actor("管理员").apply {
+            actors += Actor("系统管理员").apply {
                 project.entities.forEach { perms += it to Permission.all }
             }
             for (actorLine in dsl.splitByReturn()) {
@@ -170,7 +177,4 @@ data class SsmProject(
         }
 
     }
-}
-class SsmException(reason:String) :Exception(reason){
-
 }

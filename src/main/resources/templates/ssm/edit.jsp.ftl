@@ -33,7 +33,7 @@
                                                                         </select>
                                                                 <#else>
                                                                         <input type="text" class="form-control" id="${field.id}" name="${field.id}"
-                                                                               placeholder="${field.name}" value="${S}{${entity.id}.${field.id}}" required
+                                                                               placeholder="${field.name}" value="${S}{${entity.id}.${field.id}}" required/>
                                                                 </#if>
 
                                                         </div>

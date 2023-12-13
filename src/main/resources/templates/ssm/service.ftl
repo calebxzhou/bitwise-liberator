@@ -21,6 +21,12 @@ public class ${entity.capId}Service {
     public <#if pk == field>${entity.voId}<#else>List<${entity.voId}></#if> selectBy${field.capId}(${field.type} ${field.id}){
         return mapper.selectBy${field.capId}(${field.id});
     }
+    <#if field.type == "Integer">
+    //按${field.name}选出${entity.name}
+    public <#if pk == field>${entity.voId}<#else>List<${entity.voId}></#if> selectBy${field.capId}(String ${field.id}){
+        return mapper.selectBy${field.capId}(Integer.parseInt(${field.id}));
+    }
+    </#if>
 </#list>
     //插入${entity.name}
     public boolean insert(${entity.capId} ${entity.id}){

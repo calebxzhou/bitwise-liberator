@@ -16,6 +16,14 @@
 
 
 </#list>
-
+INSERT INTO role (roleName)
+SELECT '系统管理员'
+WHERE NOT EXISTS (
+SELECT * FROM role
+WHERE roleName = '系统管理员'
+;
+MERGE INTO systemuser (uname, pwd, systemuser_roleId)
+KEY (systemuserId)
+VALUES ('admin', '123456', 0);
 
 
