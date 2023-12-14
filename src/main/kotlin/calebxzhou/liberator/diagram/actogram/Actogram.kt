@@ -87,9 +87,9 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
                 val funcShape = funcPoses[funcName]?:continue
                 //人在功能左边
                 if(actorShape.armR.x < funcShape.xLeft.x)
-                    diam.drawArrowLine(actorShape.armR,funcShape.xLeft,true)
+                    diam.drawArrowLine(actorShape.armR,funcShape.xLeft,false)
                 else //人在功能右边
-                    diam.drawArrowLine(actorShape.armL,funcShape.xRight,true)
+                    diam.drawArrowLine(actorShape.armL,funcShape.xRight,false)
             }
         }
     }

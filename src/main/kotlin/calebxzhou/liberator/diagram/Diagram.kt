@@ -59,9 +59,23 @@ class DiagramPainter{
         val ty2 = y2 - arrowSize * sin(angle + Math.PI / 6)
         val tp2 = pointOf(tx2,ty2)
         drawLine(start, centerPosOf(tp1,tp2))
-        drawLine(end,tp1)
-        drawLine(end,tp2)
-        drawLine(tp1,tp2)
+        if(hollow){
+            drawLine(end,tp1)
+            drawLine(end,tp2)
+            drawLine(tp1,tp2)
+        }else{
+            val xa = IntArray(3)
+            xa[0] = end.x.toInt()
+            xa[1] = tp1.x.toInt()
+            xa[2] = tp2.x.toInt()
+            val ya = IntArray(3)
+            ya[0] = end.y.toInt()
+            ya[1] = tp1.y.toInt()
+            ya[2] = tp2.y.toInt()
+            g.fillPolygon(xa, ya,3)
+        }
+
+
     }
     fun drawString(str:String,x:Int,y:Int){
         g.drawString(str,x,y)

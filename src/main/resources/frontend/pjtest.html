@@ -13,42 +13,76 @@ s.parentNode.insertBefore(hm, s);
 </head>
 <body>
 <form id="myForm" method="post" action="/pjtest_do">
-    <textarea cols="200" rows="50" name="dsl">
-测试一管理模块
-测试一功能
-测试项一 操作一 结果一
-测试项二 操作二 结果二
-测试项三 操作三 结果三
-测试二功能
-测试项一 操作一 结果一
-测试项二 操作二 结果二
-测试项三 操作三 结果三
-
-进退货管理模块
-进货商品功能
-进货商品信息查询 点击进退货管理的进货商品菜单栏选项 显示全部进货商品信息
-对商品进行入库 点击添加按钮并在添加界面输入入库信息后点击提交 成功添加商品入库
-删除进货商品信息 选择一条进货商品信息并点击删除按钮 成功删除进货商品信息
-退货商品功能
-退货商品信息查询 点击进退货管理的退货商品菜单栏选项 显示全部退货商品信息
-对退货商品进行录入 点击添加按钮并在添加界面输入退货商品信息后点击提交  成功录入退货商品
-删除退货商品信息 选择退货商品信息并点击删除按钮 成功删除退货商品信息
-
-库存管理模块
-报溢商品功能
-对商品进行报溢记录 点击添加按钮并在添加界面输入报溢商品信息后点击提交 成功录入报溢商品
-对商品进行取消报溢 选择报溢商品信息并点击删除按钮 成功取消商品报溢
-报损商品功能
-对商品进行报损记录 点击添加按钮并在添加界面输入报损商品信息后点击提交 成功录入报损商品
-对商品进行取消报损 选择报损商品信息并点击删除按钮 成功取消商品报损
-全部库存功能
-查看所有商品库存信息 点击添加按钮并在添加界面输入报损商品信息后点击提交 成功录入报损商品
-对库存信息进行高级筛选 在搜索框输入曲轮轴作为查询条件查询库存信息 显示符合条件的商品库存信息
-
-
-
-    </textarea>
+    <textarea id="dsl" cols="100" rows="25" name="dsl" onkeyup="compile(this)">
+用户
+注册：导%，入对用户名+密码；注册成功返回首页
+登录：导%，入对用户名+密码+验证码；登录成功，显示登录的用户名和头像
+公告：导%，能够正确弹出公告对话框；显示公告内容
+景区：导%，表%；显%
+酒店：导%，表%；显%
+特产：导%，表%；显%
+新闻：导%，表%；显%
+管理员
+登录：进%，入对用户名+密码+验证码；登录成功，跳转到后台管理界面
+登录：进%，入错用户名+密码+验证码；登录失败，提示用户名或密码错误
+图表：导%；能正确显示图表信息
+轮播图管理：导%，进行CRUD；实现对CRUD
+管理员管理：导%，进行CRUD；实现对CRUD
+用户管理：导%，进行CRUD；实现对CRUD
+景区管理：导%，进行CRUD；实现对CRUD
+酒店管理：导%，进行CRUD；实现对CRUD
+</textarea>
     <br>
-    <button type="submit"><h3>提交</h3></button>
+    <button type="submit"><h3>下载word</h3></button>
 </form>
+<h4>显示结果</h4>
+<div id="compiled"></div>
+<script>
+    const keywords = {
+        "导%":"在%role%导航栏中点击%func%按钮",
+        "表%":"点击%func%列表中某一项",
+        "显%":"能正确显示%func%列表和%func%具体信息",
+        "进%":"进入到%func%画面",
+        "CRUD":"%func%信息的增、删、改、查",
+    }
+    function compile(dslArea){
+        let replaced = replaceString(dslArea.value,keywords)
+        let newReplaced = ""
+        let currentRole = ""
+        for (let row of replaced.split("\n")) {
+            //只有中文的就是角色
+            if(isChineseOnly(row)){
+                currentRole = row
+                newReplaced += currentRole+"\n"
+                continue
+            }
+            let func = getBeforeColon(row)
+            let rep1 = row.replaceAll("%role%",currentRole)
+            let rep2 = rep1.replaceAll("%func%",func)
+            newReplaced += rep2 +"\n"
+        }
+        document.getElementById("compiled").innerText = newReplaced
+    }
+    function replaceString(str, map) {
+        var replacedStr = str;
+        for (var key in map) {
+            var re = new RegExp(key, 'g');
+            replacedStr = replacedStr.replace(re, map[key]);
+        }
+        return replacedStr;
+    }
+    function isChineseOnly(str) {
+        let re = /^[\u4e00-\u9fa5]+$/;
+        return re.test(str);
+    }
+    function getBeforeColon(str) {
+        var index = str.indexOf("：");
+        if (index !== -1) {
+            return str.substring(0, index);
+        } else {
+            return str;
+        }
+    }
+
+</script>
 </body>
