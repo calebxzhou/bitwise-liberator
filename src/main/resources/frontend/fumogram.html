@@ -14,7 +14,7 @@
 </head>
 <body>
 <form method="post" action="/fumogram_do">
-    <textarea id="dsl" cols="100" rows="15" name="dsl">
+    <textarea id="dsl" cols="100" rows="15" name="dsl" onkeyup="keyup(this)">
 XXXXXX管理系统
 测试模块1 功能1 功能2 功能3
 测试模块2 功能4 功能5 功能6
@@ -25,6 +25,22 @@ XXXXXX管理系统
 测基管理模块 商品管理 进货修改 进货删除 进货人联系
 @功能统一高度
     </textarea><br>
-    <button type="submit"><h4>立刻生成</h4></button>
+    <button type="submit"><h4>下载图片</h4></button>
+
 </form>
+<div id="resp" style="transform: scale(0.5); transform-origin:left;width: 100%;height: 50%"></div>
 </body>
+<script>
+    function keyup(dslArea){
+        let resp = document.getElementById('resp');
+        let formData = new FormData();
+        formData.append('dsl', dslArea.value);
+        fetch('/fumogram_do', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response =>  response.text())
+            .then(data => resp.innerHTML =data)
+            .catch(error => console.error('Error:', error));
+    }
+</script>

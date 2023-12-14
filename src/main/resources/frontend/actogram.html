@@ -13,6 +13,7 @@
     <title>快速画用例图</title>
 </head>
 <body>
+<form method="post" action="/actogram_do">
     <textarea id="dsl" cols="70" rows="10" name="dsl" onkeyup="keyup(this)">
 XXXXX管理系统
 角色1 功能1 功能2 功能3 功能4
@@ -20,6 +21,9 @@ XXXXX管理系统
 系统管理员 功能5 功能6 商品管理 客户管理 密码管理 供应商管理
 指定供应商 商品管理 客户管理
     </textarea>
+    <button type="submit"><h4>下载图片</h4></button>
+</form>
+
     <div id="resp" style="transform: scale(0.5); transform-origin:left;width: 100%;height: 50%"></div>
 <script>
     function keyup(dslArea){
