@@ -4,6 +4,7 @@ import calebxzhou.liberator.db2table.Db2Table
 import calebxzhou.liberator.diagram.actogram.Actogram
 import calebxzhou.liberator.diagram.fumodiam.Fumodiam
 import calebxzhou.liberator.headfoot.HeadFoot
+import calebxzhou.liberator.pjtest.PjTest
 import calebxzhou.liberator.respondDocx
 import calebxzhou.liberator.ssm.SsmProject
 import io.ktor.http.*
@@ -103,6 +104,9 @@ fun Application.configureRouting() {
             HeadFoot.fromDsl(dsl).processDocx(fileBytes).let { bytes ->
                 call.respondDocx(bytes)
             }
+        }
+        post("/pjtest_do"){
+            PjTest.fromJson(call.receiveText()).outputDocx().let { call.respondDocx(it) }
         }
     }
 }

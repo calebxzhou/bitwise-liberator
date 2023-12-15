@@ -4,9 +4,33 @@ import calebxzhou.getResource
 import calebxzhou.liberator.msword.TableOptimizer
 import calebxzhou.poiConfigure
 import com.deepoove.poi.XWPFTemplate
+import com.deepoove.poi.data.RowRenderData
+import com.deepoove.poi.data.Rows
+import com.deepoove.poi.data.Tables
 import com.deepoove.poi.xwpf.NiceXWPFDocument
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+data class Column(val name:String,val id:String,val type:String,val length:String,val constraint: String) {
+    val renderData
+        get() = Rows.of(name, id, type, length, constraint).textColor("000000")
+            .bgColor("FFFFFF").center().create()
+}
+data class Table(val name:String,val id:String,val columns:MutableList<Column> = arrayListOf()) {
+    val allColumns
+        get() = columns.joinToString("、") { it.name }
+    //获取文档中 “数据库设计”的表格行部分
+    val columnTable : Any
+        get() {
+            val rowRenderDataList = arrayListOf<RowRenderData>()
+            val header: RowRenderData = Rows.of("属性", "列名", "数据类型", "长度", "约束")
+                .horizontalCenter()
+                .textColor("000000")
+                .bgColor("FFFFFF").center().create()
+            rowRenderDataList.add(header)
+            columns.mapTo(rowRenderDataList) { it.renderData }
+            return Tables.create(*rowRenderDataList.toTypedArray<RowRenderData>())
+        }
+}
 
 
 data class Db2Table(val tables:List<Table>){
@@ -38,6 +62,7 @@ data class Db2Table(val tables:List<Table>){
 
 
     }
+
     fun outputDocx(): ByteArrayOutputStream {
         val tpl = getResource("/templates/db2table.docx")
         val stream = ByteArrayOutputStream()

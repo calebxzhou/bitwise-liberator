@@ -10,11 +10,18 @@ s.parentNode.insertBefore(hm, s);
 <head>
     <meta charset="UTF-8">
     <title>写系统测试报告</title>
+    <style>
+        table tr td{
+            border: 1px solid;
+        }
+    </style>
 </head>
 <body>
-<form id="myForm" method="post" action="/pjtest_do">
-    <textarea id="dsl" cols="100" rows="25" name="dsl" onkeyup="compile(this)">
-用户
+<div  style="float: left">
+
+
+    <textarea id="dsl" cols="70" rows="25" name="dsl" onkeyup="compile(this)" on="compile(this)">
+-用户
 注册：导%，入对用户名+密码；注册成功返回首页
 登录：导%，入对用户名+密码+验证码；登录成功，显示登录的用户名和头像
 公告：导%，能够正确弹出公告对话框；显示公告内容
@@ -22,7 +29,7 @@ s.parentNode.insertBefore(hm, s);
 酒店：导%，表%；显%
 特产：导%，表%；显%
 新闻：导%，表%；显%
-管理员
+-管理员
 登录：进%，入对用户名+密码+验证码；登录成功，跳转到后台管理界面
 登录：进%，入错用户名+密码+验证码；登录失败，提示用户名或密码错误
 图表：导%；能正确显示图表信息
@@ -30,14 +37,53 @@ s.parentNode.insertBefore(hm, s);
 管理员管理：导%，进行CRUD；实现对CRUD
 用户管理：导%，进行CRUD；实现对CRUD
 景区管理：导%，进行CRUD；实现对CRUD
-酒店管理：导%，进行CRUD；实现对CRUD
-</textarea>
+酒店管理：导%，进行CRUD；实现对CRUD</textarea>
+    <p>使用教程：<br>
+        1. 要测什么模块？以横杠开头<br>
+        比如你要测用户模块，就写 -用户<br>
+        2. 之后的每一行，格式如下<br>
+        测试项：输入操作；结果<br>
+        测试项后面接中文冒号（：），输入操作后面接中文分号（；）<br>
+        3. 你可以用一些简写，例如<br>
+        导% 在xxx导航栏中点击xxx按钮<br>
+        表% 点击xxx列表中某一项<br>
+        显% 能正确显示xxx列表和xxx具体信息<br>
+        进% 进入到xxx画面<br>
+        CRUD xxx信息的增、删、改、查<br>
+    </p>
     <br>
-    <button type="submit"><h3>下载word</h3></button>
-</form>
-<h4>显示结果</h4>
-<div id="compiled"></div>
+    <button onclick="ok()"><h3>OK, 下载word</h3></button>
+</div>
+<h4>预览</h4>
+<table id="compiled" style="border: 1px solid">
+</table>
 <script>
+    window.onload = function (){
+        compile(document.getElementById("dsl"))
+    }
+    const modules = []
+    // 测试用例
+    class TestCase {
+        // 测试项
+        constructor(name, operation, result) {
+            this.name = name;
+            // 描述输入/操作
+            this.operation = operation;
+            // 期望+真实结果
+            this.result = result;
+        }
+    }
+
+    // 模块测试
+    class ModuleTest {
+        // 模块名
+        constructor(name, cases = []) {
+            this.name = name;
+            // 全部功能测试
+            this.cases = cases;
+        }
+    }
+
     const keywords = {
         "导%":"在%role%导航栏中点击%func%按钮",
         "表%":"点击%func%列表中某一项",
@@ -45,44 +91,128 @@ s.parentNode.insertBefore(hm, s);
         "进%":"进入到%func%画面",
         "CRUD":"%func%信息的增、删、改、查",
     }
+    function ok(){
+        let url = '/pjtest_do';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(modules)
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a blob URL
+                let url = window.URL.createObjectURL(blob);
+                // Create a link and programmatically click it to download the file
+                let a = document.createElement("a");
+                a.href = url;
+                a.download = 'response.docx';
+                a.click();
+            })
+            .catch((error) => console.error('Error:', error));
+
+    }
     function compile(dslArea){
-        let replaced = replaceString(dslArea.value,keywords)
-        let newReplaced = ""
-        let currentRole = ""
-        for (let row of replaced.split("\n")) {
-            //只有中文的就是角色
-            if(isChineseOnly(row)){
-                currentRole = row
-                newReplaced += currentRole+"\n"
+        modules.length=0
+        compileToHtml(compileToModules(dslArea.value))
+    }
+    function compileToHtml(modules) {
+        let preview = document.getElementById("compiled");
+        // Clear the preview
+        while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+        }
+        for (let module of modules) {
+            // Create and append the header row
+            let headerRow = document.createElement("tr");
+            ["编号", "测试项", "描述输入/操作", "预计结果", "实际结果", "结果对比"].forEach(text => {
+                let th = document.createElement("th");
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
+            preview.appendChild(headerRow);
+            // Create and append the data rows
+            for (let i = 0; i < module.cases.length; i++) {
+                let tc = module.cases[i];
+                let row = document.createElement("tr");
+                [i, tc.name, tc.operation, tc.result, tc.result, "一致"].forEach(text => {
+                    let td = document.createElement("td");
+                    td.textContent = text;
+                    row.appendChild(td);
+                });
+                preview.appendChild(row);
+            }
+        }
+    }
+
+    function compileToModules(value){
+        let replaced = replaceString(value,keywords)
+        let nowModule = new ModuleTest()
+        let split = replaced.split("\n");
+        for (let i = 0; i < split.length; i++) {
+            let row = split[i].trim();
+            let nextRow = split[i+1]
+            if(row === undefined || row.length===0)
+                continue
+            //保存最后一个角色
+            if(nextRow === undefined || nextRow.trim().length === 0){
+                modules.push(nowModule)
+                break
+            }
+            //保存上一个角色
+            if(nextRow.startsWith("-"))
+                modules.push(nowModule)
+            //-的就是角色
+            if(row.startsWith("-")){
+                row = row.replaceAll("-","").trim()
+                nowModule = new ModuleTest(row, [])
                 continue
             }
-            let func = getBeforeColon(row)
-            let rep1 = row.replaceAll("%role%",currentRole)
-            let rep2 = rep1.replaceAll("%func%",func)
-            newReplaced += rep2 +"\n"
+            row = row.replaceAll("%role%",nowModule.name)
+            row = handleInputCorrect(row)
+            let parts = row.split(/：|；/);
+            for (let i = 0; i < parts.length; i++) {
+                parts[i] = parts[i].replaceAll("%func%",parts[0]).trim()
+            }
+            let testCase = new TestCase(nowModule.name+parts[0], parts[1], parts[2]);
+            nowModule.cases.push(testCase);
         }
-        document.getElementById("compiled").innerText = newReplaced
+        return modules
+        //
     }
     function replaceString(str, map) {
-        var replacedStr = str;
-        for (var key in map) {
-            var re = new RegExp(key, 'g');
+        let replacedStr = str;
+        for (const key in map) {
+            const re = new RegExp(key, 'g');
             replacedStr = replacedStr.replace(re, map[key]);
         }
         return replacedStr;
     }
     function isChineseOnly(str) {
         let re = /^[\u4e00-\u9fa5]+$/;
-        return re.test(str);
+        return re.test(str.replaceAll("\n","").replace(" ",""));
     }
-    function getBeforeColon(str) {
-        var index = str.indexOf("：");
-        if (index !== -1) {
-            return str.substring(0, index);
-        } else {
-            return str;
+
+    function handleInputCorrect(input) {
+        // Find the index of "入对" in the input string
+        let startIndex = input.indexOf("入对");
+        // If "入对" is not found, return the original input
+        if (startIndex === -1) {
+            return input;
         }
+        // Extract the substring starting from "入对"
+        let str = input.substring(startIndex + 2);
+        // Split the string into an array using "+" as the separator
+        let arr = str.split("+");
+        // Join the array into a string, using "、" as the separator, and add "和" before the last element
+        let output = arr.slice(0, -1).join("、") + "和" + arr.slice(-1);
+        // Replace the pattern in the original input with the output
+        return input.replace("入对" + str, "输入正确的" + output);
     }
+
+
+
 
 </script>
 </body>
