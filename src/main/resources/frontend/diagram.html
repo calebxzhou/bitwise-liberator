@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<script>
+    let _hmt = _hmt || [];
+    (function() {
+        let hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?97653e22175b6597a0db85ab2dab22d1";
+        let s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>画图</title>
+</head>
+<body>
+<div  style="float: left">
+    <input name="diam" type="radio" value="ER" onclick="changeDiagram(this.value)">ER图
+    <input name="diam" type="radio" value="ACT" onclick="changeDiagram(this.value)">功能图
+    <input name="diam" type="radio" value="FUMO" onclick="changeDiagram(this.value)">用例图
+    <button onclick="dl()">下载图片</button>
+    <br>
+    <textarea id="dsl" cols="50" rows="15" name="dsl" onkeyup="draw()">
+
+</textarea>
+</div>
+
+
+<div id="canvas" style=" transform: scale(0.4); transform-origin:top; width: 100%"></div>
+
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+<script>
+    /**
+     * @type Diagram
+     */
+    let currentDiam;
+
+    class Diagram{
+        constructor(url,exampleDsl) {
+            this.url = url
+            this.exampleDsl = exampleDsl
+        }
+    }
+    const DIAGRAMS = {
+        'ER': new Diagram("/ergram_do",`
+学院 编号 名称
+学生 学号 姓名 电话 出生日期 学院编号
+教师 工号 姓名 电话 出生日期 学院编号
+课程 编号 名称 教师工号 教室 是否考试
+学生 多对一 从属 学院
+教师 多对一 从属 学院
+学生 多对多 学习 课程
+教师 多对多 讲解 课程`),
+        'ACT': new Diagram("/actogram_do",`
+XXXXX管理系统
+角色1 功能1 功能2 功能3 功能4
+角色2 功能3 功能4 功能5 功能6
+系统管理员 功能5 功能6 商品管理 客户管理 密码管理 供应商管理
+指定供应商 商品管理 客户管理
+    `),
+        'FUMO' : new Diagram('/fumogram_do',`
+XXXXXX管理系统
+测试模块1 功能1 功能2 功能3
+测试模块2 功能4 功能5 功能6
+系统管理模块 用户管理 角色管理 密码管理
+基础资料模块 商品管理 客户管理 供应商管理
+进货管理模块 进货查询 进货修改 进货删除 进货人联系 进货人删除 进货人修改
+测试管理模块 系统测试 功能测试 模块测试
+测基管理模块 商品管理 进货修改 进货删除 进货人联系
+@功能统一高度
+        `)
+
+    }
+    function changeDiagram(diamKey){
+        currentDiam = DIAGRAMS[diamKey]
+        let textarea = $('#dsl');
+        textarea.val(currentDiam.exampleDsl.trim())
+        draw()
+    }
+    function draw(){
+        let formData = new FormData();
+        formData.append('dsl', $('#dsl').val());
+        fetch(currentDiam.url, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response =>  response.text())
+            .then(data => $("#canvas").html(data))
+            .catch(error => console.error('Error:', error));
+    }
+    function dl(){
+        let formData = new FormData();
+        formData.append('dsl', $('#dsl').val());
+        fetch(currentDiam.url, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                let url = window.URL.createObjectURL(blob);
+                let a = document.createElement("a");
+                a.href = url;
+                a.download = 'diagram.svg';
+                a.click();
+            })
+            .catch((error) => console.error('Error:', error));
+    }
+</script>
+</html>

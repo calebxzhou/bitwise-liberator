@@ -51,7 +51,8 @@ data class Actogram(val pjName:String,val actors: List<ActorFunc>) :DiagramDrawa
         var x = WIDTH/3
         var y = startY
         val funcPoses = linkedMapOf<String,EllipseShape>()
-        for ((index, funcName) in funcs.withIndex()) {
+        for (funcName in funcs) {
+            //
             //已经有的功能就不画了
             if(funcPoses.containsKey(funcName))
                 continue

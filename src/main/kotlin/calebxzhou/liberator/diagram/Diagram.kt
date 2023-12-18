@@ -36,6 +36,15 @@ fun distanceOf(d1:Double,d2:Double) = abs(d1-d2)
 //让文本居中的坐标值
 fun centerTextPosOf(painter: DiagramPainter, text: String, d1:Int, d2:Int) = centerTextPosOf(painter,text, centerPosOf(d1, d2))
 fun centerTextPosOf(painter: DiagramPainter, text: String, centerPos:Int) = centerPos - painter.getTextWidth(text)/2
+fun Polygon.addPoint(p: Point2D): Polygon {
+    this.addPoint(p.x.toInt(), p.y.toInt())
+    return this
+}
+fun pointAtFraction(p1: Point2D, p2: Point2D, fraction: Double): Point2D {
+    val dx = p2.x - p1.x
+    val dy = p2.y - p1.y
+    return Point2D.Double(p1.x + dx * fraction, p1.y + dy * fraction)
+}
 //画矢量图
 class DiagramPainter{
     val g = SVGGraphics2D(WIDTH.toDouble(), HEIGHT.toDouble()).apply {
@@ -85,6 +94,7 @@ class DiagramPainter{
     fun drawString(str:String, x: Int, y:Int){
         g.drawString(str,x,y)
     }
+    fun drawString(str:String, p:Point2D) = drawString(str,p.x.toInt(),p.y.toInt())
     //绘制文本+外框，rotate=true则竖着画
     fun drawTextWithRect(
         text:String,

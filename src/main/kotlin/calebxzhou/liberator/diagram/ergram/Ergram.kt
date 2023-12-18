@@ -53,7 +53,7 @@ data class Ergram(
         val entityShapes = linkedMapOf<Entity,EllipseShape>()
         for ((index, entity) in entities.values.withIndex()) {
             //达到size/2去下面画
-            if(index == entity.fields.size /2){
+            if(index == entities.size /2){
                 y += 1500
                 x = START_X
             }
@@ -87,17 +87,30 @@ data class Ergram(
                         (fromShape.yUp to toShape.yDown)
                     else
                         pointOf(0,0) to pointOf(0,0)
-                val polygon = Polygon()
                 val centerX = centerPosOf(startPoint.x,endPoint.x)
                 val centerY = centerPosOf(startPoint.y,endPoint.y)
-                val textHeight = diam.textHeight
-                val textWidth = diam.getTextWidth(rel.verb)
-                polygon.addPoint(centerX.toInt(), (centerY - textHeight / 2).toInt())
-                polygon.addPoint((centerX + textWidth / 2).toInt(), centerY.toInt())
-                polygon.addPoint(centerX.toInt(), (centerY + textHeight / 2).toInt())
-                polygon.addPoint((centerX - textWidth / 2).toInt(), centerY.toInt())
-                diam.draw(polygon)
-                diam.drawString(rel.verb, (centerX - textWidth / 2).toInt(), (centerY + diam.textAscent / 2).toInt())
+                diam.drawLine(startPoint,endPoint)
+                val shape = RhombusShape.draw(diam,rel.verb,centerX.toInt(),centerY.toInt())
+                val relFromPoint = pointAtFraction(startPoint,endPoint,1.5/5)
+                val relToPoint = pointAtFraction(startPoint,endPoint,4.5/5)
+                when(rel.rel){
+                    EntityRelations.I_I -> {
+                        diam.drawString("1",relFromPoint)
+                        diam.drawString("1",relToPoint)
+                    }
+                    EntityRelations.M_I -> {
+                        diam.drawString("m",relFromPoint)
+                        diam.drawString("1",relToPoint)
+                    }
+                    EntityRelations.I_M -> {
+                        diam.drawString("1",relFromPoint)
+                        diam.drawString("m",relToPoint)
+                    }
+                    EntityRelations.M_N -> {
+                        diam.drawString("m",relFromPoint)
+                        diam.drawString("n",relToPoint)
+                    }
+                }
             }
         }
     }
