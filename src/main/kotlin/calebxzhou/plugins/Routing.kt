@@ -2,6 +2,7 @@ package calebxzhou.plugins
 
 import calebxzhou.liberator.db2table.Db2Table
 import calebxzhou.liberator.diagram.actogram.Actogram
+import calebxzhou.liberator.diagram.ergram.Ergram
 import calebxzhou.liberator.diagram.fumodiam.Fumodiam
 import calebxzhou.liberator.headfoot.HeadFoot
 import calebxzhou.liberator.pjtest.PjTest
@@ -64,14 +65,21 @@ fun Application.configureRouting() {
         post("/fumogram_do"){
             call.receiveParameters()["dsl"]?.let { dsl ->
                 Fumodiam.fromDsl(dsl).draw().let { image->
-                    call.respondBytes(image,ContentType.Image.SVG)
+                    call.respondBytes(image)
                 }
             }
         }
         post("/actogram_do"){
             call.receiveParameters()["dsl"]?.let { dsl ->
                 Actogram.fromDsl(dsl).draw().let { image->
-                    call.respondBytes(image,ContentType.Image.SVG)
+                    call.respondBytes(image)
+                }
+            }
+        }
+        post("/ergram_do"){
+            call.receiveParameters()["dsl"]?.let { dsl ->
+                Ergram.fromDsl(dsl).draw().let { image->
+                    call.respondBytes(image)
                 }
             }
         }

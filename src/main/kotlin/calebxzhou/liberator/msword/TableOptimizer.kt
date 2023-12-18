@@ -11,7 +11,6 @@ import java.math.BigInteger
  */
 //表格优化器 所有的表格作成标准三线表
 object TableOptimizer {
-    private val cellMargin = 70
     //空边
     private val emptyBorder: CTBorder = CTBorder.Factory.newInstance().apply {
         `val` = STBorder.NIL
@@ -42,15 +41,10 @@ object TableOptimizer {
     }
 
     //优化文档（所有表格变三线表）
-    fun run(document: NiceXWPFDocument): NiceXWPFDocument {
+    fun run(document: NiceXWPFDocument,cellMargin: Int): NiceXWPFDocument {
         //每个表格
         for(table in document.allTables) {
-            /*
-            跳过第一个表格 因为是任务书
-            if (j == 0) {
-                j++
-                continue
-            }*/
+
             //获取所有行
             val rows =  table.rows.toMutableList()
             //第一行：（属性 列名 etc.）只有上面和下面有边框，左面和右面没有
@@ -86,6 +80,7 @@ object TableOptimizer {
                     tableRowCell.tcPr.tcBorders = cellEmptyBorders
                 }
             }
+            //设定单元格边距
             table.setCellMargins(cellMargin,cellMargin,cellMargin,cellMargin)
         }
         return document

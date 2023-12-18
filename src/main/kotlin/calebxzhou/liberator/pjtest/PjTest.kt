@@ -68,7 +68,7 @@ data class PjTest(
         XWPFTemplate.compile(tpl, poiConfigure).render(this).write(stream)
         val niceD = NiceXWPFDocument(ByteArrayInputStream(stream.toByteArray()))
         stream.reset()
-        TableOptimizer.run(niceD).write(stream)
+        TableOptimizer.run(niceD,0).write(stream)
         return stream
     }
 }

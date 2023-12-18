@@ -69,7 +69,7 @@ data class Db2Table(val tables:List<Table>){
         XWPFTemplate.compile(tpl, poiConfigure).render(this).write(stream)
         val niceD = NiceXWPFDocument(ByteArrayInputStream(stream.toByteArray()))
         stream.reset()
-        TableOptimizer.run(niceD).write(stream)
+        TableOptimizer.run(niceD,70).write(stream)
         return stream
     }
 }

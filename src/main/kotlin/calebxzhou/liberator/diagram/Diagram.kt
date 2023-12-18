@@ -4,10 +4,12 @@ import calebxzhou.getResource
 import org.jfree.svg.SVGGraphics2D
 import java.awt.Font
 import java.awt.Point
+import java.awt.Polygon
 import java.awt.Rectangle
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -28,6 +30,9 @@ fun centerPosOf(d1:Double, d2:Double) = (d1+d2)/2
 fun centerPosOf(d1:Int, d2:Int) = (d1+d2)/2
 //两点中心
 fun centerPosOf(p1:Point2D, p2:Point2D) = pointOf(centerPosOf(p1.x , p2.x), centerPosOf(p1.y , p2.y))
+//两点距离
+fun distanceOf(d1:Int,d2:Int) = abs(d1-d2)
+fun distanceOf(d1:Double,d2:Double) = abs(d1-d2)
 //让文本居中的坐标值
 fun centerTextPosOf(painter: DiagramPainter, text: String, d1:Int, d2:Int) = centerTextPosOf(painter,text, centerPosOf(d1, d2))
 fun centerTextPosOf(painter: DiagramPainter, text: String, centerPos:Int) = centerPos - painter.getTextWidth(text)/2
@@ -77,7 +82,7 @@ class DiagramPainter{
 
 
     }
-    fun drawString(str:String,x:Int,y:Int){
+    fun drawString(str:String, x: Int, y:Int){
         g.drawString(str,x,y)
     }
     //绘制文本+外框，rotate=true则竖着画
@@ -131,6 +136,11 @@ class DiagramPainter{
     fun done(){
         g.dispose()
     }
+
+    fun draw(polygon: Polygon) {
+        g.draw(polygon)
+    }
+
     val data
     get() = g.svgElement.toByteArray()
 

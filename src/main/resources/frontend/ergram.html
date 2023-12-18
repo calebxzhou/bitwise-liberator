@@ -1,9 +1,9 @@
 <script>
-    var _hmt = _hmt || [];
+    let _hmt = _hmt || [];
     (function() {
-        var hm = document.createElement("script");
+        let hm = document.createElement("script");
         hm.src = "https://hm.baidu.com/hm.js?97653e22175b6597a0db85ab2dab22d1";
-        var s = document.getElementsByTagName("script")[0];
+        let s = document.getElementsByTagName("script")[0];
         s.parentNode.insertBefore(hm, s);
     })();
 </script>
@@ -13,22 +13,49 @@
     <title>快速画ER图</title>
 </head>
 <body>
-<form method="post" action="/ergram_do">
-    <textarea id="dsl" cols="100" rows="15" name="dsl1">
-教务管理系统
-学院 ~编号 ~名称
-学期 ~编号 ~名称
-成绩类型 ~编号 ~名称
-教室 ~编号 ~名称 所属学院
+    <textarea style="float: left" id="dsl" cols="50" rows="15" name="dsl" onkeyup="draw(this.value)">
+学院 编号 名称
 学生 学号 姓名 电话 出生日期 学院
 教师 工号 姓名 电话 出生日期 学院
-课程 ~编号 ~名称 任课教师 教室 是否考试
-选课 ~编号 学生 学期 课程
-成绩 ~编号 所选课程 成绩类型 分数
-    </textarea><br>
-    <textarea id="dsl" cols="100" rows="15" name="dsl2">
-
-    </textarea><br>
-    <button type="submit"><h4>立刻生成</h4></button>
-</form>
+课程 编号 名称 教师 教室 是否考试
+学生 多对一 从属 学院
+教师 多对一 从属 学院
+学生 多对多 学习 课程
+教师 多对多 讲解 课程
+    </textarea>
+    <button onclick="dl()">下载图片</button>
+    <div id="canvas" style=" transform: scale(0.4); transform-origin:top; width: 100%"></div>
 </body>
+<script>
+    window.onload = function (){
+        draw(document.getElementById("dsl").value)
+    }
+    function draw(dsl){
+        let formData = new FormData();
+        formData.append('dsl', dsl);
+        fetch('/ergram_do', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response =>  response.text())
+            .then(data => document.getElementById("canvas").innerHTML =data)
+            .catch(error => console.error('Error:', error));
+    }
+    function dl(){
+        let formData = new FormData();
+        formData.append('dsl', document.getElementById("dsl").value);
+        fetch('/ergram_do', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                let url = window.URL.createObjectURL(blob);
+                let a = document.createElement("a");
+                a.href = url;
+                a.download = 'ER.svg';
+                a.click();
+            })
+            .catch((error) => console.error('Error:', error));
+    }
+</script>
