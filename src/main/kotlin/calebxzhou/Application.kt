@@ -13,6 +13,7 @@ import io.ktor.server.response.*
 import kotlinx.serialization.json.Json
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
+import io.ktor.server.plugins.cors.routing.*
 import java.io.InputStream
 
 fun main() {
@@ -40,6 +41,18 @@ fun Application.module() {
         }
     }
     install(FreeMarker)
+    install(CORS) {
+        anyHost() // Allow requests from all hosts
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Patch)
+        allowHeader(HttpHeaders.AccessControlAllowHeaders)
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
+    }
 }
 fun getResource(path: String) : InputStream? = Application::class.java.getResourceAsStream(path)
 

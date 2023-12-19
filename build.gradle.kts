@@ -36,6 +36,8 @@ dependencies {
     implementation("org.springframework:spring-expression:6.0.13")
 // https://mvnrepository.com/artifact/com.github.houbb/pinyin
     implementation("com.github.houbb:pinyin:0.4.0")
+// https://mvnrepository.com/artifact/io.ktor/ktor-features
+    implementation("io.ktor:ktor-server-cors")
 
     // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
@@ -51,4 +53,5 @@ dependencies {
     // https://mvnrepository.com/artifact/io.github.oshai/kotlin-logging-jvm
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.1")
     implementation("ch.qos.logback:logback-classic:1.4.8")
+
 }

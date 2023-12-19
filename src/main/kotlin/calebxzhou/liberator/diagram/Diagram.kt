@@ -15,8 +15,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-const val WIDTH = 3840
-const val HEIGHT = 3840
+const val WIDTH = 8000
+const val HEIGHT = 8000
 const val FONT_SIZE = 30
 const val START_X = 100
 const val BASE_PADDING = 15

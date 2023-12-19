@@ -92,7 +92,9 @@ s.parentNode.insertBefore(hm, s);
         "CRUD":"%func%信息的增、删、改、查",
     }
     function ok(){
-        let url = '/pjtest_do';
+        var domain = window.location.hostname;
+        // Get the current URL
+        let url = 'http://'+domain+':19001/pjtest_do';
         fetch(url, {
             method: 'POST',
             headers: {
