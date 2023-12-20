@@ -57,7 +57,9 @@ data class Ergram(
                 y += 1500
                 x = START_X
             }
-            val entityShape = EllipseShape.draw(diam,entity.name,x,if(y < 1500) y+300 else y - 300)
+            val entityShape = EllipseShape.draw(diam,entity.name,
+                x + diam.getTextWidth(entity.fields.toString())/2,
+                if(y < 1500) y+300 else y - 300)
             entityShapes += entity to entityShape
             for (field in entity.fields) {
                 val fieldShape = EllipseShape.draw(diam,field, x,y).also {

@@ -9,16 +9,14 @@ import java.awt.Rectangle
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 
 const val WIDTH = 8000
 const val HEIGHT = 8000
 const val FONT_SIZE = 30
 const val START_X = 100
+const val START_Y = 100
 const val BASE_PADDING = 15
 val SIMSUN_FONT = Font.createFont(Font.TRUETYPE_FONT, getResource("/simsun.ttf")).deriveFont(FONT_SIZE.toFloat())
 
@@ -58,6 +56,43 @@ class DiagramPainter{
     //画线
     fun drawLine(start: Point2D, end: Point2D){
         g.draw(Line2D.Double(start,end))
+    }
+    //两个图形连在一起
+    //-90~+
+    fun drawLineConnectShapes(fromShape: EllipseShape,toShape: EllipseShape): Pair<Point2D,Point2D>{
+        val x1 = fromShape.centerX
+        val x2 = toShape.centerX
+        val y1 = fromShape.centerY
+        val y2 = toShape.centerY
+        val dx = x2-x1
+        val dy = y2-y1
+        val radian = atan2(dy, dx)
+        val deg = Math.toDegrees(radian)
+        val (startPoint,endPoint) =
+            when {
+                deg in -135.0 .. -45.0 -> (fromShape.yUp to toShape.yDown)
+                deg in -45.0 .. 45.0 -> {
+                    (fromShape.xRight to toShape.xLeft)
+                }
+                deg in 45.0 .. 135.0  -> {
+                    (fromShape.yDown to toShape.yUp)
+                }
+                deg > 135.0 || deg < -45.0 -> {
+                    (fromShape.xLeft to toShape.xRight)
+                }
+                /* (fromShape.xRight to toShape.xLeft)
+             //水平 右
+             else if(fromShape.centerX > toShape.centerX && fromShape.centerY == toShape.centerY)
+                 (fromShape.xLeft to toShape.xRight)
+             // 垂直
+             else if(fromShape.centerY < toShape.centerY)
+                 (fromShape.yDown to toShape.yUp)
+             else if(fromShape.centerY > toShape.centerY)
+                 (fromShape.yUp to toShape.yDown)*/
+                else -> pointOf(0,0) to pointOf(0,0)
+            }
+        drawLine(startPoint,endPoint)
+        return startPoint to endPoint
     }
     fun drawArrowLine(start: Point2D,end: Point2D,hollow:Boolean){
         val arrowSize = 20

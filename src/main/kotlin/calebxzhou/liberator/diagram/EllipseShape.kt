@@ -7,7 +7,10 @@ import java.awt.geom.Point2D
  */
 data class EllipseShape(
     val width:Int, val height:Int,
-    val xLeft:Point2D,val xRight:Point2D,val yUp:Point2D,val yDown:Point2D){
+    val xLeft:Point2D= pointOf(0,0),
+    val xRight:Point2D= pointOf(0,0),
+    val yUp:Point2D= pointOf(0,0),
+    val yDown:Point2D= pointOf(0,0)){
     val centerX = centerPosOf(xLeft,xRight).x
     val centerY = centerPosOf(yDown,yUp).y
     companion object{
