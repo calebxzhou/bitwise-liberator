@@ -9,8 +9,8 @@ enum class Permission(private val keyword: String) {
     UPDATE("u"),
     INSERT("c");
     companion object{
-        val all =  Permission.entries.toTypedArray().toSet()
-        fun match(keywords:String) = entries.filter { keywords.contains(it.keyword) }
+        val all =  Permission.entries.toTypedArray().toMutableSet()
+        fun match(keywords:String) = entries.filter { keywords.contains(it.keyword) }.toMutableSet()
     }
 
 }

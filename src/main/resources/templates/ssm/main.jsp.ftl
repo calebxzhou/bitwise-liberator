@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
-<#assign DLR = "$">
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<#assign s = "$">
 <!doctype html>
 <html lang="en">
   <head>
@@ -67,19 +68,21 @@
 
 <main>
   <div class="d-flex flex-column flex-shrink-0 p-3" id="navbar" style="width: 280px;">
-    <a href="${DLR}{pageContext.request.contextPath}/main.jsp" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-black text-decoration-none">
+    <a href="${s}{pageContext.request.contextPath}/main.jsp" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-black text-decoration-none">
 
       <span class="fs-4" id="title">${project.pjName}</span>
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <#list project.entities as entity>
+        <c:if test="${s}{${entity.accessibleRoles}}">
         <li class="nav-item">
           <a href="#" class="nav-link text-black" onclick="jump('${entity.capId}_selectAll')"  aria-current="page">
             <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"/></svg>
             <span>${entity.name}管理</span>
           </a>
         </li>
+        </c:if>
       </#list>
 
     </ul>
@@ -87,7 +90,7 @@
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
         <svg class="bi me-2" width="32" height="32"><use xlink:href="#people-circle"></use></svg>
-        <strong>Admin</strong>
+        <strong>${s}{user.uname}(${s}{user.systemuserId}) ${s}{user.roleName}</strong>
       </a>
     </div>
   </div>
@@ -102,7 +105,7 @@
   <script>
   //页面跳转
     function jump(src) {
-      $('iframe').attr('src', "${DLR}{pageContext.request.contextPath}/" + src);
+      $('iframe').attr('src', "${s}{pageContext.request.contextPath}/" + src);
     }
     function showDropdown(dropDownDivId) {
       document.getElementById(dropDownDivId).classList.toggle("show");

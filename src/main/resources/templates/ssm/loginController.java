@@ -5,6 +5,7 @@ import com.ssm.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -19,22 +20,25 @@ public class LoginController {
     public ModelAndView login(){
         return new ModelAndView("login");
     }
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ModelAndView loginChk(HttpSession session,String id, String pwd) {
-        Systemuser.Vo user;
+        Systemuser user;
         try {
             int iid = Integer.parseInt(id);
             user = service.selectBySystemuserId(iid);
         } catch (NumberFormatException e) {
-            user = service.selectByUname(id).get(0);
+            try {
+                user = service.selectByUname(id).get(0);
+            } catch (IndexOutOfBoundsException e1) {
+                ModelAndView view = new ModelAndView("login");
+                view.addObject("msg", "密码错误！");
+                return view ;
+            }
         }
         if(user == null) {
             ModelAndView view = new ModelAndView("login");
             view.addObject("msg", "密码错误！");
             return view ;
-        }
-        if(user.getPwd().equals("admin")) {
-            user = new Systemuser.Vo();
         }
         session.setAttribute("user", user);
         return new ModelAndView("main");

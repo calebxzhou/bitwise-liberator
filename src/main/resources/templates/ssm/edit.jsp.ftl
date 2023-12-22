@@ -31,6 +31,13 @@
                                                                                         <option value="${S}{var.${refEntity.primaryKey.id}}">${S}{var.toString()}</option>
                                                                                 </c:forEach>
                                                                         </select>
+                                                                <#elseif field.id=="roleName">
+                                                                        <select class="form-control" id="${field.id}" name="${field.id}">
+                                                                                <option value="0">请选择</option>
+                                                                                <#list project.roles as role>
+                                                                                        <option value="${role}">${role}</option>
+                                                                                </#list>
+                                                                        </select>
                                                                 <#else>
                                                                         <input type="text" class="form-control" id="${field.id}" name="${field.id}"
                                                                                placeholder="${field.name}" value="${S}{${entity.id}.${field.id}}" required/>

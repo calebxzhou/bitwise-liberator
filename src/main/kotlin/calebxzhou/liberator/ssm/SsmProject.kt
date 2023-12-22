@@ -26,20 +26,13 @@ val logger = KotlinLogging.logger{}
 
 data class SsmProject(
     val pjName:String,
-    private val entityMap: LinkedHashMap<String,Entity> = linkedMapOf(),
-    private val actorMap: LinkedHashMap<String,Actor> = linkedMapOf(),
+    val roles:MutableList<String> = arrayListOf(),
+    val entities: MutableList<Entity> = arrayListOf(),
 )  {
-
-    val entities = entityMap.values
-    val actors = actorMap.values
     //添加实体
     operator fun plusAssign(entity: Entity){
-        entityMap += entity.id to entity
+        entities += entity
     }
-    operator fun plusAssign(actor: Actor){
-        actorMap += actor.id to actor
-    }
-    operator fun get(entityId: String) : Entity? = entityMap[entityId]
     //生成全部实体的代码（实体id to 代码）
     fun genCodeForEntities():Map<Entity,List<CodeGen>>{
         val map = hashMapOf<Entity,List<CodeGen>>()
@@ -85,7 +78,6 @@ data class SsmProject(
         }
         genCodeForProject().forEach { (type, gen) ->
             zipOut.putNextEntry(ZipEntry(type.getOutPath("")))
-            logger.info { "正在写入文件${type.name}" }
             zipOut.write(gen.code.toByteArray())
             zipOut.closeEntry()
         }
@@ -101,8 +93,7 @@ data class SsmProject(
             //项目
             val project = SsmProject(pjName)
             val entityDsl = """
-                角色role
-                用户systemuser 用户名uname 密码pwd 角色
+                用户systemuser 用户名uname 密码pwd 角色roleName
                 """.trimIndent()+"\n"+entityDsl
             logger.info { entityDsl }
             initEntitiesFromDsl(project,entityDsl)
@@ -112,12 +103,14 @@ data class SsmProject(
         }
 
         private fun printProject(project: SsmProject) {
-            val entities = project.entities.map { entity -> "\n${entity.name}${entity.id}: ${entity.fields.map { field -> "${field.name}${field.id}"}.joinToString(" ")}" }
-            val actors = project.actors.map { actor -> "\n${actor.id}-${actor.perms.map { entry -> "\n${entry.key.name}${entry.key.id}-${entry.value}" }.joinToString  (" ")}" }
+            val entities = project.entities.map { entity -> "\n${entity.name}${entity.id}: ${
+                entity.fields.joinToString(
+                    " "
+                ) { field -> "${field.name}${field.id}" }
+            }"+"${entity.perms}" }
             logger.info { """
                 ${project.pjName}
                 $entities
-                $actors
             """.trimIndent() }
         }
 
@@ -153,27 +146,25 @@ data class SsmProject(
             }
         }
 
-        private fun handlePermDsl(project: SsmProject, dsl:String): List<Actor>{
-            val actors = arrayListOf<Actor>()
+        private fun handlePermDsl(project: SsmProject, dsl:String){
+            project.roles += "系统管理员"
             //添加管理员
-            actors += Actor("系统管理员").apply {
-                project.entities.forEach { perms += it to Permission.all }
+            project.entities.forEach { entity ->
+                entity.perms += "系统管理员" to Permission.all
             }
             for (actorLine in dsl.splitByReturn()) {
                 val actorTokens = actorLine.splitBySpace().toMutableList()
-                val actor = Actor(actorTokens.removeFirst())
+                val actorName = actorTokens.removeFirst()
+                project.roles += actorName
                 for (actorToken in actorTokens) {
                     val idname = IdNameBase.fromToken(actorToken)
                     val entityName = idname.name
                     val perms = Permission.match(idname.id)
                     val entity = project.entities.find { it.name==entityName }
                         ?:throw SsmException("无效的权限设定！找不到实体“$entityName”")
-                    actor.perms += entity to perms
+                    entity.perms += actorName to perms
                 }
-                project += actor
             }
-
-            return actors
         }
 
     }

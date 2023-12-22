@@ -7,11 +7,21 @@ package calebxzhou.liberator.ssm
 data class Entity(
     override val id: String,
     override val name: String,
-    private val fieldMap: LinkedHashMap<String, Field> = linkedMapOf()
+    //权限 角色名to 权限
+    val perms: MutableMap<String,MutableSet<Permission>> = hashMapOf(),
+    val fields: MutableList<Field> = arrayListOf()
 ) : IdNameBase(id, name) {
-    //所有字段（有关联的放在最后）
-    val fields
-        get() = fieldMap.values//.sortedBy { fieldRefMap[it] != null }
+    //允许访问的条件
+    val accessibleRoles
+        get() = perms.keys.joinToString("||") { "user.roleName == '${it}'" }
+    //允许crud的条件
+    val insertableRoles
+        get() = perms.filter { Permission.INSERT in it.value }.keys.joinToString("||") { "user.roleName == '${it}'" }
+    val editableRoles
+        get() = perms.filter { Permission.UPDATE in it.value }.keys.joinToString("||") { "user.roleName == '${it}'" }
+    val deletableRoles
+        get() = perms.filter { Permission.DELETE in it.value }.keys.joinToString("||") { "user.roleName == '${it}'" }
+
     //vo字段（查询用 关联的实体 除对方主键 全部展开）
     val voFields: List<Field>
         get() {
@@ -29,16 +39,10 @@ data class Entity(
                 }
             }
             return voFields
-        }/*fieldMap.values.filter(fieldRefMap::containsKey)
-            .flatMap { field -> fieldRefMap[field]?.let { refEntity ->
-                refEntity.fields.filter { refEntity.primaryKey != it }
-            } ?: listOf() }*/
-
+        }
     //实体类字段（插入用 字段有关联实体的 = 对方主键）
     val classFields
-        get() = fieldMap.values/*.map { field ->
-            fieldRefMap[field]?.primaryKey ?: field
-        }*/
+        get() = fields
 
     //主键
     var primaryKey: Field = Field("","","")
@@ -79,26 +83,32 @@ data class Entity(
         val lines = arrayListOf<String>()
         for (field in fields) {
             if (field == primaryKey) {
-                lines += "${field.id} IDENTITY PRIMARY KEY not null"
+                lines += "${field.id} INT AUTO_INCREMENT PRIMARY KEY"
             } else {
                 if (!fieldHasEntityRef(field)) {
                     lines += "${field.id} ${Field.NORMAL_DTYPE} not null"
                 } else {
                     fieldRefMap[field]?.let { refEntity ->
-                        lines += "${field.parentEntityId}_${refEntity.primaryKey.id} ${Field.ID_DTYPE} " +
-                                "REFERENCES ${refEntity.id}(${refEntity.primaryKey.id}) not null"
+                        lines += "${field.parentEntityId}_${refEntity.primaryKey.id} ${Field.ID_DTYPE} not null"
+                               // "FOREIGN KEY REFERENCES ${refEntity.id}(${refEntity.primaryKey.id}) not null"
                     }
                 }
             }
+        }
+        for(field in fields.filter { fieldHasEntityRef(it) }){
+            fieldRefMap[field]?.let { refEntity ->
+                lines += "foreign key (${field.parentEntityId}_${refEntity.primaryKey.id}) references ${refEntity.id}(${refEntity.primaryKey.id})"
+            }
+
         }
         return lines.joinToString(",\n")
     }
 
     // +=field 是添加字段
     operator fun plusAssign(field: Field) {
-        if(fieldMap.size==0)
+        if(fields.size==0)
             primaryKey = field
-        fieldMap += field.id to field
+        fields+= field
     }
 
 

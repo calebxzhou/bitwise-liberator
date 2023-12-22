@@ -10,13 +10,17 @@
 <body>
 <h2 class="m-3">${entity.name}管理</h2>
 <div class="container">
-    <div class="row">
+
+        <form method="get" action="${entity.capId}_selectAll">
+            <div class="row">
         <div class="col-2">
+            <c:if test="${$}{${entity.insertableRoles}}">
             <a href="${$}{pageContext.request.contextPath}/${entity.capId}_insert">
                 <button type="button" class="btn btn-primary">添加${entity.name}</button>
             </a>
+            </c:if>
         </div>
-        <form method="get" action="${entity.capId}_selectAll">
+
             <div class="col-2">
                 <select class="form-select" name="by">
                     <#list entity.voFields as field>
@@ -28,12 +32,12 @@
                 <input name="value" class="form-control">
             </div>
             <div class="col">
-                <button type="submit" class="btn editBtn">搜索${entity.name}</button>
+                <button type="submit" class="btn btn-primary">搜索${entity.name}</button>
             </div>
-
+            </div>
         </form>
 
-    </div>
+
 </div>
 
 
@@ -53,17 +57,21 @@
                     <td>${$}{var.${field.id}}</td>
                 </#list>
                 <td>
+                    <c:if test="${$}{${entity.editableRoles}}">
+
                     <a href="${entity.capId}_edit?${entity.jspHrefParam}">
                         <button class="btn btn-primary">
                             编辑
                         </button>
 
-                    </a>
+                    </a> </c:if>
+                    <c:if test="${$}{${entity.deletableRoles}}">
+
                     <a href="${entity.capId}_delete?${entity.primaryKey.id}=${$}{var.${entity.primaryKey.id}}">
                         <button class="btn btn-danger">
                             删除
                         </button>
-                    </a>
+                    </a> </c:if>
                 </td>
             </tr>
         </c:forEach>
