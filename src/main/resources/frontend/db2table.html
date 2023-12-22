@@ -188,7 +188,7 @@
     }
 
     function extractEnglishCharacters(inputString) {
-        let englishCharacters = inputString.match(/[a-zA-Z\s]/g);
+        let englishCharacters = inputString.match(/[a-z_A-Z\s]/g);
         return englishCharacters ? englishCharacters.join('') : '';
     }
 
