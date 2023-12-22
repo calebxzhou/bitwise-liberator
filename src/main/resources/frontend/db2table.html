@@ -1,6 +1,6 @@
 <script>
     var _hmt = _hmt || [];
-    (function() {
+    (function () {
         var hm = document.createElement("script");
         hm.src = "https://hm.baidu.com/hm.js?97653e22175b6597a0db85ab2dab22d1";
         var s = document.getElementsByTagName("script")[0];
@@ -10,46 +10,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>数据库设计</title>
+    <title>数据库设计</title>
+    <style>
+        table tr td {
+            border: 1px solid;
+        }
+    </style>
 </head>
-<form method="post" action="/db2table_do">
-<textarea cols="50" rows="40" name="dsl">
-表一 table1
-字段1 field1 varchar 50 主键
-字段2 field2 varchar 50 非空
-字段3 field3 varchar 50 非空
-字段4 field4 varchar 50 非空
-字段5 field5 varchar 50 ——
-
-表二 test2
-字段1 field1 varchar 50 主键
-字段2 field2 varchar 50 非空
-字段3 field3 varchar 50 非空
-字段4 field4 varchar 50 非空
-字段5 field5 varchar 50 ——
-
-用户 users
-账号 usid varchar 20 主键
-昵称 name varchar 30 非空
-密码 pawd varchar 16 非空
-角色 role varchar 10 非空
-备注 comm varchar 50 非空
-
-角色 user_role
-编号 rlid varchar 10 主键
-名称 name varchar 20 非空
-备注 comm varchar 50 ——
-
-商品种类 item_type
-编号 tpid varchar 10 主键
-名称 name varchar 30 非空
-类别 plid varchar 30 非空
-
-商品单位 item_unit
-编号 iuid varchar 10 主键
-名称 name varchar 10 非空
-
-
+<div style="float: left">
+<textarea cols="30" rows="30" id="dsl" onkeyup="compile(this.value)">
+-用户users
+账号user_id varchar20
+昵称user_name varchar30
+密码password varchar16
+角色编号role_id int
+-角色user_role
+角色编号role_id int
+名称name varchar20
+-商品种类item_type
+编号item_type_id int
+名称item_type_name varchar30
+类别type_id varchar30
+-商品单位item_unit
+编号item_unit int
+名称name varchar10
 </textarea><br>
-<button type="submit"><h4>立刻生成</h4></button>
-</form>
+    <p>使用教程：<br>
+        ↑按照上面我给的例子做<br>
+        -表中文名英文名<br>
+        列中文名英文名 数据类型长度<br>
+    </p>
+    <br>
+    <button onclick="ok()"><h3>OK, 下载word</h3></button>
+</div>
+<h4>预览</h4>
+<table id="compiled" style="border: 1px solid">
+</table>
+<script>
+    window.onload = function () {
+        compile(document.getElementById("dsl").value)
+    }
+    /**
+     *
+     * @type {Table[]}
+     */
+    const tables = []
+
+    class Table {
+        /**
+         * @param id{string}
+         * @param {string} name
+         * @param {Column[]} columns
+         */
+        constructor(id, name, columns) {
+            this.id = id
+            this.name = name
+            this.columns = columns
+        }
+    }
+
+    class Column {
+        /**
+         *
+         * @param id{string}
+         * @param name{string}
+         * @param type{string}
+         * @param len{string}
+         */
+        constructor(id, name, type, len) {
+            this.id = id;
+            this.name = name
+            this.type = type;
+            this.len = len;
+        }
+    }
+    function ok(){
+        var domain = window.location.hostname;
+        // Get the current URL
+        let url = 'http://'+domain+':19001/dbTable';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(tables)
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a blob URL
+                let url = window.URL.createObjectURL(blob);
+                // Create a link and programmatically click it to download the file
+                let a = document.createElement("a");
+                a.href = url;
+                a.download = 'DbTable.docx';
+                a.click();
+            })
+            .catch((error) => console.error('Error:', error));
+
+    }
+    function compile(dsl) {
+        tables.length = 0
+        let tableNow = new Table("", "", [])
+        let rows = dsl.split("\n")
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i].trim();
+            let nextRow = rows[i + 1]
+            if (row === undefined || row.length === 0)
+                continue
+            //-的就是表格
+            if (row.startsWith("-")) {
+                row = row.replaceAll("-", "").trim()
+                tableNow = new Table(extractEnglishCharacters(row), extractChineseCharacters(row), [])
+                continue
+            }
+            let tokens = splitBySpaces(row)
+            let column = new Column(
+                extractEnglishCharacters(tokens[0]),
+                extractChineseCharacters(tokens[0]),
+                extractEnglishCharacters(tokens[1]),
+                extractNumbers(tokens[1]),
+            )
+            tableNow.columns.push(column)
+            //保存最后一个
+            if (nextRow === undefined || nextRow.trim().length === 0) {
+                tables.push(tableNow)
+                break
+            }
+            //保存上一个表格
+            if (nextRow.startsWith("-")) {
+                tables.push(tableNow)
+            }
+        }
+        compileToHtml(tables)
+        return tables;
+    }
+
+    function compileToHtml(tables) {
+        let preview = document.getElementById("compiled");
+        // Clear the preview
+        while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+        }
+
+        for (let table of tables) {
+            preview.appendChild(document.createTextNode(table.name))
+            // Create and append the header row
+            let headerRow = document.createElement("tr");
+            ["字段名", "数据类型", "长度", "是否为空", "是否主键", "描述"].forEach(text => {
+                let th = document.createElement("th");
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
+            preview.appendChild(headerRow);
+            // Create and append the data rows
+            for (let i = 0; i < table.columns.length; i++) {
+                let col = table.columns[i];
+                let tr = document.createElement("tr");
+                let isPk = "否";
+                let lenStr = col.len;
+                if (i === 0)
+                    isPk = "是";
+                if (col.len.length === 0)
+                    lenStr = "——";
+                [col.id, col.type, lenStr, "否", isPk.toString(), col.name].forEach(text => {
+                    let td = document.createElement("td");
+                    td.textContent = text;
+                    tr.appendChild(td);
+                });
+                preview.appendChild(tr);
+            }
+        }
+    }
+
+    function extractChineseCharacters(inputString) {
+        let chineseCharacters = inputString.match(/[\p{Script=Han}]/gu);
+        return chineseCharacters ? chineseCharacters.join('') : '';
+    }
+
+    function extractEnglishCharacters(inputString) {
+        let englishCharacters = inputString.match(/[a-zA-Z\s]/g);
+        return englishCharacters ? englishCharacters.join('') : '';
+    }
+
+    function extractNumbers(inputString) {
+        let numbers = inputString.match(/\d+/g);
+        return numbers ? numbers.join('') : '';
+    }
+
+    function splitBySpaces(inputString) {
+        return inputString.split(/\s+/);
+    }
+
+</script>
