@@ -1,3 +1,4 @@
+//${entity.name}的服务类
 package com.ssm.service;
 <#assign pk = entity.primaryKey>
 import com.ssm.entity.${entity.capId};
@@ -6,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-//${entity.name}的服务类
+
 @Service
 public class ${entity.capId}Service {
     //自动注入数据库映射类

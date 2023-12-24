@@ -1,3 +1,4 @@
+//${entity.name}的数据库映射类
 package com.ssm.mapper;
 <#assign pk = entity.primaryKey>
 import com.ssm.entity.*;
@@ -6,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-//${entity.name}的数据库映射类
+
 @Repository
 @Mapper
 public interface ${entity.capId}Mapper {

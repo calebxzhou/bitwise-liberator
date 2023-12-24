@@ -2,48 +2,198 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
 </head>
 <body>
 
 <h1>生成包文件说明表</h1>
-<h5>请上传项目包。</h5>
-<input type="file" id="zipFile" accept=".zip" onchange="handleFile()">
-
-<textarea>
-com/ssm 基础代码
-com/ssm/
-</textarea>
+请在每个代码文件的第一行写上作用，就像这样（“学院的控制器类”）<br>
+<img src="img/file-example.jpg" width="400px"/><br>
+然后上传代码包<input type="file" id="zipFile" accept=".zip" onchange="handleFile()"><br>
 <div id="result"></div>
-
+<br>
+<button onclick="ok()"><h3>OK, 下载word</h3></button>
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
 <script src="zip.js"></script>
+<script src="util.js"></script>
 <script>
+    /**
+     *
+     * @type {Package[]}
+     */
+    let packages = [];
+
+    class Package{
+        /**
+         *
+         * @param id{string}
+         * @param name{string}
+         * @param files{File[]}
+         */
+        constructor(id,name,files) {
+            this.id=id
+            this.name=name
+            this.files=files
+        }
+    }
+    class File{
+        /**
+         *
+         * @param id{string}
+         * @param name{string}
+         */
+        constructor(id,name) {
+            this.id=id
+            this.name=name
+        }
+    }
+    function toDocDsl() {
+        let dsl = `h1 2 系统实现
+        h2 2.1 系统框架
+        p 本系统工程目录结构图，如图2.1所示。
+        h6 图2.1 工程目录结构图\n`
+        for (let i = 0; i < packages.length; i++) {
+            let package = packages[i]
+            dsl += `p ${package.id}是${package.name}的包。${package.id}包的说明表，如表2.${i+1}所示。
+            h6 表2.${i+1} ${package.id}包的说明表
+                  th 文件名4536c 作用4536c
+                  `
+            for (let file of package.files) {
+                dsl += `tr ${file.id} ${file.name}\n`
+            }
+        }
+        return dsl;
+    }
+    function renderResult() {
+        let div = $('#result');
+        div.empty(); // Clear the div first
+        div.append('处理完成！请在下方修改内容。<br>')
+        packages.forEach((pkg) => {
+            div.append('文件名&emsp;&emsp;&emsp;作用<br>')
+            // Input for package id
+            let idInput = $('<input/>', {
+                type: 'text',
+                id: 'id-' + pkg.id,
+                size: pkg.id.length,
+                value: pkg.id
+            });
+
+            // Attach event listener for id change
+            idInput.on('change', function() {
+                pkg.id = this.value;
+            });
+
+            // Input for package name
+            let nameInput = $('<input/>', {
+                type: 'text',
+                id: 'name-' + pkg.id,
+                value: pkg.name,
+                size: pkg.name.length*2,
+            });
+
+            // Attach event listener for name change
+            nameInput.on('change', function() {
+                pkg.name = this.value;
+            });
+
+            div.append(idInput); // Append the id input box to the div
+            div.append(nameInput); // Append the name input box to the div
+            div.append('<br>')
+            // Loop over files in the package
+            pkg.files.forEach((file) => {
+                // Input for file id
+                let fileIdInput = $('<input/>', {
+                    type: 'text',
+                    id: 'file-id-' + file.id,
+                    value: file.id,
+                    size: file.id.length,
+                });
+
+                // Attach event listener for file id change
+                fileIdInput.on('change', function() {
+                    file.id = this.value;
+                });
+
+                // Input for file name
+                let fileNameInput = $('<input/>', {
+                    type: 'text',
+                    id: 'file-name-' + file.id,
+                    value: file.name,
+                    size: file.name.length*2,
+                });
+
+                // Attach event listener for file name change
+                fileNameInput.on('change', function() {
+                    file.name = this.value;
+                });
+
+                div.append(fileIdInput); // Append the file id input box to the div
+                div.append(fileNameInput); // Append the file name input box to the div
+                div.append('<br>'); // Add a line break after each file
+            });
+
+            div.append('<br>'); // Add a line break after each package
+        });
+    }
+
     async function handleFile() {
+        packages.length=0
         const fileInput = document.getElementById('zipFile');
         const file = fileInput.files[0];
 
-        let zipReader = new zip.ZipReader(new zip.BlobReader(file)/*, function(reader) {
-            reader.getEntries(function(entries) {
-                entries.forEach(function(entry) {
-                    if (!entry.directory) {
-                        entry.getData(new zip.TextWriter(), function(text) {
-                            const firstLine = text.split('\n')[0];
-                            console.log("File path: ", entry.filename);
-                            console.log("First line: ", firstLine);
-                        });
-                    }
-                });
-            });
-        }*/);
-        let entries = await zipReader.getEntries()
-        for (let entry of entries) {
+        let zipReader = new zip.ZipReader(new zip.BlobReader(file));
+        const directoryMap = {};
+
+        (await zipReader.getEntries()).forEach(entry => {
+            const pathParts = entry.filename.split('/');
+            const parentDirectory = pathParts.slice(0, -1).join('/');
+
             if (!entry.directory) {
-                document.getElementById("result").innerText += entry.filename
-            }else{
-                document.getElementById("result").innerText += entry.filename
+                if (!directoryMap[parentDirectory]) {
+                    directoryMap[parentDirectory] = [];
+                }
+
+                directoryMap[parentDirectory].push(entry);
             }
+        });
+        for (const directory of Object.keys(directoryMap)) {
+            if (directoryMap[directory].length <= 0) {
+                continue;
+            }
+            if(directory.trim().length<=0)
+                continue;
+            let op="xxx";
+            if(directory.includes("controller"))
+                op="控制器"
+            else if (directory.includes("service"))
+                op="业务逻辑"
+            else if (directory.includes("mapper"))
+                op="数据库映射器"
+            else if (directory.includes("dao"))
+                op="数据访问对象"
+            else if (directory.includes("daoimpl"))
+                op="数据访问对象实现"
+            else if (directory.includes("pojo")
+                ||directory.includes("model")
+                ||directory.includes("entity"))
+                op="实体类"
+            let name = `用于${op}的操作的包`
+            let pkg = new Package(directory.replaceAll("/","."),name,[])
+            for (let entry of directoryMap[directory]) {
+                    const writer = new zip.TextWriter();
+                    const firstLine = (await entry.getData(writer)).split("\n")[0].match(/([\u4e00-\u9fa5]+)/);
+                    const id = entry.filename.replaceAll(directory+"/","")
+                    await zipReader.close();
+                    let fileName="用于xxx操作的文件"
+                    if(firstLine !== undefined && firstLine !== null && firstLine.length>=2)
+                        fileName = firstLine[1]
+                    pkg.files.push(new File(id,fileName))
+            }
+            packages.push(pkg)
         }
+        renderResult()
+    }
+    function ok(){
+        downloadDocx(toDocDsl());
     }
 </script>
 

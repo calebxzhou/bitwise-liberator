@@ -1,3 +1,4 @@
+//${entity.name}的控制器类
 package com.ssm.controller;
 
 import com.ssm.entity.*;
@@ -9,7 +10,7 @@ import org.springframework.lang.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-//${entity.name}的控制器类
+
 @Controller
 public class ${entity.capId}Controller {
 

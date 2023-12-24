@@ -1,6 +1,7 @@
+//${entity.name}实体类
 package com.ssm.entity;
 
-//${entity.name}实体类
+
 public class ${entity.capId}{
 
 <#list entity.classFields as field>
