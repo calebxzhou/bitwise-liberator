@@ -177,7 +177,11 @@
                 ||directory.includes("entity"))
                 op="实体类"
             let name = `用于${op}的操作的包`
-            let pkg = new Package(directory.replaceAll("/","."),name,[])
+            let pkgId = directory.replaceAll("/",".")
+                .replaceAll("src.test.java","")
+                .replaceAll("src.main.java.","")
+                .replaceAll("src.main.webapp.","")
+            let pkg = new Package(pkgId,name,[])
             for (let entry of directoryMap[directory]) {
                     const writer = new zip.TextWriter();
                     const firstLine = (await entry.getData(writer)).split("\n")[0].match(/([\u4e00-\u9fa5]+)/);
