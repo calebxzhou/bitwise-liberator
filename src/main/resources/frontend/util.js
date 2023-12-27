@@ -11,7 +11,11 @@ const randomElementOfArray = array => array[Math.floor(Math.random() * array.len
 function removeAllSpaces(str) {
     return str.replace(/\s+/g, '');
 }
-
+function serverUrl(){
+    let domain = window.location.hostname;
+    // Get the current URL
+    return 'http://' + domain + ':19001';
+}
 /**
  *
  * @param dsl {string}

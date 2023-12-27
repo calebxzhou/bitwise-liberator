@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>优化表格</title>
+    <style>
+        table {
+            border-collapse: collapse; /* Collapse borders */
+        }
+
+        table tr:first-child td {
+            border-top: 1px solid black; /* Add top border to the first row */
+        }
+
+        table tr td {
+            border-bottom: 1px solid black; /* Add bottom border to all rows */
+        }
+
+    </style>
+</head>
+<body>
+<h1>优化表格</h1>
+上传Word：<input type="file" id="fileUpload" name="fileUpload">
+<div id="result"></div>
+<br>
+<button onclick="ok()">OK，下载word</button>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+
+<script src="util.js"></script>
+<script>
+    /**
+     * Class representing the content of a document table.
+     */
+    class DocTableContent {
+        /**
+         * Create a DocTableContent.
+         * @param {string} tableName - The name of the table.
+         * @param {string[]} headers - The headers of the table.
+         * @param {string[][]} rowCells - The cells of the table.
+         */
+        constructor(tableName, headers, rowCells) {
+            this.tableName = tableName;
+            this.headers = headers;
+            this.rowCells = rowCells;
+        }
+    }
+    // Function to create a table from a DocTableContent object
+    /**
+     * 
+     * @param tableContents {DocTableContent[]}
+     */
+    function createTables(tableContents){
+        for (let i = 0; i < tableContents.length; i++) {
+            let docTableContent = tableContents[i];
+            // Create a new table element
+            let table = $('<table></table>');
+
+            // Add the table name as a caption
+            let caption = $('<caption></caption>');
+            caption.text(docTableContent.tableName);
+            table.append(caption);
+
+            // Add the headers to the table
+            let thead = $('<thead></thead>');
+            let headerRow = $('<tr></tr>');
+            docTableContent.headers.forEach(function(header) {
+                let th = $('<th></th>');
+                th.text(header);
+                headerRow.append(th);
+            });
+            let th = $('<th></th>');
+            th.text("选中->行前加续表");
+            headerRow.append(th);
+            thead.append(headerRow);
+            table.append(thead);
+
+            // Add the rows to the table
+            let tbody = $('<tbody></tbody>');
+            for (let j = 0; j < docTableContent.rowCells.length; j++){
+                const rowCells = docTableContent.rowCells[j];
+                let tr = $('<tr></tr>');
+                rowCells.forEach(function(cell) {
+                    let td = $('<td></td>');
+                    td.text(cell);
+                    tr.append(td);
+                });
+                let btn = $('<input>',{
+                    type: 'radio',
+                    name: docTableContent.tableName,
+                    value: `${i}-${j}`
+                })
+                tr.append(btn)
+                tbody.append(tr);
+            }
+            table.append(tbody);
+            $('#result').append(table);
+        }
+    }
+    $(document).ready(function(){
+        $("#fileUpload").change(function(){
+            let fileInput = $('#fileUpload')[0];
+            let file = fileInput.files[0];
+            let formData = new FormData();
+            formData.append('file', file);
+
+            $.ajax({
+                url: serverUrl()+'/docTablesGet',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    // Map the response to a DocTableContent object
+                    let docTableContents = response.map(function(item) {
+                        return new DocTableContent(item.tableName, item.headers, item.rowCells);
+                    });
+                    $('#result').html('')
+                    // Append the tables to the body of the HTML document
+                    createTables(docTableContents); 
+                },
+                error: function() {
+                    console.log('An error occurred while uploading the file.');
+                }
+            });
+        });
+    });
+    function ok(){
+
+    }
+</script>
+</html>
