@@ -2,12 +2,23 @@
 <html >
 <head>
     <meta charset="UTF-8">
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
 <h1>生成功能实现</h1>
-<h5>格式：模块名=功能名页面#输入项1中文英文+输入项2中文英文+..+输入项n中文英文#控制层类名.方法3#服务层类名.方法#持久层类名.方法#数据库表名</h5>
-<textarea rows="20" cols="200">
-用户端模块=登录login.jsp#用户名username+密码password#LoginController.login#LoginService.login#UserMapper.findUserById#table_user
+选择模板<select id="presets"></select><br>
+<textarea id="dsl-area" class="fl" rows="50" cols="70" style="word-break: break-all" onkeyup="updatePreview(this.value)">
 </textarea>
+<div id="preview" class="fl" style="max-width: 500px">
+</div>
+<button onclick="downloadDocx(toDocDsl())"><h1>下载word</h1></button>
+<pre id="preview2" class="fl" style="max-width: 800px;white-space:pre-wrap;">
+
+</pre>
+
 </body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+<script src="sysimpl-gen.js"></script>
+<script src="util.js"></script>
+
 </html>

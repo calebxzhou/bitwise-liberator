@@ -61,3 +61,18 @@ function extractNumbers(inputString) {
 function splitBySpaces(inputString) {
     return inputString.split(/\s+/);
 }
+
+/**
+ * 分离中英文 name id
+ * @param input {string}
+ * @returns {{name: (string|null), id: (string|null)}}
+ */
+function matchIdName(input) {
+    let regex = /([\u4e00-\u9fa5]+)([a-zA-Z0-9.-_]+)/; // Matches Chinese characters followed by English characters
+    let match = input.match(regex);
+
+    return {
+        name: match ? match[1] : null,
+        id: match ? match[2] : null
+    };
+}

@@ -1,5 +1,5 @@
 document.getElementById("output").onclick = output
-let content = document.getElementById("content");
+let content = document.getElementById("impl");
 let str;
 let words;
 const maxWords = getRandomInt(1000, 1200)
