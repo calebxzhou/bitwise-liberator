@@ -11,7 +11,6 @@
         table tr:first-child td {
             border-top: 1px solid black; /* Add top border to the first row */
         }
-
         table tr td {
             border-bottom: 1px solid black; /* Add bottom border to all rows */
         }
@@ -19,7 +18,7 @@
     </style>
 </head>
 <body>
-<h1>优化表格</h1>
+<h1>加续表</h1>
 上传Word：<input type="file" id="fileUpload" name="fileUpload">
 <div id="result"></div>
 <br>
@@ -45,6 +44,24 @@
             this.rowCells = rowCells;
         }
     }
+    /**
+     * Represents a continuation of a document table.
+     */
+    class DocTableContinue {
+        /**
+         * Create a new DocTableContinue.
+         * @param {number} tableIndex - The index of the table.
+         * @param {string} tableName - The name of the table.
+         * @param {number} rowIndex - The index of the row for continuation.
+         */
+        constructor(tableIndex, tableName, rowIndex) {
+            this.tableIndex = tableIndex;
+            this.tableName = tableName;
+            this.rowIndex = rowIndex;
+        }
+    }
+
+
     // Function to create a table from a DocTableContent object
     /**
      * 
@@ -70,7 +87,7 @@
                 headerRow.append(th);
             });
             let th = $('<th></th>');
-            th.text("选中->行前加续表");
+            th.text("想在哪行前面加续表？");
             headerRow.append(th);
             thead.append(headerRow);
             table.append(thead);
@@ -86,9 +103,11 @@
                     tr.append(td);
                 });
                 let btn = $('<input>',{
-                    type: 'radio',
+                    type: 'checkbox',
                     name: docTableContent.tableName,
-                    value: `${i}-${j}`
+                    class: 'table-con-chkbox',
+                    tableIndex: i,
+                    rowIndex: j
                 })
                 tr.append(btn)
                 tbody.append(tr);
@@ -105,7 +124,7 @@
             formData.append('file', file);
 
             $.ajax({
-                url: serverUrl()+'/docTablesGet',
+                url: serverUrl('/docTablesGet'),
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -126,7 +145,59 @@
         });
     });
     function ok(){
+        // Get all selected checkboxes with the class 'table-con-chkbox'
+        let selectedCheckboxes = $('.table-con-chkbox:checkbox:checked');
 
+        // Create an array to store the DocTableContinue objects
+        let docTableContinues = [];
+
+        // Loop through each selected checkbox
+        selectedCheckboxes.each(function() {
+            // Get the tableIndex, tableName, and rowIndexForContinue attributes
+            let tableIndex = $(this).attr('tableIndex');
+            let tableName = $(this).attr('name');
+            let rowIndex = $(this).attr('rowIndex');
+
+            // Create a new DocTableContinue object
+            let docTableContinue = new DocTableContinue(Number(tableIndex), tableName, Number(rowIndex));
+
+            // Add the new object to the array
+            docTableContinues.push(docTableContinue);
+        });
+        // Serialize the docTableContinues array to JSON
+        var reader = new FileReader();
+
+        reader.readAsDataURL($('#fileUpload')[0].files[0]);
+        reader.onloadend = function() {
+            var docxB64 = reader.result.split(',')[1];
+            let url = serverUrl('/docTablesOpt');
+            let data = {
+                'file': docxB64,
+                'continues': docTableContinues,
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    // Create a blob URL
+                    let url = window.URL.createObjectURL(blob);
+                    // Create a link and programmatically click it to download the file
+                    let a = $('<a />', {
+                        href: url,
+                        download: '1.docx'
+                    }).appendTo('body');
+                    a[0].click();
+                    a.remove();
+                })
+                .catch(error => console.error('Error:', error));
+
+        }
     }
 </script>
 </html>
