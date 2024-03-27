@@ -1,0 +1,23 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field>
+    <mat-label>中文名</mat-label>
+    <input formControlName="name" matInput [errorStateMatcher]="matcher" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>英文名</mat-label>
+    <input formControlName="id" matInput [errorStateMatcher]="matcher" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>类型</mat-label>
+    <mat-select formControlName="type" matInput [errorStateMatcher]="matcher">
+      <mat-option [value]="0">文字</mat-option>
+      <mat-option [value]="1">整数</mat-option>
+      <mat-option [value]="2">小数</mat-option>
+      <mat-option [value]="3">日期</mat-option>
+      <mat-option [value]="4">时间</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button type="submit" mat-fab color="primary" *ngIf="form.valid">
+    <mat-icon>check</mat-icon>
+  </button>
+</form>

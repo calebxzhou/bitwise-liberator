@@ -1,17 +1,17 @@
 //项目
 export class Project {
   //项目名
-  name!: string;
+  name: string = '';
   //所有实体
-  entities!: Entity[];
+  entities: Entity[] = [];
   //所有db表
-  tables!: Table[];
+  tables: Table[] = [];
   //所有实体关系
-  relations!: EntityRelation[];
+  relations: EntityRelation[] = [];
   //所有模块
-  modules!: ModuleFunction[];
+  modules: ModuleFunction[] = [];
   //角色
-  actors!: ActorAccess[];
+  actors: ActorAccess[] = [];
 }
 //角色与权限
 export class ActorAccess {

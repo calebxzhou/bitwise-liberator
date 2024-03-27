@@ -1,0 +1,11 @@
+<div class="h-screen flex items-center justify-center bg-gray-200">
+  <form [formGroup]="form">
+    <mat-form-field style="min-width: 20rem">
+      <mat-label>项目ID</mat-label>
+      <input formControlName="idField" matInput [errorStateMatcher]="matcher" />
+    </mat-form-field>
+  </form>
+  <button mat-fab color="primary" *ngIf="form.valid">
+    <mat-icon>arrow_forward</mat-icon>
+  </button>
+</div>

@@ -11,12 +11,14 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "css","skipTests": true
+          "style": "css",
+          "skipTests": true, 
+          "inlineStyle": true
         }
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "bl",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -34,6 +36,7 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -94,6 +97,7 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": []
