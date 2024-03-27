@@ -1,19 +1,24 @@
 <h1 class="m-4 text-3xl">创建项目</h1>
 <div class="m-6">
   <form [formGroup]="form">
-    <mat-form-field class="w-full">
-      <mat-label>项目信息</mat-label>
-      <textarea
-        (keyup)="parse()"
-        class="w-full"
-        [rows]="25"
-        [cols]="50"
-        [(ngModel)]="dsl"
-        formControlName="dsl"
-        matInput
-        [errorStateMatcher]="matcher"
-      ></textarea>
-    </mat-form-field>
+    <div class="flex h-[80vh]">
+      <mat-form-field class="w-1/2">
+        <mat-label>项目信息</mat-label>
+        <textarea
+          (keyup)="parse()"
+          class="whitespace-pre overflow-x-auto"
+          [rows]="30"
+          [cols]="50"
+          [(ngModel)]="dsl"
+          formControlName="dsl"
+          matInput
+          [errorStateMatcher]="matcher"
+        ></textarea>
+      </mat-form-field>
+      <div class="w-1/2">
+        <span class="text-2xl">预览: {{ project.name }}</span>
+      </div>
+    </div>
     <!-- <div class="m-4">
       <h2 class="m-4 text-2xl">创建实体</h2>
       <bl-entity-create (created)="onEntityCreated($event)"></bl-entity-create>
@@ -51,9 +56,6 @@
       ></textarea>
     </mat-form-field> -->
   </form>
-  <div>
-    <span>项目： {{ pjJson() }}</span>
-  </div>
   <span class="text-red-500">{{ err }}</span>
   <button mat-fab color="primary" *ngIf="form.valid">
     <mat-icon>arrow_forward</mat-icon>
