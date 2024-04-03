@@ -1,63 +1,56 @@
 <h1 class="m-4 text-3xl">创建项目</h1>
 <div class="m-6">
-  <form [formGroup]="form">
-    <div class="flex h-[80vh]">
-      <mat-form-field class="w-1/2">
-        <mat-label>项目信息</mat-label>
-        <textarea
-          (keyup)="parse()"
-          class="whitespace-pre overflow-x-auto"
-          [rows]="30"
-          [cols]="50"
-          [(ngModel)]="dsl"
-          formControlName="dsl"
-          matInput
-          [errorStateMatcher]="matcher"
-        ></textarea>
-      </mat-form-field>
-      <div class="w-1/2">
-        <span class="text-2xl">预览: {{ project.name }}</span>
-      </div>
+  <div class="flex h-[80vh]">
+    <textarea
+      (keyup)="parse()"
+      class="whitespace-pre overflow-x-auto h-[80vh] w-1/2"
+      [rows]="28"
+      [cols]="50"
+      [(ngModel)]="dsl"
+    ></textarea>
+    <div class="w-1/2">
+      <span class="text-2xl">项目名: {{ project.name }}</span>
+      <br />
+      <span class="text-red-500 text-base" *ngIf="err"> 错误：{{ err }} </span>
+      <br />
+      <ng-container *ngIf="!err">
+        <span class="font-bold">角色与功能</span>
+        <table class="text-sm">
+          <tr class="border-2" *ngFor="let actor of project.actors">
+            <td class="border-2">{{ actor.name }}</td>
+            <td class="pl-2" *ngFor="let func of actor.funcs">{{ func }}</td>
+          </tr>
+        </table>
+        <span class="font-bold">模块与功能</span>
+        <table class="text-sm">
+          <tr class="border-2" *ngFor="let module of project.modules">
+            <td class="border-2">{{ module.name }}</td>
+            <td class="pl-2" *ngFor="let func of module.funcs">{{ func }}</td>
+          </tr>
+        </table>
+        <span class="font-bold">实体与字段</span>
+        <table class="text-xs">
+          <tr class="border-2" *ngFor="let entity of project.entities">
+            <td class="border-2">{{ entity.name }}({{ entity.id }})</td>
+            <td *ngFor="let field of entity.fields">
+              {{ field.name }}({{ field.id }})
+            </td>
+          </tr>
+        </table>
+        <span class="font-bold">实体关系</span>
+        <table class="text-xs">
+          <tr class="border-2" *ngFor="let relation of project.relations">
+            <td class="border-2">{{ relation.fromEntityId }}</td>
+            <td class="border-2">{{ relation.type }}</td>
+            <td class="border-2">{{ relation.verb }}</td>
+            <td class="border-2">{{ relation.toEntityId }}</td>
+          </tr>
+        </table></ng-container
+      >
     </div>
-    <!-- <div class="m-4">
-      <h2 class="m-4 text-2xl">创建实体</h2>
-      <bl-entity-create (created)="onEntityCreated($event)"></bl-entity-create>
-    </div> -->
-    <!-- <mat-form-field>
-      <mat-label>实体与字段</mat-label>
-      <textarea
-        formControlName="idField"
-        matInput
-        [errorStateMatcher]="matcher"
-      ></textarea>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>实体关联</mat-label>
-      <textarea
-        formControlName="idField"
-        matInput
-        [errorStateMatcher]="matcher"
-      ></textarea>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>模块与功能</mat-label>
-      <textarea
-        formControlName="idField"
-        matInput
-        [errorStateMatcher]="matcher"
-      ></textarea>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>角色与功能</mat-label>
-      <textarea
-        formControlName="idField"
-        matInput
-        [errorStateMatcher]="matcher"
-      ></textarea>
-    </mat-form-field> -->
-  </form>
-  <span class="text-red-500">{{ err }}</span>
-  <button mat-fab color="primary" *ngIf="form.valid">
+  </div>
+
+  <button mat-fab color="primary" *ngIf="!err" (click)="create()">
     <mat-icon>arrow_forward</mat-icon>
   </button>
 </div>

@@ -1,4 +1,6 @@
 import { ValidatorFn, AbstractControl } from '@angular/forms';
+import { NumberAlias } from '@svgdotjs/svg.js';
+import RandExp from 'randexp';
 
 export function isValidMongoId(id: string) {
   const regex = new RegExp('^[0-9a-fA-F]{24}$');
@@ -44,4 +46,7 @@ export function matchIdName(input: string): {
     name: match ? match[1] : null,
     id: match ? match[2] : null,
   };
+}
+export function avarage(x: NumberAlias, y: NumberAlias) {
+  return (Number(x) + Number(y)) / 2;
 }

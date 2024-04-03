@@ -1,0 +1,43 @@
+<h1 class="m-4 text-3xl">假数据生成器</h1>
+<div class="m-6">
+  <div class="flex h-[60vh] m">
+    <textarea
+      (keyup)="doParse()"
+      class="outline-double whitespace-pre overflow-x-auto w-1/2"
+      [rows]="20"
+      [cols]="50"
+      [(ngModel)]="dsl"
+    ></textarea>
+    <div class="w-1/2 m-4">
+      <span class="text-2xl">表名: {{ data.tableName }}</span>
+      <br />
+      <span class="text-red-500 text-base" *ngIf="err"> 错误：{{ err }} </span>
+      <br />
+      <ng-container *ngIf="!err">
+        <table class="text-base">
+          <th>列名</th>
+          <th>类型</th>
+          <th>例子</th>
+          <tr class="border-2" *ngFor="let col of data.columns">
+            <td class="border-2">{{ col.name }}</td>
+            <td class="pl-2">{{ col.type }}</td>
+            <td class="pl-2">{{ genData(col) }}</td>
+          </tr>
+        </table>
+      </ng-container>
+    </div>
+  </div>
+  <div>
+    <button
+      mat-flat-button
+      color="primary"
+      *ngIf="!err"
+      (click)="downloadSql()"
+    >
+      💾生成SQL
+    </button>
+    <button mat-flat-button color="accent" *ngIf="!err" (click)="downloadCsv()">
+      💾生成CSV
+    </button>
+  </div>
+</div>

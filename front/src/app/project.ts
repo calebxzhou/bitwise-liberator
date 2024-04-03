@@ -1,5 +1,8 @@
+import { v4 as uuidv4 } from 'uuid';
 //项目
 export class Project {
+  //ID
+  id: string = uuidv4();
   //项目名
   name: string = '';
   //所有实体
@@ -34,7 +37,7 @@ export class EntityRelation {
   //从
   fromEntityId!: string;
   //类型
-  type!: RelationType;
+  type!: string;
   //动词
   verb!: string;
   //到
@@ -43,7 +46,7 @@ export class EntityRelation {
 export class Field {
   id!: string;
   name!: string;
-  type!: FieldType;
+  type!: string;
 }
 export class Table {
   id!: string;
