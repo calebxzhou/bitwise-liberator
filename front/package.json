@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^17.2.0",
     "@angular/router": "^17.2.0",
     "@svgdotjs/svg.js": "^3.2.0",
+    "docx": "^8.5.0",
     "file-saver": "^2.0.5",
     "ngx-cookie-service": "^17.1.0",
     "randexp": "^0.5.3",

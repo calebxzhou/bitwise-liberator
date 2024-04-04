@@ -12,29 +12,15 @@ import {
   getLineStartPoint,
   getVerticalTextHeight,
 } from '../draw-svg';
+import { MatButtonModule } from '@angular/material/button';
+import saveAs from 'file-saver';
 
 @Component({
   selector: 'bl-fumogram',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatButtonModule],
   templateUrl: './fumogram.component.html',
-  styles: `
-  //中文宋体 英文罗马
-  @font-face {
-    font-family: 'MyFont';
-    src: local('Times New Roman');
-    unicode-range: U+30-39, U+41-5A, U+61-7A; /* Unicode range for numbers and English letters */
-}
-
-@font-face {
-    font-family: 'MyFont';
-    src: local('SimSun');
-    unicode-range: U+4E00-9FFF; /* Unicode range for CJK characters */
-}
- 
-  #svg{
-    font-family: 'MyFont'; 
-  }`,
+  styles: ` `,
 })
 export class FumogramComponent implements OnInit {
   ngOnInit(): void {
@@ -53,6 +39,13 @@ export class FumogramComponent implements OnInit {
   测试管理模块 系统测试 功能测试 模块测试
   测基管理模块 商品管理 进货修改 进货删除 进货人联系`;
   data = new Project();
+  svg = SVG();
+  save() {
+    let blob = new Blob([this.svg.svg()], {
+      type: 'image/svg+xml;charset=utf-8',
+    });
+    saveAs(blob, 'fumogram.svg');
+  }
   parse(dsl: string): Project {
     let pj = new Project();
     let lines = dsl
@@ -78,6 +71,19 @@ export class FumogramComponent implements OnInit {
     svg.width('100%');
     svg.height('1080px');
     svg.addTo('#svg');
+    svg.defs().element('style').words(`//中文宋体 英文罗马
+    @font-face {
+      font-family: 'MyFont';
+      src: local('Times New Roman');
+      unicode-range: U+30-39, U+41-5A, U+61-7A; 
+  }
+  
+  @font-face {
+      font-family: 'MyFont';
+      src: local('SimSun');
+      unicode-range: U+4E00-9FFF; 
+  }`);
+    svg.font('family', 'MyFont');
     let startY = 200;
     let startX = 20;
     //统一高度，用最高的功能
@@ -194,5 +200,6 @@ export class FumogramComponent implements OnInit {
       pj.name,
       false
     );
+    this.svg = svg;
   }
 }
