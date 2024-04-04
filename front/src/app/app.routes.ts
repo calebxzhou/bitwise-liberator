@@ -10,12 +10,14 @@ import {
   MockDataComponent,
 } from './mock-data/mock-data.component';
 import { FumogramComponent } from './fumogram/fumogram.component';
+import { DocDslTestComponent } from './doc-dsl-test/doc-dsl-test.component';
 
 export const routes: Routes = [
   { path: 'project-select', component: ProjectSelectComponent },
   { path: 'project-home', component: ProjectHomeComponent },
   { path: 'project-create', component: ProjectCreateComponent },
   { path: 'mock-data', component: MockDataComponent },
+  { path: 'doc-dsl-test', component: DocDslTestComponent },
   { path: 'home', component: HomeComponent },
   { path: 'toolbox', component: ToolboxComponent },
   { path: 'fumogram', component: FumogramComponent },
