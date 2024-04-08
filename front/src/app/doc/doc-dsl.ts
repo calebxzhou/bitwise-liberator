@@ -2,6 +2,7 @@ import {
   AlignmentType,
   BorderStyle,
   Document,
+  HeightRule,
   ImageRun,
   Packer,
   Paragraph,
@@ -15,6 +16,7 @@ import {
 import { splitBySpaces } from '../util';
 import { FileChild } from 'docx/build/file/file-child';
 import saveAs from 'file-saver';
+import { LineError } from '../errors';
 
 export enum DocElementType {
   h1 = '标1',
@@ -22,7 +24,7 @@ export enum DocElementType {
   h3 = '标3',
   h4 = '标4',
   h6 = '标6',
-  img = '图片',
+  img = '<img',
   p = '正文',
   table = '表格',
 }
@@ -44,27 +46,29 @@ function getEnumKeyByEnumValue(myEnum: any, enumValue: string): string | null {
 //词法分析 dsl转row
 export function parseDslToRows(dsl: string) {
   let dslRows: DocDslRow[] = [];
-  for (let dslLine of dsl.split('\n').map((r) => r.trim())) {
-    let tokens = splitBySpaces(dslLine);
-
-    let value = tokens.shift() ?? '正文';
-    let type = Object.keys(DocElementType).find(
-      (key) => DocElementType[key as keyof typeof DocElementType] === value
-    );
-
-    if (type) {
-      dslRows.push(
-        new DocDslRow(
-          DocElementType[type as keyof typeof DocElementType],
-          tokens
-        )
+  let elemTypeNow = DocElementType.p;
+  dsl
+    .split('\n')
+    .map((r) => r.trim())
+    .forEach((dslLine, lineNum) => {
+      let tokens = splitBySpaces(dslLine);
+      if (tokens.length == 0) {
+        throw new LineError(lineNum, '文字不存在');
+      }
+      let typeValue = tokens[0];
+      let type = Object.keys(DocElementType).find(
+        (key) =>
+          DocElementType[key as keyof typeof DocElementType] === typeValue
       );
-    } else {
-      // Handle the case where the type is not found in the enum
-      // For example, default to 'p' if the value is not found
-      dslRows.push(new DocDslRow(DocElementType.p, tokens));
-    }
-  }
+      elemTypeNow = DocElementType[type as keyof typeof DocElementType];
+      //防止无类型时删掉整段文字
+      if (tokens.length > 1) tokens.shift();
+      //默认为正文类型
+      if (!elemTypeNow) elemTypeNow = DocElementType.p;
+      let row = new DocDslRow(elemTypeNow, tokens);
+
+      dslRows.push(row);
+    });
   return dslRows;
 }
 const verticalAlignMap: {
@@ -107,10 +111,11 @@ export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
         );
         break;
       case DocElementType.img:
+        let imageb64 = row.merged.split('"')[1];
         children.push(
           new Paragraph({
             alignment: 'center',
-            children: [base64ImageToImageRun(row.merged, 200, 200)],
+            children: [base64ImageToImageRun(imageb64, 200, 200)],
           })
         );
         break;
@@ -166,7 +171,6 @@ export function createTable(
   headers: TableHeader[],
   rowCells: string[][]
 ) {
-  console.log(headers);
   let rows: TableRow[] = [];
   let headerCells = headers.map((h) => {
     return new TableCell({
@@ -211,23 +215,23 @@ export function createTable(
   );
 
   let contentRows = rowCells.map(
-    (row) =>
+    (row, rowIndex) =>
       new TableRow({
         children: row.map(
-          (cellContent, i) =>
+          (cellContent, cellIndex) =>
             new TableCell({
               children: [
                 new Paragraph({
                   text: cellContent,
                   style: 'table-cell',
-                  alignment: headers[i].hAlign,
+                  alignment: headers[cellIndex].hAlign,
                 }),
               ],
               width: {
-                size: headers[i].width,
+                size: headers[cellIndex].width,
                 type: WidthType.DXA,
               },
-              verticalAlign: headers[i].vAlign,
+              verticalAlign: headers[cellIndex].vAlign,
               borders: {
                 left: {
                   style: BorderStyle.NIL,
@@ -235,9 +239,29 @@ export function createTable(
                 right: {
                   style: BorderStyle.NIL,
                 },
+                top: {
+                  style: rowIndex == 0 ? BorderStyle.SINGLE : BorderStyle.NIL,
+                },
+                //只给最后一行底下加边框
+                bottom: {
+                  style:
+                    rowIndex == rowCells.length - 1
+                      ? BorderStyle.SINGLE
+                      : BorderStyle.NIL,
+                  size: 8,
+                },
+              },
+              margins: {
+                marginUnitType: WidthType.DXA,
+                left: 100,
+                right: 100,
               },
             })
         ),
+        height: {
+          value: LineSpacing,
+          rule: HeightRule.ATLEAST,
+        },
       })
   );
   rows.push(...contentRows);
@@ -251,7 +275,7 @@ export function createTable(
   });
   return table;
 }
-export function createDoc(children: FileChild[]) {
+export function createDoc(children: FileChild[]): Document {
   let doc = new Document({
     creator: 'Bitwise Liberator Doc',
     styles: {
@@ -487,8 +511,9 @@ export function createDoc(children: FileChild[]) {
   });
   return doc;
 }
-export function saveDoc(doc: Document) {
-  Packer.toBlob(doc).then((blob) => saveAs(blob, 'doc.docx'));
+export async function exportDoc(doc: Document) {
+  let block = await Packer.toBlob(doc);
+  return block;
 }
 export function base64ImageToImageRun(
   base64Image: string,

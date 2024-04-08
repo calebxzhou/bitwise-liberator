@@ -97,6 +97,7 @@ export function drawRectangleWithText(
 
   return rect;
 }
+//画线
 export function drawLine(
   svg: Svg,
   x1: NumberAlias,
@@ -122,3 +123,45 @@ export function getLineEndPoint(line: Line) {
   const endY = points[1][1];
   return { x: endX, y: endY };
 }
+export interface EllipseShape {
+  xLeft: number;
+  xRight: number;
+  yUp: number;
+  yDown: number;
+}
+//画带字椭圆
+function drawEllipse(
+  svg: Svg,
+  x: number,
+  y: number,
+  textString: string
+): EllipseShape {
+  // Create group to hold the ellipse and text
+  const group = svg.group();
+
+  // Create text element and add it to the group
+  const text = group.text(textString).move(x, y);
+  const textSize = text.bbox();
+
+  // Calculate ellipse size based on text dimensions
+  const padding = 10; // Adjust padding as needed
+  const ellipseWidth = textSize.width + padding * 2;
+  const ellipseHeight = textSize.height + padding * 2;
+
+  // Draw the ellipse with no fill and add it to the group
+  const ellipse = group
+    .ellipse(ellipseWidth, ellipseHeight)
+    .center(x, y)
+    .fill('none')
+    .stroke({ width: 1 });
+
+  // Return the four points of the ellipse
+  const bbox = ellipse.bbox();
+  return {
+    xLeft: bbox.x,
+    xRight: bbox.x2,
+    yUp: bbox.y,
+    yDown: bbox.y2,
+  };
+}
+//画带字小人

@@ -1,5 +1,86 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html, body { height: 100%; }
-body { margin: 0; }
+@font-face {
+  font-family: "SunRoman";
+  src: local("Simsun");
+  unicode-range: U+4E00-9FFF; /* CJK characters */
+}
+
+@font-face {
+  font-family: "SunRoman";
+  src: local("Times New Roman");
+  unicode-range: U+0000-00FF, U+2000-206F, U+2E00-2E7F, U+3000-303F; /* Western letters and numbers */
+}
+@font-face {
+  font-family: "HeiRoman";
+  src: local("SimHei");
+  unicode-range: U+4E00-9FFF; /* CJK characters */
+}
+
+@font-face {
+  font-family: "HeiRoman";
+  src: local("Times New Roman");
+  unicode-range: U+0000-00FF, U+2000-206F, U+2E00-2E7F, U+3000-303F; /* Western letters and numbers */
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+.small-img img {
+  height: 150px;
+}
+.docdsl-preview {
+  font-family: SunRoman;
+}
+.docdsl-preview h1 {
+  font-family: HeiRoman;
+  text-align: center;
+  font-size: 32px;
+  margin: 20px 20px;
+}
+.docdsl-preview h2 {
+  font-family: HeiRoman;
+  font-size: 28px;
+  margin: 20px 5px;
+}
+.docdsl-preview h3 {
+  font-family: HeiRoman;
+  font-size: 24px;
+}
+.docdsl-preview h6 {
+  font-family: HeiRoman;
+  text-align: center;
+}
+.docdsl-preview img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.docdsl-preview table {
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+}
+.docdsl-preview p {
+  margin: 15px 0px;
+}
+.docdsl-preview table tr:first-child td {
+  border-top: 1px solid black;
+}
+
+.docdsl-preview table tr:nth-child(2) td {
+  border-top: 1px solid black;
+}
+
+.docdsl-preview table tr:last-child td {
+  border-bottom: 1px solid black;
+}
+
+.docdsl-preview table td {
+  border-left: none;
+  border-right: none;
+}
