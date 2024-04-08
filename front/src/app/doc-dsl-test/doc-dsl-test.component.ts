@@ -55,7 +55,7 @@ export class DocDslTestComponent implements OnInit, AfterViewInit {
 
     表格格式：表头#行1#行2#行3.。。。。
     表头格式：列名+列宽+垂直对齐(上|中|下)+水平对齐(始|终|中|两|左|右)
-
+    图片：直接粘贴
     
     `);
   }
