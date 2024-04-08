@@ -13,6 +13,8 @@
   <button mat-flat-button color="primary" (click)="exportAsWord()">
     导出word
   </button>
+  <button mat-flat-button color="accent" (click)="reset()">重置</button>
+  <button mat-flat-button color="primary" (click)="help()">使用教程</button>
 </div>
 <div class="flex small-img">
   <pre
@@ -22,5 +24,8 @@
     (input)="updateContent($event)"
     (keyup)="parse()"
   ></pre>
-  <div class="w-1/2 docdsl-preview" [innerHTML]="docPreview"></div>
+  <div
+    class="w-1/2 scale-90 translate-x-0 origin-top-left docdsl-preview"
+    [innerHTML]="docPreview"
+  ></div>
 </div>

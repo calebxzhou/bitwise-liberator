@@ -27,6 +27,7 @@ export enum DocElementType {
   img = '<img',
   p = '正文',
   table = '表格',
+  var = '变量',
 }
 export class DocDslRow {
   public type: DocElementType;
@@ -88,8 +89,18 @@ const horizontalAlignMap: {
   左: AlignmentType.LEFT,
   右: AlignmentType.RIGHT,
 };
+function replaceTemplateStrings(
+  str: string,
+  vars: Map<string, string>
+): string {
+  return str.replace(/\{\{(\w+)\}\}/g, (match, p1) => {
+    const replacement = vars.get(p1);
+    return replacement !== undefined ? replacement : match;
+  });
+}
 export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
   let children: FileChild[] = [];
+  let vars: Map<string, string> = new Map();
   for (let i = 0; i < rows.length; i++) {
     let row = rows[i];
     switch (row.type) {
@@ -99,13 +110,16 @@ export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
       case DocElementType.h4:
       case DocElementType.h6:
       case DocElementType.p:
+        //小标题/正文 首行2字空格
+        let text =
+          row.type === DocElementType.h4 || row.type === DocElementType.p
+            ? `${ChineseSpace}${ChineseSpace}${row.merged}`
+            : row.merged;
+        text = replaceTemplateStrings(text, vars);
         children.push(
           new Paragraph({
-            text:
-              //小标题/正文 首行2字空格
-              row.type === DocElementType.h4 || row.type === DocElementType.p
-                ? `${ChineseSpace}${ChineseSpace}${row.merged}`
-                : row.merged,
+            text,
+
             style: row.type.toString(),
           })
         );
@@ -119,9 +133,21 @@ export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
           })
         );
         break;
+      case DocElementType.var:
+        if (row.merged.includes('=')) {
+          let name = row.merged.split('=')[0];
+          let val = row.merged.split('=')[1];
+          vars.set(name, val);
+        } else if (row.merged.includes('++')) {
+          let name = row.merged.split('++')[0];
+          let val = vars.get(name);
+          if (Number.isNaN(val))
+            throw new LineError(i, `${val}不是一个数字，无法进行自+1操作`);
+          vars.set(name, Number(val) + 1 + '');
+        }
+        break;
       case DocElementType.table:
         let tokens = row.merged.split('#');
-        let tableName = tokens.shift() ?? '表名';
         let headers: TableHeader[] = (tokens.shift() ?? '表头')
           .split(' ')
           .map((token) => {
@@ -147,13 +173,7 @@ export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
             return header;
           });
         let rowCells = tokens.map((item) => item.split(' '));
-        let p = createTable(tableName, headers, rowCells);
-        children.push(
-          new Paragraph({
-            text: tableName,
-            style: '标6',
-          })
-        );
+        let p = createTable(headers, rowCells);
         children.push(p);
         break;
     }
@@ -166,11 +186,7 @@ export interface TableHeader {
   hAlign: (typeof AlignmentType)[keyof typeof AlignmentType];
   vAlign: (typeof VerticalAlign)[keyof typeof VerticalAlign];
 }
-export function createTable(
-  name: string,
-  headers: TableHeader[],
-  rowCells: string[][]
-) {
+export function createTable(headers: TableHeader[], rowCells: string[][]) {
   let rows: TableRow[] = [];
   let headerCells = headers.map((h) => {
     return new TableCell({
