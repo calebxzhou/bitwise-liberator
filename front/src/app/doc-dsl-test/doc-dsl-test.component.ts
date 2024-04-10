@@ -14,7 +14,7 @@ import {
   parseRowsToDocChildren,
   exportDoc,
 } from '../doc/doc-dsl';
-const mammoth = require('mammoth/mammoth.browser');
+import mammoth from 'mammoth';
 import { Document } from 'docx';
 import { saveAs } from 'file-saver';
 
