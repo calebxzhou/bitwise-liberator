@@ -51,13 +51,15 @@ export class Field {
 export class Table {
   id!: string;
   name!: string;
-  columns!: Column[];
+  columns: Column[] = [];
 }
 export class Column {
   id!: string;
   name!: string;
   length!: number;
   type!: string;
+  nullable: boolean = false;
+  primaryKey: boolean = false;
 }
 export class ModuleFunction {
   name!: string;

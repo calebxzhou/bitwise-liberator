@@ -1,13 +1,45 @@
 <div class="block">
-  <p class="text-3xl m-5">生成数据库设计表</p>
+  <p class="text-3xl m-5">制作数据库设计表</p>
 </div>
-<button mat-flat-button color="primary" (click)="exportWord()">导出word</button>
-<div class="flex">
+<p class="m-3">
+  模仿下面的例子，描述系统名称、表和列，即可快速制作数据库设计信息的Word文档。
+</p>
+<div class="flex m-3">
   <textarea
     (keyup)="doParse()"
     class="outline-double whitespace-pre overflow-x-auto"
     [rows]="30"
-    [cols]="30"
+    [cols]="40"
     [(ngModel)]="dsl"
   ></textarea>
+  <div class="ml-6">
+    <p>系统名称：{{ pj.name }}</p>
+    @for (table of pj.tables; track $index) {
+    <p>{{ $index + 1 }}. {{ table.name }}表{{ table.id }}</p>
+    <table class="border">
+      <th>#</th>
+      <th>字段名</th>
+      <th>数据类型</th>
+      <th>长度</th>
+      <th>是否为空</th>
+      <th>是否主键</th>
+      <th>描述</th>
+      <tr class="border" *ngFor="let col of table.columns; index as ci">
+        <td>{{ ci + 1 }}</td>
+        <td>{{ col.id }}</td>
+        <td>{{ col.type }}</td>
+        <td>{{ col.length }}</td>
+        <td><input type="checkbox" [(ngModel)]="col.nullable" /></td>
+        <td>
+          <input type="checkbox" [(ngModel)]="col.primaryKey" />
+        </td>
+        <td>{{ col.name }}</td>
+      </tr>
+    </table>
+    }
+    <button mat-flat-button color="primary" (click)="exportWord()">
+      导出word
+    </button>
+    <button mat-flat-button color="warn" (click)="reset()">还原</button>
+  </div>
 </div>

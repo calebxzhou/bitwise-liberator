@@ -26,7 +26,6 @@ import {
   RelationType,
   Table,
 } from '../project';
-import { EntityCreateComponent } from '../entity-create/entity-create.component';
 import { Router } from '@angular/router';
 @Component({
   selector: 'bl-project-create',
@@ -40,7 +39,6 @@ import { Router } from '@angular/router';
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
-    EntityCreateComponent,
   ],
   providers: [CookieService],
 })

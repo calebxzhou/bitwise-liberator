@@ -1,9 +1,15 @@
-<div class="block">
-  <p class="text-3xl m-5">生成包文件说明表</p>
-  <span>代码第一行写上作用。例：</span>
+<div class="block m-3">
+  <p class="text-3xl m-5">制作包文件说明表</p>
+  <span>请在每个代码文件的第一行写上作用。例：</span>
   <img src="assets/file-example.jpg" class="w-80" />
-  <span class="m-4">选择项目的&nbsp;<b>src文件夹</b></span>
-  <input type="file" webkitdirectory multiple (change)="handleDir($event)" />
+  <span>写好以后，选择项目的&nbsp;<b>src文件夹</b></span>
+  <input
+    class="ml-5"
+    type="file"
+    webkitdirectory
+    multiple
+    (change)="handleDir($event)"
+  />
 </div>
 <!-- package-list.component.html -->
 <div class="block mb-8" *ngFor="let package of packages; index as pi">

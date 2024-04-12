@@ -14,7 +14,6 @@ import {
   parseRowsToDocChildren,
   exportDoc,
 } from '../doc/doc-dsl';
-import mammoth from 'mammoth';
 import { Document } from 'docx';
 import { saveAs } from 'file-saver';
 
@@ -116,7 +115,7 @@ export class DocDslTestComponent implements OnInit, AfterViewInit {
       this.doc = createDoc(children);
       exportDoc(this.doc).then(async (blob) => {
         // Assuming 'blob' is your .docx file's Blob
-        mammoth
+        /*  mammoth
 
           .convertToHtml(
             {
@@ -143,7 +142,7 @@ export class DocDslTestComponent implements OnInit, AfterViewInit {
           .catch((err: any) => {
             console.error(err);
             this.docPreview = err;
-          });
+          }); */
       });
     } catch (e: any) {
       this.docPreview = e;

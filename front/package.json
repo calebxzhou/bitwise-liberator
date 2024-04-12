@@ -26,10 +26,12 @@
     "file-saver": "^2.0.5",
     "mammoth": "^1.7.1",
     "ngx-cookie-service": "^17.1.0",
+    "path": "^0.12.7",
     "process": "^0.11.10",
     "randexp": "^0.5.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "util": "^0.12.5",
     "uuid": "^9.0.1",
     "zone.js": "~0.14.3"
   },
