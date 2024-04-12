@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 @font-face {
+  font-family: "circular";
+  src: url("./assets/CircularStd-Book.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+@layer components {
+  .font-circular {
+    font-family: "Circular", sans-serif;
+  }
+}
+
+@font-face {
   font-family: "SunRoman";
   src: local("Simsun");
   unicode-range: U+4E00-9FFF; /* CJK characters */

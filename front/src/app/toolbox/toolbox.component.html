@@ -1,10 +1,42 @@
-<span class="text-4xl m-4">工具箱</span><br />
-<button mat-flat-button color="primary" [routerLink]="'/mock-data'">
-  SQL测试数据生成
-</button>
-<button mat-flat-button color="primary" [routerLink]="'/fumogram'">
-  画功能模块图
-</button>
-<button mat-flat-button color="primary" [routerLink]="'/doc-dsl-test'">
-  编写文档
-</button>
+<div class="m-8 font-circular">
+  <span class="text-3xl">Bitwise Liberator</span>
+  <span class="mx-3 font-bold">MARK.II</span>
+  <button
+    class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-4 rounded"
+    [routerLink]="['/project-select']"
+  >
+    打开项目
+  </button>
+  <button
+    class="bg-green-500 hover:bg-green-700 text-white py-1 px-4 rounded ml-4"
+    [routerLink]="['/project-create']"
+  >
+    创建项目
+  </button>
+</div>
+
+<div class="m-8">
+  <h3 class="text-2xl m-4">代码</h3>
+
+  <button mat-stroked-button color="" [routerLink]="'/mock-data'">
+    SQL测试数据
+  </button>
+</div>
+<div class="m-8">
+  <h3 class="text-2xl m-4">绘图</h3>
+
+  <button mat-stroked-button color="" [routerLink]="'/fumogram'">
+    功能模块图
+  </button>
+</div>
+
+<div class="m-8">
+  <h3 class="text-2xl m-4">文档</h3>
+
+  <button mat-stroked-button color="" [routerLink]="'/doc-dsl-test'">
+    DocDSL 训练场
+  </button>
+  <button mat-stroked-button color="" [routerLink]="'/packinfo'">
+    包文件介绍表
+  </button>
+</div>

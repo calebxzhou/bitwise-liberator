@@ -1,0 +1,36 @@
+<div class="block">
+  <p class="text-3xl m-5">生成包文件说明表</p>
+  <span>代码第一行写上作用。例：</span>
+  <img src="assets/file-example.jpg" class="w-80" />
+  <span class="m-4">选择项目的&nbsp;<b>src文件夹</b></span>
+  <input type="file" webkitdirectory multiple (change)="handleDir($event)" />
+</div>
+<!-- package-list.component.html -->
+<div class="block mb-8" *ngFor="let package of packages; index as pi">
+  <hr />
+  <span class="text-3xl mr-3">{{ pi + 1 }}.</span>
+  <button mat-flat-button color="warn" (click)="removePackage(pi)">删除</button>
+
+  <mat-form-field class="w-64">
+    <mat-label>目录路径</mat-label>
+    <input matInput [(ngModel)]="package.id" />
+  </mat-form-field>
+  <mat-form-field class="w-64">
+    <mat-label>目录名称</mat-label>
+    <input matInput [(ngModel)]="package.name" />
+  </mat-form-field>
+  <div class="flex flex-row flex-wrap items-center gap-1">
+    @for (file of package.files; track $index) {
+
+    <mat-form-field class="min-w-40">
+      <mat-label>{{ $index + 1 }}.{{ file.id }}</mat-label>
+      <input matInput [(ngModel)]="file.name" />
+    </mat-form-field>
+    }
+  </div>
+</div>
+<div>
+  <button mat-flat-button color="primary" (click)="exportWord()">
+    导出word
+  </button>
+</div>

@@ -1,0 +1,13 @@
+<div class="block">
+  <p class="text-3xl m-5">生成数据库设计表</p>
+</div>
+<button mat-flat-button color="primary" (click)="exportWord()">导出word</button>
+<div class="flex">
+  <textarea
+    (keyup)="doParse()"
+    class="outline-double whitespace-pre overflow-x-auto"
+    [rows]="30"
+    [cols]="30"
+    [(ngModel)]="dsl"
+  ></textarea>
+</div>

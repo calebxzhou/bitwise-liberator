@@ -44,6 +44,13 @@ function getEnumKeyByEnumValue(myEnum: any, enumValue: string): string | null {
   let keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
   return keys.length > 0 ? keys[0] : null;
 }
+export async function saveDocFromDsl(dsl: string) {
+  let rows = parseDslToRows(dsl);
+  let children = parseRowsToDocChildren(rows);
+  let doc = createDoc(children);
+  let data = await exportDoc(doc);
+  saveAs(data, new Date() + '.docx');
+}
 //词法分析 dsl转row
 export function parseDslToRows(dsl: string) {
   let dslRows: DocDslRow[] = [];
