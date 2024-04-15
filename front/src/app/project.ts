@@ -15,6 +15,19 @@ export class Project {
   modules: ModuleFunction[] = [];
   //角色
   actors: ActorAccess[] = [];
+  //用例
+  useCases: UseCase[] = [];
+}
+//用例
+export class UseCase {
+  id!: string;
+  name!: string;
+  //角色
+  role!: string;
+  //简介
+  intro!: string;
+  //步骤
+  steps: string[] = [];
 }
 //角色与权限
 export class ActorAccess {

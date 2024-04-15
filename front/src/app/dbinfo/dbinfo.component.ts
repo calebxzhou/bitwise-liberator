@@ -127,7 +127,7 @@ export class DbinfoComponent implements OnInit {
             .map((c) => `${c.name}（${c.id}）`)
             .join('、')}。${table.name}信息表的结构，如表2.${index + 1}所示。
         标6 表2.${index + 1} ${table.name}信息表 ${table.id}
-        表格 字段名1985中中 数据类型1560中中 长度1275中中 是否为空1275中中 是否主键1275中中 描述1700中中#${table.columns
+        三线表 字段名1985中中 数据类型1560中中 长度1275中中 是否为空1275中中 是否主键1275中中 描述1700中中#${table.columns
           .map(
             (c) =>
               `${c.id} ${c.type} ${c.length == 0 ? '——' : c.length} ${

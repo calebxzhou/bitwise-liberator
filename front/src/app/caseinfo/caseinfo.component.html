@@ -1,0 +1,39 @@
+<div class="block">
+  <p class="text-3xl m-5">制作功能用例表</p>
+</div>
+<p class="m-3">
+  模仿下面的例子，描述系统名称、角色、用例名称等信息，即可快速制作功能用例信息的Word文档。
+</p>
+<div class="flex m-3">
+  <textarea
+    (keyup)="doParse()"
+    class="outline-double whitespace-pre overflow-x-auto"
+    [rows]="30"
+    [cols]="40"
+    [(ngModel)]="dsl"
+  ></textarea>
+  <div class="ml-6">
+    <p>系统名称：{{ pj.name }}</p>
+    @for (case of pj.useCases; track $index) {
+    <p>表1.{{ $index + 1 }} {{ case.name }}用例详细说明表</p>
+    <p>用例编号：{{ case.id }}，用例名称：{{ case.name }}</p>
+    <p>用例描述：{{ case.role }}{{ case.intro }}</p>
+    <p>参与者：{{ case.role }}</p>
+    <p>前置条件：{{ case.role }}成功登录到系统</p>
+    <p>后置条件：系统成功执行{{ case.name }}操作</p>
+    <span
+      >事件流
+      <p *ngFor="let step of case.steps; index as i">
+        {{ i + 1 }}. {{ step }}
+      </p></span
+    >
+    <br />
+    <hr />
+    }
+
+    <button mat-flat-button color="primary" (click)="exportWord()">
+      导出word
+    </button>
+    <button mat-flat-button color="warn" (click)="reset()">还原</button>
+  </div>
+</div>

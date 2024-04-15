@@ -120,7 +120,7 @@ export class PackinfoComponent implements OnInit {
         i + 1
       }所示。
       标6 表3.${i + 1} ${pkg.id}包的说明表
-      表格 文件名4536中中 作用4536中中#`;
+      三线表 文件名4536中中 作用4536中中#`;
       dsl += pkg.files.map((file) => `${file.id} ${file.name}`).join('#');
       dsl += '\n';
     }

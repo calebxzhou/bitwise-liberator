@@ -26,6 +26,7 @@ export enum DocElementType {
   h6 = '标6',
   img = '<img',
   p = '正文',
+  table3Line = '三线表',
   table = '表格',
   var = '变量',
 }
@@ -105,9 +106,33 @@ function replaceTemplateStrings(
     return replacement !== undefined ? replacement : match;
   });
 }
+//解析图片
+function parseDslImage(children: FileChild[], row: DocDslRow) {
+  let imageb64 = row.merged.split('"')[1];
+  children.push(
+    new Paragraph({
+      alignment: 'center',
+      children: [base64ImageToImageRun(imageb64, 200, 200)],
+    })
+  );
+}
+//解析标题/正文
+function parseDslTitleBody(children: FileChild[], row: DocDslRow) {
+  //小标题/正文 首行2字空格
+  let text =
+    row.type === DocElementType.h4 || row.type === DocElementType.p
+      ? `${ChineseSpace}${ChineseSpace}${row.merged}`
+      : row.merged;
+  children.push(
+    new Paragraph({
+      text,
+      style: row.type.toString(),
+    })
+  );
+}
+//解析三线表
 export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
   let children: FileChild[] = [];
-  let vars: Map<string, string> = new Map();
   for (let i = 0; i < rows.length; i++) {
     let row = rows[i];
     switch (row.type) {
@@ -117,43 +142,12 @@ export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
       case DocElementType.h4:
       case DocElementType.h6:
       case DocElementType.p:
-        //小标题/正文 首行2字空格
-        let text =
-          row.type === DocElementType.h4 || row.type === DocElementType.p
-            ? `${ChineseSpace}${ChineseSpace}${row.merged}`
-            : row.merged;
-        text = replaceTemplateStrings(text, vars);
-        children.push(
-          new Paragraph({
-            text,
-
-            style: row.type.toString(),
-          })
-        );
+        parseDslTitleBody(children, row);
         break;
       case DocElementType.img:
-        let imageb64 = row.merged.split('"')[1];
-        children.push(
-          new Paragraph({
-            alignment: 'center',
-            children: [base64ImageToImageRun(imageb64, 200, 200)],
-          })
-        );
+        parseDslImage(children, row);
         break;
-      case DocElementType.var:
-        if (row.merged.includes('=')) {
-          let name = row.merged.split('=')[0];
-          let val = row.merged.split('=')[1];
-          vars.set(name, val);
-        } else if (row.merged.includes('++')) {
-          let name = row.merged.split('++')[0];
-          let val = vars.get(name);
-          if (Number.isNaN(val))
-            throw new LineError(i, `${val}不是一个数字，无法进行自+1操作`);
-          vars.set(name, Number(val) + 1 + '');
-        }
-        break;
-      case DocElementType.table:
+      case DocElementType.table3Line:
         let tokens = row.merged.split('#');
         let headers: TableHeader[] = (tokens.shift() ?? '表头')
           .split(' ')
@@ -183,9 +177,111 @@ export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
         let p = createTable(headers, rowCells);
         children.push(p);
         break;
+      case DocElementType.table:
+        let tableWidth = Number(row.tokens.shift() ?? 1);
+        let rowInfos: TableRowInfo[] = [];
+        let tableRows = row.tokens.join(' ').split('#');
+
+        tableRows.forEach((row) => {
+          let cells = row.split('$');
+          let rowHeight = Number(cells.shift() ?? 1000);
+          let cellInfos: TableCellInfo[] = [];
+          cells.forEach((cell) => {
+            let cellTokens = cell.split(' ');
+            let cellText = cellTokens[0];
+            let cellWidth = Number(cellTokens[1]);
+            let vAlign: (typeof VerticalAlign)[keyof typeof VerticalAlign] =
+              VerticalAlign.CENTER;
+            let hAlign: (typeof AlignmentType)[keyof typeof AlignmentType] =
+              AlignmentType.CENTER;
+            //TODO 上中下 垂直排列 其他的没做呢
+            if (cellTokens[2] === '中') {
+              vAlign = VerticalAlign.CENTER;
+            }
+            if (cellTokens[2] === '上') {
+              vAlign = VerticalAlign.TOP;
+            }
+            if (cellTokens[3] === '中') {
+              hAlign = AlignmentType.CENTER;
+            }
+            if (cellTokens[3] === '左') {
+              hAlign = AlignmentType.LEFT;
+            }
+            let span = Number(cellTokens[4]);
+            cellInfos.push({
+              cellText,
+              cellWidth,
+              columnSpan: span,
+              vAlign,
+              hAlign,
+            });
+          });
+          rowInfos.push({
+            rowHeight,
+            cellInfos,
+          });
+        });
+        let rows = rowInfos.map(
+          (rowInfo) =>
+            new TableRow({
+              height: { value: rowInfo.rowHeight, rule: HeightRule.ATLEAST },
+
+              cantSplit: true,
+              children: rowInfo.cellInfos.map(
+                (cellInfo) =>
+                  new TableCell({
+                    children: cellInfo.cellText.split('%n').map(
+                      (text) =>
+                        new Paragraph({
+                          text,
+                          style: 'table-cell',
+                          alignment: cellInfo.hAlign,
+                        })
+                    ),
+                    /* [
+                      new Paragraph({
+                        text: cellInfo.cellText.replaceAll('%n', '\n'),
+                        style: 'table-cell',
+                        alignment: cellInfo.hAlign,
+                      }),
+                    ] */ columnSpan: cellInfo.columnSpan,
+                    width: {
+                      size: cellInfo.cellWidth,
+                      type: WidthType.DXA,
+                    },
+                    verticalAlign: cellInfo.vAlign,
+                    margins: {
+                      marginUnitType: WidthType.DXA,
+                      left: 100,
+                      right: 100,
+                    },
+                  })
+              ),
+            })
+        );
+        let table = new Table({
+          width: {
+            size: tableWidth,
+            type: WidthType.DXA,
+          },
+          rows,
+        });
+        children.push(table);
+        break;
     }
   }
   return children;
+}
+export interface TableRowInfo {
+  rowHeight: number;
+  cellInfos: TableCellInfo[];
+}
+export interface TableCellInfo {
+  cellText: string;
+  cellWidth: number;
+  columnSpan: number;
+  hAlign: (typeof AlignmentType)[keyof typeof AlignmentType];
+  vAlign: (typeof VerticalAlign)[keyof typeof VerticalAlign];
 }
 export interface TableHeader {
   name: string;
