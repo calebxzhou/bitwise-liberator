@@ -1,1 +1,34 @@
-<p>pjtest works!</p>
+<div class="block">
+  <p class="text-3xl m-5">制作测试用例表</p>
+</div>
+<p class="m-3">模仿下面的例子，即可快速制作测试用例信息的Word文档。</p>
+<div class="flex m-3">
+  <textarea
+    (keyup)="doParse()"
+    class="outline-double whitespace-pre overflow-x-auto"
+    [rows]="30"
+    [cols]="80"
+    [(ngModel)]="dsl"
+  ></textarea>
+  <div class="ml-6">
+    <p>系统名称：{{ pj.name }}</p>
+    @for (case of pj.testCases; track $index) {
+    <p>{{ $index + 1 }}.</p>
+    <p>测试用例：{{ case.name }}</p>
+    <p>测试字段：{{ case.fields.join("、") }}</p>
+    <p>测试操作：</p>
+    @for (action of case.actions; track $index) {
+    <hr />
+    <p>条件： {{ action.conditions.join("，") }}</p>
+    <p>数据： {{ action.datas.join("，") }}</p>
+    <p>描述： {{ action.intro }}</p>
+    <p>结果： {{ action.result }}</p>
+    <br />
+    } }
+
+    <button mat-flat-button color="primary" (click)="exportWord()">
+      导出word
+    </button>
+    <button mat-flat-button color="warn" (click)="reset()">还原</button>
+  </div>
+</div>

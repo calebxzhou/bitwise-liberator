@@ -14,6 +14,7 @@ import { DocDslTestComponent } from './doc-dsl-test/doc-dsl-test.component';
 import { PackinfoComponent } from './packinfo/packinfo.component';
 import { DbinfoComponent } from './dbinfo/dbinfo.component';
 import { CaseinfoComponent } from './caseinfo/caseinfo.component';
+import { PjtestComponent } from './pjtest/pjtest.component';
 
 export const routes: Routes = [
   { path: 'project-select', component: ProjectSelectComponent },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'mock-data', component: MockDataComponent },
   { path: 'packinfo', component: PackinfoComponent },
   { path: 'dbinfo', component: DbinfoComponent },
+  { path: 'pjtest', component: PjtestComponent },
   { path: 'caseinfo', component: CaseinfoComponent },
   { path: 'doc-dsl-test', component: DocDslTestComponent },
   { path: 'home', component: ToolboxComponent },

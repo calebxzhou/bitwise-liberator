@@ -238,13 +238,7 @@ export function parseRowsToDocChildren(rows: DocDslRow[]): FileChild[] {
                           alignment: cellInfo.hAlign,
                         })
                     ),
-                    /* [
-                      new Paragraph({
-                        text: cellInfo.cellText.replaceAll('%n', '\n'),
-                        style: 'table-cell',
-                        alignment: cellInfo.hAlign,
-                      }),
-                    ] */ columnSpan: cellInfo.columnSpan,
+                    columnSpan: cellInfo.columnSpan,
                     width: {
                       size: cellInfo.cellWidth,
                       type: WidthType.DXA,

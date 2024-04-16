@@ -15,8 +15,29 @@ export class Project {
   modules: ModuleFunction[] = [];
   //角色
   actors: ActorAccess[] = [];
-  //用例
+  //功能用例
   useCases: UseCase[] = [];
+  //测试用例
+  testCases: TestCase[] = [];
+}
+//测试用例
+export class TestCase {
+  //名称
+  name!: string;
+  //字段
+  fields: string[] = [];
+  //操作
+  actions: TestCaseAction[] = [];
+}
+export class TestCaseAction {
+  //条件
+  conditions: string[] = [];
+  //数据
+  datas: string[] = [];
+  //描述
+  intro!: string;
+  //结果
+  result!: string;
 }
 //用例
 export class UseCase {
@@ -28,6 +49,12 @@ export class UseCase {
   intro!: string;
   //步骤
   steps: string[] = [];
+  //前置条件
+  condition!: string;
+  //后置条件
+  after!: string;
+  //优先级
+  priority!: string;
 }
 //角色与权限
 export class ActorAccess {

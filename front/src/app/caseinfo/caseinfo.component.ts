@@ -5,11 +5,21 @@ import { MatButtonModule } from '@angular/material/button';
 import { Project, UseCase } from '../project';
 import { splitBySpaces } from '../util';
 import { saveDocFromDsl } from '../doc/doc-dsl';
-
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { LiberDoc, TableCellInfo, TableRowInfo } from '../liberdoc';
+import { Alignment, AlignmentType, VerticalAlign } from 'docx';
 @Component({
   selector: 'bl-caseinfo',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, FormsModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    FormsModule,
+    MatInputModule,
+    MatButtonModule,
+    MatRadioModule,
+  ],
   templateUrl: './caseinfo.component.html',
   styles: ``,
 })
@@ -41,18 +51,24 @@ export class CaseinfoComponent implements OnInit {
         usecase.role = tokens[0];
         usecase.name = tokens[1];
         usecase.id = tokens[2];
+        usecase.priority = '中等';
+        usecase.condition = `${usecase.role}成功登录到系统`;
+        usecase.after = `系统成功执行${usecase.name}操作`;
+
         continue;
       }
       //有2个token的是事件流
       if (tokens.length === 2) {
         if (!usecase) continue;
-        usecase.steps.push(tokens.join('：') + '。');
+        usecase.steps.push(
+          `${usecase.steps.length + 1}. ${tokens[0]}：${tokens[1]}。`
+        );
         continue;
       }
       //其余是简介
       if (tokens.length === 1) {
         if (!usecase) continue;
-        usecase.intro = line;
+        usecase.intro = usecase.role + line;
       }
     }
     //保存最后一个表+
@@ -61,30 +77,53 @@ export class CaseinfoComponent implements OnInit {
     return pj;
   }
   exportWord() {
-    let docdsl = `标3 1.3.2 用例描述\n`;
-    docdsl += this.pj.useCases.map(
-      (usecase, i) =>
-        `正文 ${usecase.name}用例描述如表1.${i + 1}所示。
-    标6 表1.${i + 1} ${usecase.name}用例详细说明表
-    表格 8800 500$功能编号 2200 中 中 1$${
-      usecase.id
-    } 2200 中 中 1$用例名称 2200 中 中 1$${
-          usecase.name
-        } 2200 中 中 1#500$用例描述 2200 中 中 1$${
-          usecase.intro
-        } 6600 中 左 3#500$优先级 2200 中 中 1$中等 6600 中 左 3#500$参与者 2200 中 中 1$${
-          usecase.role
-        } 6600 中 左 3#500$前置条件 2200 中 中 1$${
-          usecase.role
-        }成功登录到系统 6600 中 左 3#500$后置条件 2200 中 中 1$系统成功执行${
-          usecase.name
-        }操作 6600 中 左 3#2500$事件流 2200 中 中 1$基本流%n${usecase.steps
-          .map((s, i) => `${i + 1}.${s}`)
-          .join('%n')} 6600 上 左 3
-    `
-    );
-    console.log(docdsl);
-    saveDocFromDsl(docdsl);
+    let doc = new LiberDoc().h3('1.3.2 用例描述');
+
+    this.pj.useCases.forEach((usecase, i) => {
+      let rows: TableRowInfo[] = [
+        new TableRowInfo(500, [
+          new TableCellInfo('功能编号', 2200),
+          new TableCellInfo(usecase.id, 2200),
+          new TableCellInfo('用例名称', 2200),
+          new TableCellInfo(usecase.name, 2200),
+        ]),
+        new TableRowInfo(500, [
+          new TableCellInfo('用例描述', 2200),
+          new TableCellInfo(usecase.intro, 6600, 3, AlignmentType.LEFT),
+        ]),
+        new TableRowInfo(500, [
+          new TableCellInfo('优先级', 2200),
+          new TableCellInfo(usecase.priority, 6600, 3, AlignmentType.LEFT),
+        ]),
+        new TableRowInfo(500, [
+          new TableCellInfo('参与者', 2200),
+          new TableCellInfo(usecase.role, 6600, 3, AlignmentType.LEFT),
+        ]),
+        new TableRowInfo(500, [
+          new TableCellInfo('前置条件', 2200),
+          new TableCellInfo(usecase.condition, 6600, 3, AlignmentType.LEFT),
+        ]),
+        new TableRowInfo(500, [
+          new TableCellInfo('后置条件', 2200),
+          new TableCellInfo(usecase.after, 6600, 3, AlignmentType.LEFT),
+        ]),
+        new TableRowInfo(2500, [
+          new TableCellInfo('事件流', 2200),
+          new TableCellInfo(
+            '基本流\n' + usecase.steps.join('\n'),
+            6600,
+            3,
+            AlignmentType.LEFT,
+            VerticalAlign.TOP
+          ),
+        ]),
+      ];
+      doc
+        .p(`${usecase.name}用例描述如表1.${i + 1}所示。`)
+        .h6(`表1.${i + 1} ${usecase.name}用例详细说明表`)
+        .table(rows);
+    });
+    doc.save();
   }
   reset() {
     if (confirm('确定要还原为系统默认的内容吗？？？')) {

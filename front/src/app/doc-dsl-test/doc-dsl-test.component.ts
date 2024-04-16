@@ -152,11 +152,31 @@ export class DocDslTestComponent implements OnInit, AfterViewInit {
   dsl = localStorage.getItem('docdsl') ?? defaultDsl;
 }
 const defaultDsl = `
-标1 1 一级标题
-标2 1.1 二级标题
-标3 1.1.1 三级标题
-标4 (1)小标题
-正文 段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字段落文字
+h1 1 head1;
+h2 1.1 head2;
+h3 1.1.1 head3;
+h4 (1)head4;
+p mainbodymainbodymainbody;
+table{
+  h 8500;
+  tr{
+    h 1000;
+    td{
+      w 4000;
+      halign c;
+      valign c;
+      vgap 1;
+      text testcelltestcell;
+    }
+    td{
+      w 4500;
+      halign c;
+      valign c;
+      vgap 1;
+      text testcelltestcell;
+    }
+  }
+};
 表格 8500 1000$test 4000 中 中$test 4500 中 中#2000$test 4000 中 中$test 4500 中 中
 变量 a=1
 正文 变量测试：a的值是{{a}}

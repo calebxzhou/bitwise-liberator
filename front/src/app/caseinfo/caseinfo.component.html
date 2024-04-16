@@ -17,14 +17,53 @@
     @for (case of pj.useCases; track $index) {
     <p>表1.{{ $index + 1 }} {{ case.name }}用例详细说明表</p>
     <p>用例编号：{{ case.id }}，用例名称：{{ case.name }}</p>
-    <p>用例描述：{{ case.role }}{{ case.intro }}</p>
+    <p>用例描述：{{ case.intro }}</p>
     <p>参与者：{{ case.role }}</p>
-    <p>前置条件：{{ case.role }}成功登录到系统</p>
-    <p>后置条件：系统成功执行{{ case.name }}操作</p>
+
+    <span>优先级：</span>
+    <input
+      [(ngModel)]="case.priority"
+      [name]="case.id"
+      type="radio"
+      value="中等"
+    />中等
+    <input
+      [(ngModel)]="case.priority"
+      [name]="case.id"
+      type="radio"
+      value="高"
+    />高
+    <input
+      [(ngModel)]="case.priority"
+      [name]="case.id"
+      type="radio"
+      value="极高"
+    />极高
+    <input
+      [(ngModel)]="case.priority"
+      [name]="case.id"
+      type="radio"
+      value="低"
+    />低
+    <input
+      [(ngModel)]="case.priority"
+      [name]="case.id"
+      type="radio"
+      value="极低"
+    />极低
+    <br />
+    <mat-form-field class="w-80">
+      <mat-label>前置条件</mat-label>
+      <input matInput [(ngModel)]="case.condition" />
+    </mat-form-field>
+    <mat-form-field class="w-80">
+      <mat-label>后置条件</mat-label>
+      <input matInput [(ngModel)]="case.after" /> </mat-form-field
+    ><br />
     <span
       >事件流
-      <p *ngFor="let step of case.steps; index as i">
-        {{ i + 1 }}. {{ step }}
+      <p *ngFor="let step of case.steps">
+        {{ step }}
       </p></span
     >
     <br />
