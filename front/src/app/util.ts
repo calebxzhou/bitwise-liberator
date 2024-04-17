@@ -20,6 +20,25 @@ export function extractChineseChars(inputString: string) {
   let chineseCharacters = inputString.match(/[\p{Script=Han}]/gu);
   return chineseCharacters ? chineseCharacters.join('') : '';
 }
+//[135][246] => [123456]
+export function interleaveArrays<T>(array1: T[], array2: T[]) {
+  // Create a new array to hold the result
+  let result: T[] = [];
+
+  // Use forEach to iterate over array1 and array2 simultaneously
+  array1.forEach((element, index) => {
+    // Add the current element from array1
+    result.push(element);
+
+    // Check if there's an element in array2 to add in the next odd position
+    if (array2[index]) {
+      // Add the element from array2 into the next odd position
+      result.push(array2[index]);
+    }
+  });
+
+  return result;
+}
 
 export function extractEnglishChars(inputString: string) {
   let englishCharacters = inputString.match(/[a-z_A-Z\s]/g);

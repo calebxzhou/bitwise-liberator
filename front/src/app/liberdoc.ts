@@ -9,6 +9,8 @@ import {
   SectionType,
   Table,
   TableCell,
+  TableLayout,
+  TableLayoutType,
   TableRow,
   VerticalAlign,
   WidthType,
@@ -184,6 +186,8 @@ export class LiberDoc {
                   marginUnitType: WidthType.DXA,
                   left: 100,
                   right: 100,
+                  top: 100,
+                  bottom: 100,
                 },
               })
           ),
@@ -245,6 +249,7 @@ export class LiberDoc {
         type: WidthType.DXA,
       },
       rows,
+      layout: TableLayoutType.FIXED,
     });
     this.docChildren.push(table);
     return this;

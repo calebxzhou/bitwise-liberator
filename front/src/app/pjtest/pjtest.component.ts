@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { Project, TestCase, TestCaseAction } from '../project';
 import { splitBySpaces } from '../util';
+import { AlignmentType, VerticalAlign } from 'docx';
 
 @Component({
   selector: 'bl-pjtest',
@@ -109,7 +110,93 @@ export class PjtestComponent {
           ),
         ]),
       ]);
-
+    this.pj.testCases.forEach((tcase, i) => {
+      doc
+        .h4(`(${i + 1}) ${tcase.name}测试用例`)
+        .h6(`表4.${i + 1} ${tcase.name}测试用例表`)
+        .table([
+          new TableRowInfo(300, [
+            new TableCellInfo(
+              '测试用例：' + tcase.name,
+              8800,
+              7,
+              AlignmentType.LEFT
+            ),
+          ]),
+          new TableRowInfo(300, [
+            new TableCellInfo(
+              '测试数据：' +
+                tcase.fields
+                  .map((field, i) => `${field}：${tcase.actions[0].datas[i]}`)
+                  .join('；'),
+              8800,
+              7,
+              AlignmentType.LEFT
+            ),
+          ]),
+          new TableRowInfo(510, [
+            new TableCellInfo('测试操作', 740),
+            new TableCellInfo('预置条件', 1600),
+            new TableCellInfo('测试描述', 1600),
+            new TableCellInfo('数据', 1600),
+            new TableCellInfo('期望结果', 1120),
+            new TableCellInfo('实际结果', 1120),
+            new TableCellInfo('测试状态', 1120),
+          ]),
+          ...tcase.actions.map(
+            (action, i) =>
+              new TableRowInfo(1730, [
+                new TableCellInfo(`${i + 1}`, 740),
+                new TableCellInfo(
+                  action.conditions
+                    .map((cond, i) => `（${i + 1}）${cond}`)
+                    .join('\n'),
+                  1680,
+                  1,
+                  AlignmentType.BOTH,
+                  VerticalAlign.TOP
+                ),
+                new TableCellInfo(
+                  action.intro,
+                  1500,
+                  1,
+                  AlignmentType.BOTH,
+                  VerticalAlign.TOP
+                ),
+                new TableCellInfo(
+                  tcase.fields
+                    .map((field, j) => `${field}：${action.datas[j]}`)
+                    .join('\n'),
+                  1500,
+                  1,
+                  AlignmentType.BOTH,
+                  VerticalAlign.TOP
+                ),
+                new TableCellInfo(
+                  action.result,
+                  1120,
+                  1,
+                  AlignmentType.BOTH,
+                  VerticalAlign.TOP
+                ),
+                new TableCellInfo(
+                  action.result,
+                  1120,
+                  1,
+                  AlignmentType.BOTH,
+                  VerticalAlign.TOP
+                ),
+                new TableCellInfo(
+                  '与预期结果相同',
+                  1120,
+                  1,
+                  AlignmentType.BOTH,
+                  VerticalAlign.TOP
+                ),
+              ])
+          ),
+        ]);
+    });
     doc.save();
   }
   reset() {
