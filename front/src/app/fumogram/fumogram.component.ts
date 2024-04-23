@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModuleFunction, Project } from '../project';
 import { LineError } from '../errors';
-import { avarage as centerOf, splitBySpaces } from '../util';
+import { centerOf, splitBySpaces } from '../util';
 import { Line, Rect, Svg, SVG } from '@svgdotjs/svg.js';
 import {
   drawLine,
@@ -11,6 +11,7 @@ import {
   getLineEndPoint,
   getLineStartPoint,
   getVerticalTextHeight,
+  setupFont,
 } from '../draw-svg';
 import { MatButtonModule } from '@angular/material/button';
 import saveAs from 'file-saver';
@@ -71,19 +72,7 @@ export class FumogramComponent implements OnInit {
     svg.width('100%');
     svg.height('1080px');
     svg.addTo('#svg');
-    svg.defs().element('style').words(`//中文宋体 英文罗马
-    @font-face {
-      font-family: 'MyFont';
-      src: local('Times New Roman');
-      unicode-range: U+30-39, U+41-5A, U+61-7A; 
-  }
-  
-  @font-face {
-      font-family: 'MyFont';
-      src: local('SimSun');
-      unicode-range: U+4E00-9FFF; 
-  }`);
-    svg.font('family', 'MyFont');
+    setupFont(svg);
     let startY = 200;
     let startX = 20;
     //统一高度，用最高的功能

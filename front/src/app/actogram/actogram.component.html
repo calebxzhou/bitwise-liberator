@@ -1,0 +1,11 @@
+<div class="block w-full">
+  <textarea
+    (keyup)="doParse()"
+    class="outline-double whitespace-pre overflow-x-auto w-full"
+    [rows]="10"
+    [cols]="50"
+    [(ngModel)]="dsl"
+  ></textarea>
+  <button mat-flat-button color="primary" (click)="save()">💾保存图片</button>
+  <div id="svg" class="m-3"></div>
+</div>

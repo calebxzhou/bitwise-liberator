@@ -66,6 +66,6 @@ export function matchIdName(input: string): {
     id: match ? match[2] : null,
   };
 }
-export function avarage(x: NumberAlias, y: NumberAlias) {
+export function centerOf(x: NumberAlias, y: NumberAlias) {
   return (Number(x) + Number(y)) / 2;
 }

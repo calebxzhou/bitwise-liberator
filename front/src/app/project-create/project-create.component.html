@@ -40,10 +40,10 @@
         <span class="font-bold">实体关系</span>
         <table class="text-xs">
           <tr class="border-2" *ngFor="let relation of project.relations">
-            <td class="border-2">{{ relation.fromEntityId }}</td>
+            <td class="border-2">{{ relation.fromEntity }}</td>
             <td class="border-2">{{ relation.type }}</td>
             <td class="border-2">{{ relation.verb }}</td>
-            <td class="border-2">{{ relation.toEntityId }}</td>
+            <td class="border-2">{{ relation.toEntity }}</td>
           </tr>
         </table></ng-container
       >

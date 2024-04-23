@@ -15,6 +15,8 @@ import { PackinfoComponent } from './packinfo/packinfo.component';
 import { DbinfoComponent } from './dbinfo/dbinfo.component';
 import { CaseinfoComponent } from './caseinfo/caseinfo.component';
 import { PjtestComponent } from './pjtest/pjtest.component';
+import { ActogramComponent } from './actogram/actogram.component';
+import { ErgramComponent } from './ergram/ergram.component';
 
 export const routes: Routes = [
   { path: 'project-select', component: ProjectSelectComponent },
@@ -29,6 +31,8 @@ export const routes: Routes = [
   { path: 'home', component: ToolboxComponent },
   { path: 'toolbox', component: ToolboxComponent },
   { path: 'fumogram', component: FumogramComponent },
+  { path: 'ergram', component: ErgramComponent },
+  { path: 'actogram', component: ActogramComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];

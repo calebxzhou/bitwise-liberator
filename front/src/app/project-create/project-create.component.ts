@@ -175,7 +175,7 @@ export class ProjectCreateComponent implements OnInit {
         throw new Error(`第${lineNumber}行，无效的实体关系`);
       }
       //第一个token=模块名
-      er.fromEntityId = tokens[0];
+      er.fromEntity = tokens[0];
       switch (tokens[1]) {
         case '多对一':
           er.type = 'n1';
@@ -191,7 +191,7 @@ export class ProjectCreateComponent implements OnInit {
           break;
       }
       er.verb = tokens[2];
-      er.toEntityId = tokens[3];
+      er.toEntity = tokens[3];
       project.relations.push(er);
       lineNumber++;
     } while (!lines[lineNumber].includes('★'));

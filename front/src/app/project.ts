@@ -75,13 +75,13 @@ export class Entity {
 //实体关系
 export class EntityRelation {
   //从
-  fromEntityId!: string;
+  fromEntity!: string;
   //类型
   type!: string;
   //动词
   verb!: string;
   //到
-  toEntityId!: string;
+  toEntity!: string;
 }
 export class Field {
   id!: string;
