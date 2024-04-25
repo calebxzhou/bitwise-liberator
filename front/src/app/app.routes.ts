@@ -9,20 +9,22 @@ import {
   MockDataColumn,
   MockDataComponent,
 } from './mock-data/mock-data.component';
-import { FumogramComponent } from './fumogram/fumogram.component';
+import { FumogramComponent } from './diagram/fumogram.component';
 import { DocDslTestComponent } from './doc-dsl-test/doc-dsl-test.component';
 import { PackinfoComponent } from './packinfo/packinfo.component';
 import { DbinfoComponent } from './dbinfo/dbinfo.component';
 import { CaseinfoComponent } from './caseinfo/caseinfo.component';
 import { PjtestComponent } from './pjtest/pjtest.component';
-import { ActogramComponent } from './actogram/actogram.component';
-import { ErgramComponent } from './ergram/ergram.component';
+import { ActogramComponent } from './diagram/actogram.component';
+import { ErgramComponent } from './diagram/ergram.component';
+import { DaoFactoryComponent } from './codegen/dao-factory.component';
 
 export const routes: Routes = [
   { path: 'project-select', component: ProjectSelectComponent },
   { path: 'project-home', component: ProjectHomeComponent },
   { path: 'project-create', component: ProjectCreateComponent },
   { path: 'mock-data', component: MockDataComponent },
+  { path: 'dao-factory', component: DaoFactoryComponent },
   { path: 'packinfo', component: PackinfoComponent },
   { path: 'dbinfo', component: DbinfoComponent },
   { path: 'pjtest', component: PjtestComponent },

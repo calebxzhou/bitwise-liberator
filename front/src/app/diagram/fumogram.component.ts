@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModuleFunction, Project } from '../project';
-import { LineError } from '../errors';
 import { centerOf, splitBySpaces } from '../util';
 import { Line, Rect, Svg, SVG } from '@svgdotjs/svg.js';
 import {
@@ -15,23 +14,18 @@ import {
 } from '../draw-svg';
 import { MatButtonModule } from '@angular/material/button';
 import saveAs from 'file-saver';
+import { DiagramComponent } from './diagram.component';
 
 @Component({
   selector: 'bl-fumogram',
   standalone: true,
   imports: [FormsModule, MatButtonModule],
-  templateUrl: './fumogram.component.html',
+  templateUrl: './diagram.component.html',
   styles: ` `,
 })
-export class FumogramComponent implements OnInit {
-  ngOnInit(): void {
-    this.doParse();
-  }
-  doParse() {
-    let pj = this.parse(this.dsl);
-    this.draw(pj);
-  }
-  dsl = `XXXXXX管理系统
+export class FumogramComponent extends DiagramComponent {
+  override title = '功能模块图绘制';
+  override defaultDsl = `XXXXXX管理系统
   测试模块1 功能1 功能2 功能3
   测试模块2 功能4 功能5 功能6
   系统管理模块 用户管理 角色管理 密码管理
@@ -39,15 +33,8 @@ export class FumogramComponent implements OnInit {
   进货管理模块 进货查询 进货修改 进货删除 进货人联系 进货人删除 进货人修改
   测试管理模块 系统测试 功能测试 模块测试
   测基管理模块 商品管理 进货修改 进货删除 进货人联系`;
-  data = new Project();
-  svg = SVG();
-  save() {
-    let blob = new Blob([this.svg.svg()], {
-      type: 'image/svg+xml;charset=utf-8',
-    });
-    saveAs(blob, 'fumogram.svg');
-  }
-  parse(dsl: string): Project {
+  override storageKey = 'fumogram';
+  override parse(dsl: string): Project {
     let pj = new Project();
     let lines = dsl
       .split('\n')
@@ -65,7 +52,7 @@ export class FumogramComponent implements OnInit {
     console.log(pj);
     return pj;
   }
-  draw(pj: Project) {
+  override draw(pj: Project) {
     let ele = document.getElementById('svg');
     if (ele) ele.innerHTML = '';
     let svg = SVG();

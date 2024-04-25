@@ -16,6 +16,12 @@ export function getMongoIdValidator(): ValidatorFn {
 export function splitBySpaces(inputStr: string) {
   return inputStr.split(/\s+/);
 }
+export function splitByReturn(inputStr: string) {
+  return inputStr
+    .split('\n')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+}
 export function extractChineseChars(inputString: string) {
   let chineseCharacters = inputString.match(/[\p{Script=Han}]/gu);
   return chineseCharacters ? chineseCharacters.join('') : '';

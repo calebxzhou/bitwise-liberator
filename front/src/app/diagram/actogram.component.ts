@@ -1,54 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { SVG, Line, Rect, Svg, NumberAlias } from '@svgdotjs/svg.js';
+import { SVG } from '@svgdotjs/svg.js';
 import saveAs from 'file-saver';
 import {
-  getVerticalTextHeight,
-  drawRectangleWithText,
-  drawLine,
-  getLineStartPoint,
-  getHorizontalTextWidth,
-  getLineEndPoint,
   setupFont,
   drawEllipseWithText,
   EllipseShape,
   ActorShape,
-  drawActor,
   drawActorCenter,
 } from '../draw-svg';
-import { Project, ModuleFunction, ActorAccess } from '../project';
+import { Project, ActorAccess } from '../project';
 import { centerOf, splitBySpaces } from '../util';
+import { DiagramComponent } from './diagram.component';
 
 @Component({
   selector: 'bl-actogram',
   standalone: true,
   imports: [FormsModule, MatButtonModule],
-  templateUrl: './actogram.component.html',
+  templateUrl: './diagram.component.html',
   styles: ``,
 })
-export class ActogramComponent implements OnInit {
-  ngOnInit(): void {
-    this.doParse();
-  }
-  doParse() {
-    let pj = this.parse(this.dsl);
-    this.draw(pj);
-  }
-  dsl = `XXXXX管理系统
+export class ActogramComponent extends DiagramComponent {
+  override storageKey = 'actogram';
+  override title = '用例图绘制';
+  override defaultDsl = `XXXXX管理系统
   角色1 功能1 功能2 功能3 功能4
   角色2 功能3 功能4 功能5 功能6
   系统管理员 功能5 功能6 商品管理 客户管理 密码管理 供应商管理
   指定供应商 商品管理 客户管理`;
-  data = new Project();
-  svg = SVG();
-  save() {
-    let blob = new Blob([this.svg.svg()], {
-      type: 'image/svg+xml;charset=utf-8',
-    });
-    saveAs(blob, 'actogram.svg');
-  }
-  parse(dsl: string): Project {
+  override parse(dsl: string): Project {
     let pj = new Project();
     let lines = dsl
       .split('\n')
@@ -66,7 +47,7 @@ export class ActogramComponent implements OnInit {
     console.log(pj);
     return pj;
   }
-  draw(pj: Project) {
+  override draw(pj: Project) {
     let ele = document.getElementById('svg');
     if (ele) ele.innerHTML = '';
     let svg = SVG();

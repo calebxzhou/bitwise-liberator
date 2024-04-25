@@ -1,33 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { SVG, Line, Rect } from '@svgdotjs/svg.js';
-import saveAs from 'file-saver';
+import { SVG } from '@svgdotjs/svg.js';
 import {
   setupFont,
-  getVerticalTextHeight,
-  drawRectangleWithText,
-  drawLine,
-  getLineStartPoint,
   getHorizontalTextWidth,
-  getLineEndPoint,
   drawEllipseWithText,
   EllipseShape,
   drawRhombusWithText,
   drawTextAlongLine,
 } from '../draw-svg';
-import { Project, ModuleFunction, EntityRelation, Entity } from '../project';
+import { Project, EntityRelation, Entity } from '../project';
 import { splitBySpaces, centerOf } from '../util';
+import { DiagramComponent } from './diagram.component';
 
 @Component({
   selector: 'bl-ergram',
   standalone: true,
   imports: [FormsModule, MatButtonModule],
-  templateUrl: './ergram.component.html',
+  templateUrl: './diagram.component.html',
   styles: ``,
 })
-export class ErgramComponent implements OnInit {
-  dsl = `学院 编号 名称
+export class ErgramComponent extends DiagramComponent {
+  override title = 'E-R图绘制';
+  override defaultDsl = `学院 编号 名称
   学生 学号 姓名 电话 出生日期 学院编号
   教师 工号 姓名 电话 出生日期 学院编号
   课程 编号 名称 教师工号 教室 是否考试
@@ -35,22 +31,9 @@ export class ErgramComponent implements OnInit {
   教师 多对一 从属 学院
   学生 多对多 学习 课程
   教师 多对多 讲解 课程`;
-  ngOnInit(): void {
-    this.doParse();
-  }
-  doParse() {
-    let pj = this.parse(this.dsl);
-    this.draw(pj);
-  }
-  data = new Project();
-  svg = SVG();
-  save() {
-    let blob = new Blob([this.svg.svg()], {
-      type: 'image/svg+xml;charset=utf-8',
-    });
-    saveAs(blob, 'ergram.svg');
-  }
-  parse(dsl: string): Project {
+  override storageKey = 'ergram';
+
+  override parse(dsl: string): Project {
     let pj = new Project();
     let lines = dsl
       .split('\n')
@@ -79,7 +62,7 @@ export class ErgramComponent implements OnInit {
     console.log(pj);
     return pj;
   }
-  draw(pj: Project) {
+  override draw(pj: Project) {
     let ele = document.getElementById('svg');
     if (ele) ele.innerHTML = '';
     let svg = SVG();

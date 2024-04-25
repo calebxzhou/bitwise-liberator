@@ -1,7 +1,7 @@
 <div class="m-8 font-circular">
   <span class="text-3xl">Bitwise Liberator</span>
   <span class="mx-3 font-bold">MARK.II</span>
-  <button
+  <!-- <button
     class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-4 rounded"
     [routerLink]="['/project-select']"
   >
@@ -12,37 +12,64 @@
     [routerLink]="['/project-create']"
   >
     创建项目
-  </button>
+  </button> -->
 </div>
 
 <div class="m-8">
   <h3 class="text-2xl m-4">代码</h3>
+  <div class="m-4">
+    <p class="m-4">后端</p>
+    <button mat-stroked-button [routerLink]="'/dao-factory'">
+      DAO Factory
+    </button>
+    <button mat-stroked-button [routerLink]="'/codegen-dao-impl'">
+      DAO Impl
+    </button>
+    <button mat-stroked-button [routerLink]="'/codegen-dao'">DAO</button>
 
-  <button mat-stroked-button color="" [routerLink]="'/mock-data'">
-    SQL测试数据
-  </button>
+    <button mat-stroked-button [routerLink]="'/codegen-entity'">Entity</button>
+
+    <button mat-stroked-button [routerLink]="'/codegen-controller'">
+      Controller
+    </button>
+    <button mat-stroked-button [routerLink]="'/codegen-service'">
+      Service
+    </button>
+    <button mat-stroked-button [routerLink]="'/codegen-mapper'">Mapper</button>
+    <button mat-stroked-button [routerLink]="'/codegen-servlet'">
+      Servlet
+    </button>
+  </div>
+  <div class="m-4">
+    <p class="m-4">前端</p>
+    <button mat-stroked-button [routerLink]="'/codegen-front-select'">
+      查询页面
+    </button>
+    <button mat-stroked-button [routerLink]="'/codegen-front-insert'">
+      新增页面
+    </button>
+    <button mat-stroked-button [routerLink]="'/codegen-front-update'">
+      修改页面
+    </button>
+  </div>
+  <div class="m-4">
+    <p class="m-4">其他</p>
+    <button mat-stroked-button [routerLink]="'/mock-data'">SQL测试数据</button>
+  </div>
 </div>
 <div class="m-8">
   <h3 class="text-2xl m-4">绘图</h3>
 
-  <button mat-stroked-button color="" [routerLink]="'/fumogram'">
-    功能模块图
-  </button>
-  <button mat-stroked-button color="" [routerLink]="'/actogram'">用例图</button>
-  <button mat-stroked-button color="" [routerLink]="'/ergram'">E-R图</button>
+  <button mat-stroked-button [routerLink]="'/fumogram'">功能模块图</button>
+  <button mat-stroked-button [routerLink]="'/actogram'">用例图</button>
+  <button mat-stroked-button [routerLink]="'/ergram'">E-R图</button>
 </div>
 
 <div class="m-8">
   <h3 class="text-2xl m-4">文档</h3>
 
-  <button mat-stroked-button color="" [routerLink]="'/packinfo'">
-    包文件介绍
-  </button>
-  <button mat-stroked-button color="" [routerLink]="'/dbinfo'">
-    数据库设计
-  </button>
-  <button mat-stroked-button color="" [routerLink]="'/caseinfo'">
-    功能用例
-  </button>
-  <button mat-stroked-button color="" [routerLink]="'/pjtest'">测试用例</button>
+  <button mat-stroked-button [routerLink]="'/packinfo'">包文件介绍</button>
+  <button mat-stroked-button [routerLink]="'/dbinfo'">数据库设计</button>
+  <button mat-stroked-button [routerLink]="'/caseinfo'">功能用例</button>
+  <button mat-stroked-button [routerLink]="'/pjtest'">测试用例</button>
 </div>

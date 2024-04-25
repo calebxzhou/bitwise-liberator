@@ -1,0 +1,19 @@
+<div class="flex m-5 align-middle">
+  <span class="text-2xl font-bold">{{ title }}</span>
+  <span class="ml-5">
+    <button mat-stroked-button color="" (click)="save()">💾保存图片</button>
+    <button mat-stroked-button color="" (click)="reset()">↩️还原</button>
+  </span>
+</div>
+
+<div class="block w-full">
+  <textarea
+    (keyup)="doParse()"
+    class="outline-double whitespace-pre overflow-x-auto w-full"
+    [rows]="10"
+    [cols]="50"
+    [(ngModel)]="dsl"
+  ></textarea>
+
+  <div id="svg" class="m-3"></div>
+</div>

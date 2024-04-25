@@ -1,0 +1,20 @@
+<div class="flex m-5 align-middle">
+  <span class="text-2xl font-bold">{{ title }}</span>
+  <span class="ml-5">
+    <button mat-stroked-button color="" (click)="exportCode()">
+      💾生成代码
+    </button>
+    <button mat-stroked-button color="" (click)="reset()">↩️还原</button>
+  </span>
+</div>
+<div class="block w-full">
+  <textarea
+    (keyup)="doParse()"
+    class="outline-double whitespace-pre overflow-x-auto w-1/2"
+    [rows]="10"
+    [cols]="50"
+    [(ngModel)]="dsl"
+  ></textarea>
+
+  <div class="m-3">{{ preview }}</div>
+</div>
