@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { CodegenComponent } from './codegen.component';
 import { Entity, Project } from '../project';
-import { splitByReturn, splitBySpaces } from '../util';
+import { capitalize, splitByReturn, splitBySpaces } from '../util';
 
 @Component({
   selector: 'bl-dao-factory',
@@ -13,7 +13,7 @@ import { splitByReturn, splitBySpaces } from '../util';
   styles: ``,
 })
 export class DaoFactoryComponent extends CodegenComponent {
-  override title = '数据访问对象工厂类DAO Factory生成';
+  override title = 'DAO Factory生成';
   override storageKey: string = 'dao-factory';
   override templateName: string = 'DaoFactory.java';
   override defaultDsl: string = `com.ssm.dao
@@ -21,8 +21,10 @@ export class DaoFactoryComponent extends CodegenComponent {
   学院 college
   课程 course
   教师 teacher`;
-  override renderPreview(): string {
-    return '';
+  override renderPreview() {
+    this.renderTemplateToCode({ pj: this.pj }).then((code) =>
+      this.editor.setValue(code)
+    );
   }
   override parse(dsl: string): Project {
     let pj = new Project();
@@ -31,11 +33,14 @@ export class DaoFactoryComponent extends CodegenComponent {
     pj.entities = lines.map((l) => {
       let tokens = splitBySpaces(l);
       let e = new Entity();
-      e.id = tokens[1];
+      e.id = capitalize(tokens[1]);
       e.name = tokens[0];
       return e;
     });
-
     return pj;
+  }
+  override async exportCode() {
+    let p = await this.renderTemplateToCode({ pj: this.pj });
+    this.saveCode(p);
   }
 }

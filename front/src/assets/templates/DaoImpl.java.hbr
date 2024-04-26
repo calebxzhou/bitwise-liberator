@@ -1,0 +1,158 @@
+package com.dao.impl;
+
+import com.dao.*;
+import com.entity.*;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.Timestamp;
+
+public class {{entity.capId}}DaoImpl implements {{entity.capId}}Dao{
+    private boolean flag = false;
+    private Connection conn = DBConnection.getConnection();
+    private PreparedStatement pstmt = null;
+    private ResultSet rs = null;
+
+{{#each entity.fields}}
+    public List<{{../entity.capId}}> doSelectBy{{this.capId}}({{this.type}} {{this.uncapId}}){
+        List<{{../entity.capId}}> {{../entity.uncapId}}List = new ArrayList<>();
+        try{
+            String sql = "select * from {{../entity.capId}} where {{this.uncapId}}=?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1,{{this.uncapId}});
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                {{../entity.capId}} {{../entity.uncapId}} = new {{../entity.capId}}();
+                {{#each entity.fields}}
+                    {{../entity.uncapId}}.set{{this.capId}}(rs.getObject("{{this.uncapId}}"));
+                 {{/each}}
+                {{../entity.uncapId}}List.add({{../entity.uncapId}});
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            try{
+                pstmt.close();
+                rs.close();
+                conn.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+ {{/each}}
+
+
+    public List<{{entity.capId}}> doSelectAll() {
+        List<{{entity.capId}}> {{entity.uncapId}}List = new ArrayList<>();
+        try {
+            pstmt = conn.prepareStatement("select * from {{entity.capId}}");
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                {{entity.capId}} {{entity.uncapId}} = new {{entity.capId}}();
+                {{#each entity.fields}}
+                    {{../entity.uncapId}}.set{{this.capId}}(rs.getObject("{{this.uncapId}}"));
+                 {{/each}}
+                {{entity.capId}}List.add({{entity.uncapId}});
+            }
+
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            try{
+				pstmt.close();
+				rs.close();
+	            conn.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return {{entity.capId}}List ;
+
+    }
+
+    public boolean doUpdate({{entity.capId}} {{entity.uncapId}}) {
+        try{
+            String sql = "update {{entity.capId}} set {{entity.updatePstmtSets}} where id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt({{plus1 entity.fields.length}},{{entity.uncapId}}.getId());
+            {{#each entity.fields}}
+            pstmt.setObject({{plus1 @index}},{{../entity.uncapId}}.get{{this.capId}}());
+            {{/each}} 
+            int count = pstmt.executeUpdate();
+            if(count>0){
+                flag=true;
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                pstmt.close();
+                conn.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return flag;
+    }
+
+    public boolean doCreate({{entity.capId}} {{entity.uncapId}}) {
+        try{
+            String sql = "insert into {{entity.capId}} values ({{entity.insertPstmtQMarks}})";
+            pstmt = conn.prepareStatement(sql);
+            {{#each entity.fields}}
+            pstmt.setObject({{plus1 @index}},{{../entity.uncapId}}.get{{this.capId}}());
+             {{/each}}
+
+            int count = pstmt.executeUpdate();
+            if(count>0){
+                flag=true;
+            }
+        }  catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            try{
+				pstmt.close();
+	            conn.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return flag;
+
+    }
+
+    public boolean doDelete(Integer id) {
+        try{
+            pstmt = conn.prepareStatement("delete from {{entity.capId}} where id=?");
+            pstmt.setInt(1, id);
+            int count = pstmt.executeUpdate();
+            if(count>0){
+                flag=true;
+            }
+        }  catch(Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                pstmt.close();
+                conn.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        return flag;
+
+
+
+    }
+
+
+
+}

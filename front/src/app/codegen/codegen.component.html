@@ -2,19 +2,21 @@
   <span class="text-2xl font-bold">{{ title }}</span>
   <span class="ml-5">
     <button mat-stroked-button color="" (click)="exportCode()">
-      💾生成代码
+      💾导出代码
     </button>
     <button mat-stroked-button color="" (click)="reset()">↩️还原</button>
   </span>
 </div>
-<div class="block w-full">
+<div class="flex w-full h-[90vh]">
   <textarea
-    (keyup)="doParse()"
+    (keyup)="onDslAreaCursorChanged()"
+    (click)="onDslAreaCursorChanged()"
     class="outline-double whitespace-pre overflow-x-auto w-1/2"
     [rows]="10"
     [cols]="50"
     [(ngModel)]="dsl"
+    #dslArea
   ></textarea>
 
-  <div class="m-3">{{ preview }}</div>
+  <div id="preview" class="m-3 w-1/2">{{ preview }}</div>
 </div>

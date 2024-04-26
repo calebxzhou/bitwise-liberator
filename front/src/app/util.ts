@@ -75,3 +75,9 @@ export function matchIdName(input: string): {
 export function centerOf(x: NumberAlias, y: NumberAlias) {
   return (Number(x) + Number(y)) / 2;
 }
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+export function uncapitalize(str: string): string {
+  return str.charAt(0).toLowerCase() + str.slice(1);
+}

@@ -18,6 +18,7 @@ import { PjtestComponent } from './pjtest/pjtest.component';
 import { ActogramComponent } from './diagram/actogram.component';
 import { ErgramComponent } from './diagram/ergram.component';
 import { DaoFactoryComponent } from './codegen/dao-factory.component';
+import { DaoImplComponent } from './codegen/dao-impl.component';
 
 export const routes: Routes = [
   { path: 'project-select', component: ProjectSelectComponent },
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'project-create', component: ProjectCreateComponent },
   { path: 'mock-data', component: MockDataComponent },
   { path: 'dao-factory', component: DaoFactoryComponent },
+  { path: 'dao-impl', component: DaoImplComponent },
   { path: 'packinfo', component: PackinfoComponent },
   { path: 'dbinfo', component: DbinfoComponent },
   { path: 'pjtest', component: PjtestComponent },

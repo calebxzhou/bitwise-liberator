@@ -1,0 +1,25 @@
+
+package com.dao
+
+// {{entity.name}} 数据访问对象接口
+
+public interface {{entity.capId}}DAO {
+
+    // 查询全部{{entity.name}}
+    public List<{{entity.capId}}> doSelectAll();
+
+    {{#each entity.fields as |field|}}
+    // 查询{{entity.name}}的{{field.name}}
+    public List<{{entity.capId}}> doSelectBy{{field.capId}}({{field.type}} {{field.uncapId}});
+    {{/each}}
+
+    // 更新{{entity.name}}
+    public boolean doUpdate({{entity.capId}} {{entity.uncapId}});
+
+    // 插入{{entity.name}}
+    public boolean doInsert({{entity.capId}} {{entity.uncapId}});
+
+    // 删除{{entity.name}}
+    public boolean doDelete({{entity.capId}} {{entity.uncapId}});
+
+}

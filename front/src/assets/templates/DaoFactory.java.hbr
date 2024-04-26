@@ -6,12 +6,12 @@ import java.util.*;
 import com.dao.impl.*;
 
 //数据工厂
-public class DAOFactory{
+public class DaoFactory{
     {{#each pj.entities}}
-        //获取{{this.name}}的数据访问对象
-        public static {{this.id}}DAO get{{this.id}}DAOInstance(){
-            return new {{this.id}}DAOImpl();
-        }
+    //获取{{this.name}}的数据访问对象
+    public static {{this.capId}}DAO get{{this.capId}}DAOInstance(){
+        return new {{this.capId}}DAOImpl();
+    }
     {{/each}}
 
 }

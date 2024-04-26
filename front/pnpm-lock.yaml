@@ -56,6 +56,9 @@ dependencies:
   mammoth:
     specifier: ^1.7.1
     version: 1.7.1
+  monaco-editor:
+    specifier: ^0.48.0
+    version: 0.48.0
   ngx-cookie-service:
     specifier: ^17.1.0
     version: 17.1.0(@angular/common@17.3.0)(@angular/core@17.3.0)
@@ -6258,6 +6261,10 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dev: true
+
+  /monaco-editor@0.48.0:
+    resolution: {integrity: sha512-goSDElNqFfw7iDHMg8WDATkfcyeLTNpBHQpO8incK6p5qZt5G/1j41X0xdGzpIkGojGXM+QiRQyLjnfDVvrpwA==}
+    dev: false
 
   /mrmime@2.0.0:
     resolution: {integrity: sha512-eu38+hdgojoyq63s+yTpN4XMBdt5l8HhMhc4VKLO9KM5caLIBvUm4thi7fFaxyTmCKeNnXZ5pAlBwCUnhA09uw==}

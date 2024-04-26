@@ -10,7 +10,7 @@ import {
   drawRhombusWithText,
   drawTextAlongLine,
 } from '../draw-svg';
-import { Project, EntityRelation, Entity } from '../project';
+import { Project, EntityRelation, Entity, Field } from '../project';
 import { splitBySpaces, centerOf } from '../util';
 import { DiagramComponent } from './diagram.component';
 
@@ -54,7 +54,7 @@ export class ErgramComponent extends DiagramComponent {
         //第一个token=实体
         entity.name = tokens.shift() ?? '';
         entity.fields = tokens.map((t) => {
-          return { id: t, name: t, type: t };
+          return new Field(t, t, t);
         });
         pj.entities.push(entity);
       }

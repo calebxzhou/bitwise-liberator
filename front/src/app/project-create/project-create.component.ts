@@ -155,11 +155,11 @@ export class ProjectCreateComponent implements OnInit {
       entity.fields = [];
       //读取字段
       for (let token of tokens) {
-        let field = new Field();
-        field.id = matchIdName(token).id!;
-        field.name = matchIdName(token).name!;
-        //默认文本型 以后调
-        field.type = 'text';
+        let field = new Field(
+          matchIdName(token).id!,
+          matchIdName(token).name!,
+          'text'
+        );
         entity.fields.push(field);
       }
       project.entities.push(entity);

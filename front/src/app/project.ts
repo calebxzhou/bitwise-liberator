@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import { capitalize, uncapitalize } from './util';
+import { from, map, of, toArray } from 'rxjs';
 //项目
 export class Project {
   //ID
@@ -71,6 +73,14 @@ export class Entity {
   name!: string;
   //所有字段
   fields!: Field[];
+  //insert语句 preparedstatement 后面的?,?,?
+  insertPstmtQMarks = () => new Array(this.fields.length).fill('?').join(', ');
+  //update语句 set xxx=?,xxx=?
+  updatePstmtSets = () =>
+    this.fields.map((f) => `${f.uncapId()} = ?`).join(', ');
+
+  capId = () => capitalize(this.id);
+  uncapId = () => uncapitalize(this.id);
 }
 //实体关系
 export class EntityRelation {
@@ -87,6 +97,13 @@ export class Field {
   id!: string;
   name!: string;
   type!: string;
+  constructor(id: string, name: string, type: string) {
+    this.id = id;
+    this.name = name;
+    this.type = type;
+  }
+  capId = () => capitalize(this.id);
+  uncapId = () => uncapitalize(this.id);
 }
 export class Table {
   id!: string;
