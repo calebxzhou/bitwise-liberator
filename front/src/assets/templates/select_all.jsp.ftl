@@ -8,15 +8,15 @@
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h2 class="m-3">${entity.name}管理</h2>
+<h2 class="m-3">{{entity.name}}管理</h2>
 <div class="container">
 
-        <form method="get" action="${entity.capId}_selectAll">
+        <form method="get" action="{{entity.capId}}_selectAll">
             <div class="row">
         <div class="col-2">
-            <c:if test="${$}{${entity.insertableRoles}}">
-            <a href="${$}{pageContext.request.contextPath}/${entity.capId}_insert">
-                <button type="button" class="btn btn-primary">添加${entity.name}</button>
+            <c:if test="{{$}}{{{entity.insertableRoles}}}">
+            <a href="{{$}}{pageContext.request.contextPath}/{{entity.capId}}_insert">
+                <button type="button" class="btn btn-primary">添加{{entity.name}}</button>
             </a>
             </c:if>
         </div>
@@ -24,7 +24,7 @@
             <div class="col-2">
                 <select class="form-select" name="by">
                     <#list entity.voFields as field>
-                        <option value="${field.id}">${field.name}</option>
+                        <option value="{{field.id}}">{{field.name}}</option>
                     </#list>
                 </select>
             </div>
@@ -32,7 +32,7 @@
                 <input name="value" class="form-control">
             </div>
             <div class="col">
-                <button type="submit" class="btn btn-primary">搜索${entity.name}</button>
+                <button type="submit" class="btn btn-primary">搜索{{entity.name}}</button>
             </div>
             </div>
         </form>
@@ -46,28 +46,28 @@
         <thead>
         <tr>
             <#list entity.voFields as field>
-                <th scope="col">${field.name}</th>
+                <th scope="col">{{field.name}}</th>
             </#list>
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${$}{items}" var="var">
+        <c:forEach items="{{$}}{items}" var="var">
             <tr>
                 <#list entity.voFields as field>
-                    <td>${$}{var.${field.id}}</td>
+                    <td>{{$}}{var.{{field.id}}}</td>
                 </#list>
                 <td>
-                    <c:if test="${$}{${entity.editableRoles}}">
+                    <c:if test="{{$}}{{{entity.editableRoles}}}">
 
-                    <a href="${entity.capId}_edit?${entity.jspHrefParam}">
+                    <a href="{{entity.capId}}_edit?{{entity.jspHrefParam}}">
                         <button class="btn btn-primary">
                             编辑
                         </button>
 
                     </a> </c:if>
-                    <c:if test="${$}{${entity.deletableRoles}}">
+                    <c:if test="{{$}}{{{entity.deletableRoles}}}">
 
-                    <a href="${entity.capId}_delete?${entity.primaryKey.id}=${$}{var.${entity.primaryKey.id}}">
+                    <a href="{{entity.capId}}_delete?{{entity.primaryKey.id}}={{$}}{var.{{entity.primaryKey.id}}}">
                         <button class="btn btn-danger">
                             删除
                         </button>

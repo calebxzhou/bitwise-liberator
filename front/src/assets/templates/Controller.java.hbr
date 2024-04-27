@@ -25,7 +25,7 @@ public class {{entity.capId}}Controller {
                 if(by.equals("{{field.id}}")){
                     modelAndView.addObject("items",service.selectBy{{field.capId}}(value));
                 }
-            </#list>
+            {{/each}}
         }else{
             modelAndView.addObject("items",service.selectAll());
         }

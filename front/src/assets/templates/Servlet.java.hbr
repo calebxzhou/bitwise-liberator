@@ -1,0 +1,95 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.sql.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.dao.*;
+import com.model.*;
+public class {{entity.capId}}Servlet{
+    //查询全部信息
+    @WebServlet("/{{entity.capId}}QueryAllServlet")
+    public class {{entity.capId}}QueryAllServlet extends HttpServlet {
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+            //去数据库读取全部信息
+            List<{{entity.capId}}> list = DAOFactory.get{{entity.capId}}DAOInstance().doQueryAll();
+            //存入list
+            req.setAttribute("list",list);
+            //跳到jsp
+            req.getRequestDispatcher("{{entity.uncapId}}_queryall.jsp").forward(req,resp);
+        }
+        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+            doGet(req,resp);
+        }
+    }
+    @WebServlet("/{{entity.capId}}EditServlet")
+    public class {{entity.capId}}EditServlet extends HttpServlet {
+
+        //跳转到{{entity.name}}的修改界面
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+            //去数据库读取对应编号的数据，写到修改界面里
+            {{entity.capId}} {{entity.uncapId}} = DAOFactory.get{{entity.capId}}DAOInstance().doQueryById(req.getParameter("id"));
+            req.setAttribute("{{entity.uncapId}}",{{entity.uncapId}});
+            req.getRequestDispatcher("{{entity.uncapId}}_edit.jsp").forward(req,resp);
+        }
+
+        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+            //创建新的{{entity.name}}对象
+            {{entity.capId}} {{entity.uncapId}} = new {{entity.capId}}();
+            {{}}
+    {{#each entity.fields as |field|}}
+                //读取界面上的{{field.name}}内容
+                {{field.type}} {{field.id}} = {{field.type}}.valueOf(req.getParameter("{{field.id}}"));
+                //把{{field.name}}写入到{{entity.name}}对象里
+                {{entity.uncapId}}.set{{field.capId}}({{field.id}});
+    {{/each}}
+            //去数据库更新{{entity.name}}对象
+            DAOFactory.get{{entity.capId}}DAOInstance().doUpdate({{entity.uncapId}});
+            //跳回查询{{entity.name}}全部信息界面
+            req.getRequestDispatcher("{{entity.capId}}QueryAllServlet").forward(req,resp);
+        }
+    }
+
+    @WebServlet("/{{entity.capId}}DeleteServlet")
+    public class {{entity.capId}}DeleteServlet extends HttpServlet {
+
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+            DAOFactory.get{{entity.capId}}DAOInstance().doDelete(req.getParameter("id"));
+            //跳回信息查询界面
+            req.getRequestDispatcher("{{entity.capId}}QueryAllServlet").forward(req,resp);
+        }
+
+    }
+
+    @WebServlet("/{{entity.capId}}AddServlet")
+    public class {{entity.capId}}AddServlet extends HttpServlet {
+
+        //跳转到{{entity.name}}的添加界面
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+            //跳转
+            req.getRequestDispatcher("{{entity.uncapId}}_add.jsp").forward(req,resp);
+        }
+
+        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
+            //创建一个新的{{entity.name}}对象
+            {{entity.capId}} {{entity.uncapId}} = new {{entity.capId}}();
+            {{#each entity.fields as |field|}}
+                //从表单中读取{{field.name}}数据
+                //给{{entity.name}}的{{field.name}}赋值
+                {{entity.uncapId}}.set{{field.capId}}({{field.type}}.valueOf(req.getParameter("{{field.id}}")));
+            {{/each}}
+            //存入数据库
+            if(DAOFactory.get{{entity.capId}}DAOInstance().doCreate({{entity.uncapId}})){
+                //跳回列表
+                req.getRequestDispatcher("{{entity.capId}}QueryAllServlet").forward(req,resp);
+            }
+        }
+    }
+}
