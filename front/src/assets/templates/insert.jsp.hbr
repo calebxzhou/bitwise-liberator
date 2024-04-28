@@ -24,14 +24,14 @@
             <div class="col-md-7 col-lg-8">
                 <form method="POST" action="{{entity.capId}}_insert_do">
                     <div class="row g-3">
-                        <#list entity.fields as field>
+                        {{#each entity.fields as |field|}}
                             <div class="col-12">
                                 <label for="{{field.id}}" class="form-label">{{field.name}}</label>
                                 
                                         <input type="text" class="form-control" id="{{field.id}}" name="{{field.id}}"
                                                placeholder="{{field.name}}"  >
                             </div>
-                        </#list>
+                        {{/each}}
                     </div>
                     <button class="w-100 btn btn-lg btn-primary" type="submit" >提交</button>
                 </form>

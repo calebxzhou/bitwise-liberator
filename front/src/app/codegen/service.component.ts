@@ -4,14 +4,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { CodegenComponent } from './codegen.component';
 
 @Component({
-  selector: 'bl-dao-factory',
+  selector: 'bl-Service',
   standalone: true,
   imports: [FormsModule, MatButtonModule],
   templateUrl: './codegen.component.html',
   styles: ``,
 })
-export class DaoFactoryComponent extends CodegenComponent {
-  override title = 'DAO Factory生成';
-  override templateName: string = 'DaoFactory.java';
-  override singleFile = true;
+export class ServiceComponent extends CodegenComponent {
+  override title = 'Service 生成';
+  override templateName: string = 'Service.java';
 }

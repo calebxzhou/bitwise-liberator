@@ -1,0 +1,34 @@
+//{{entity.name}}的数据库映射类
+package com.ssm.mapper;
+import com.ssm.entity.*;
+import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+
+@Repository
+@Mapper
+public interface {{entity.capId}}Mapper {
+    //选择所有{{entity.name}}
+    @Select("select * from {{entity.uncapId}}")
+    List<{{entity.capId}}> selectAll();
+
+    {{#each entity.fields as |field|}}
+    //按{{field.name}}选出{{entity.name}}
+    @Select("select * from {{entity.voTable}} where {{field.id}} = {{井 field.id}}")
+    List<{{entity.capId}}> selectBy{{field.capId}}({{field.type}} {{field.id}});
+    {{/each}}
+
+    //插入{{entity.name}}
+    @Insert("insert into {{entity.id}} {{entity.insertCols}} values {{entity.mybatisSqlInsertValues}}")
+    int insert({{entity.capId}} {{entity.id}});
+
+    //更新{{entity.name}}
+    @Update(" update {{entity.id}} set {{entity.mybatisSqlUpdateSet}} where {{entity.pkid}}={{井 (pkid entity)}}")
+    int update({{entity.capId}} {{entity.id}});
+
+    //删除{{entity.name}}
+    @Delete("delete from {{entity.id}} where {{entity.pkid}}={{井 (pkid entity)}}")
+    int delete({{entity.capId}} {{entity.id}});
+}

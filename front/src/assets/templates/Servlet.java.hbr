@@ -42,12 +42,12 @@ public class {{entity.capId}}Servlet{
         protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
             //创建新的{{entity.name}}对象
             {{entity.capId}} {{entity.uncapId}} = new {{entity.capId}}();
-            {{}}
+           
     {{#each entity.fields as |field|}}
                 //读取界面上的{{field.name}}内容
                 {{field.type}} {{field.id}} = {{field.type}}.valueOf(req.getParameter("{{field.id}}"));
-                //把{{field.name}}写入到{{entity.name}}对象里
-                {{entity.uncapId}}.set{{field.capId}}({{field.id}});
+                //把{{field.name}}写入到{{../entity.name}}对象里
+                {{../entity.uncapId}}.set{{field.capId}}({{field.id}});
     {{/each}}
             //去数据库更新{{entity.name}}对象
             DAOFactory.get{{entity.capId}}DAOInstance().doUpdate({{entity.uncapId}});
@@ -82,8 +82,8 @@ public class {{entity.capId}}Servlet{
             {{entity.capId}} {{entity.uncapId}} = new {{entity.capId}}();
             {{#each entity.fields as |field|}}
                 //从表单中读取{{field.name}}数据
-                //给{{entity.name}}的{{field.name}}赋值
-                {{entity.uncapId}}.set{{field.capId}}({{field.type}}.valueOf(req.getParameter("{{field.id}}")));
+                //给{{../entity.name}}的{{field.name}}赋值
+                {{../entity.uncapId}}.set{{field.capId}}({{field.type}}.valueOf(req.getParameter("{{field.id}}")));
             {{/each}}
             //存入数据库
             if(DAOFactory.get{{entity.capId}}DAOInstance().doCreate({{entity.uncapId}})){

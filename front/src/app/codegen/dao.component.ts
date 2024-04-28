@@ -8,13 +8,13 @@ import { BlobWriter, TextReader, ZipWriter } from '@zip.js/zip.js';
 import saveAs from 'file-saver';
 
 @Component({
-  selector: 'bl-dao-impl',
+  selector: 'bl-dao',
   standalone: true,
   imports: [FormsModule, MatButtonModule],
   templateUrl: './codegen.component.html',
   styles: ``,
 })
-export class DaoImplComponent extends CodegenComponent {
-  override title = 'DAO Impl生成';
-  override templateName: string = 'DaoImpl.java';
+export class DaoComponent extends CodegenComponent {
+  override title = 'DAO 生成';
+  override templateName: string = 'Dao.java';
 }

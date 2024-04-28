@@ -1,4 +1,4 @@
-//${entity.name}的控制器类
+//{{entity.name}}的控制器类
 package com.ssm.controller;
 
 import com.ssm.entity.*;

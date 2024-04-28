@@ -18,7 +18,13 @@ import { PjtestComponent } from './pjtest/pjtest.component';
 import { ActogramComponent } from './diagram/actogram.component';
 import { ErgramComponent } from './diagram/ergram.component';
 import { DaoFactoryComponent } from './codegen/dao-factory.component';
+import { DaoComponent } from './codegen/dao.component';
 import { DaoImplComponent } from './codegen/dao-impl.component';
+import { EntityComponent } from './codegen/entity.component';
+import { ControllerComponent } from './codegen/controller.component';
+import { ServiceComponent } from './codegen/service.component';
+import { MapperComponent } from './codegen/mapper.component';
+import { ServletComponent } from './codegen/servlet.component';
 
 export const routes: Routes = [
   { path: 'project-select', component: ProjectSelectComponent },
@@ -27,6 +33,12 @@ export const routes: Routes = [
   { path: 'mock-data', component: MockDataComponent },
   { path: 'dao-factory', component: DaoFactoryComponent },
   { path: 'dao-impl', component: DaoImplComponent },
+  { path: 'dao', component: DaoComponent },
+  { path: 'entity', component: EntityComponent },
+  { path: 'controller', component: ControllerComponent },
+  { path: 'service', component: ServiceComponent },
+  { path: 'mapper', component: MapperComponent },
+  { path: 'servlet', component: ServletComponent },
   { path: 'packinfo', component: PackinfoComponent },
   { path: 'dbinfo', component: DbinfoComponent },
   { path: 'pjtest', component: PjtestComponent },

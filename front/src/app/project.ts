@@ -73,6 +73,13 @@ export class Entity {
   name!: string;
   //所有字段
   fields!: Field[];
+  pkid = () => this.fields[0].id;
+  //insert语句 列
+  insertCols = () => `(${this.fields.map((f) => f.id).join(',')})`;
+  mybatisSqlInsertValues = () =>
+    `(${this.fields.map((f) => `#{${f.id}}`).join(',')})`;
+  mybatisSqlUpdateSet = () =>
+    this.fields.map((f) => `${f.uncapId()} = #{${f.uncapId()}}`).join(', ');
   //insert语句 preparedstatement 后面的?,?,?
   insertPstmtQMarks = () => new Array(this.fields.length).fill('?').join(', ');
   //update语句 set xxx=?,xxx=?

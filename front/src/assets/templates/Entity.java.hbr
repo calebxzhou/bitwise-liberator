@@ -4,13 +4,13 @@ package com.ssm.entity;
 
 public class {{entity.capId}}{
 
-<#list entity.classFields as field>
+{{#each entity.fields as |field|}}
     //{{field.name}}
     private {{field.type}} {{field.id}};
-</#list>
+{{/each}}
 
 
-<#list entity.classFields as field>
+{{#each entity.fields as |field|}}
     //获取{{field.name}}
     public {{field.type}} get{{field.capId}}(){
         return this.{{field.id}};
@@ -19,13 +19,13 @@ public class {{entity.capId}}{
     public void set{{field.capId}}({{field.type}} {{field.id}}){
         this.{{field.id}} = {{field.id}};
     }
-</#list>
+{{/each}}
 
     //转换为字符串
     public String toString(){
-        return <#list entity.classFields as field>
+        return {{#each entity.fields as |field|}}
             {{field.id}} + "," +
-        </#list>
+        {{/each}}
         ".";
     } 
 

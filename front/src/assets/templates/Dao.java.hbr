@@ -9,8 +9,8 @@ public interface {{entity.capId}}DAO {
     public List<{{entity.capId}}> doSelectAll();
 
     {{#each entity.fields as |field|}}
-    // 查询{{entity.name}}的{{field.name}}
-    public List<{{entity.capId}}> doSelectBy{{field.capId}}({{field.type}} {{field.uncapId}});
+    // 查询{{../entity.name}}的{{field.name}}
+    public List<{{../entity.capId}}> doSelectBy{{field.capId}}({{field.type}} {{field.uncapId}});
     {{/each}}
 
     // 更新{{entity.name}}

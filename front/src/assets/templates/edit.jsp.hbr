@@ -19,7 +19,7 @@
                         <div class="col-md-7 col-lg-8">
                                 <form method="POST" action="{{entity.capId}}_edit_do">
                                         <div class="row g-3">
-                                                <#list entity.fields as field>
+                                                {{#each entity.fields as |field|}}
                                                         <div class="col-1">
                                                                 <label for="{{field.id}}" class="form-label">{{field.name}}</label>
                                                                 
