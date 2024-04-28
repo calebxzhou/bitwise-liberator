@@ -25,6 +25,10 @@ import { ControllerComponent } from './codegen/controller.component';
 import { ServiceComponent } from './codegen/service.component';
 import { MapperComponent } from './codegen/mapper.component';
 import { ServletComponent } from './codegen/servlet.component';
+import { SqlComponent } from './codegen/sql.component';
+import { EditJspComponent } from './codegen/jsp-edit.component';
+import { InsertJspComponent } from './codegen/jsp-insert.component';
+import { SelectJspComponent } from './codegen/jsp-select.component';
 
 export const routes: Routes = [
   { path: 'project-select', component: ProjectSelectComponent },
@@ -39,6 +43,10 @@ export const routes: Routes = [
   { path: 'service', component: ServiceComponent },
   { path: 'mapper', component: MapperComponent },
   { path: 'servlet', component: ServletComponent },
+  { path: 'sql', component: SqlComponent },
+  { path: 'jsp-edit', component: EditJspComponent },
+  { path: 'jsp-insert', component: InsertJspComponent },
+  { path: 'jsp-select', component: SelectJspComponent },
   { path: 'packinfo', component: PackinfoComponent },
   { path: 'dbinfo', component: DbinfoComponent },
   { path: 'pjtest', component: PjtestComponent },

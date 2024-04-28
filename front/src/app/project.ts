@@ -85,7 +85,8 @@ export class Entity {
   //update语句 set xxx=?,xxx=?
   updatePstmtSets = () =>
     this.fields.map((f) => `${f.uncapId()} = ?`).join(', ');
-
+  sqlCols = () =>
+    this.fields.map((f) => `${f.id} nvarchar(${f.id.length * 8})`).join(',\n');
   capId = () => capitalize(this.id);
   uncapId = () => uncapitalize(this.id);
 }

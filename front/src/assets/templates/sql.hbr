@@ -1,9 +1,9 @@
 CREATE DATABASE IF NOT EXISTS test1;
 
 {{#each pj.entities as |entity|}}
-    CREATE TABLE IF NOT EXISTS {{entity.id}}(
-        {{entity.getSqlCreateTableColumns()}}
-    );
+CREATE TABLE IF NOT EXISTS {{entity.id}}(
+{{entity.sqlCols}}
+);
 
 {{/each}}
 
