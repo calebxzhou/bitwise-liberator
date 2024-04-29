@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { Column, Project, Table } from '../project';
-import { LineError } from '../errors';
-import { splitBySpaces } from '../util';
-import { saveDocFromDsl } from '../doc/doc-dsl';
+import { Column, Project, Table } from '../../project';
+import { LineError } from '../../errors';
+import { splitBySpaces } from '../../util';
+import { saveDocFromDsl } from '../doc-dsl';
 
 @Component({
   selector: 'bl-dbinfo',

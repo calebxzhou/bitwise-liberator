@@ -11,10 +11,10 @@ import {
 } from './mock-data/mock-data.component';
 import { FumogramComponent } from './diagram/fumogram.component';
 import { DocDslTestComponent } from './doc-dsl-test/doc-dsl-test.component';
-import { PackinfoComponent } from './packinfo/packinfo.component';
-import { DbinfoComponent } from './dbinfo/dbinfo.component';
+import { PackinfoComponent } from './doc/packinfo/packinfo.component';
+import { DbinfoComponent } from './doc/dbinfo/dbinfo.component';
 import { CaseinfoComponent } from './caseinfo/caseinfo.component';
-import { PjtestComponent } from './pjtest/pjtest.component';
+import { PjtestComponent } from './doc/pjtest/pjtest.component';
 import { ActogramComponent } from './diagram/actogram.component';
 import { ErgramComponent } from './diagram/ergram.component';
 import { DaoFactoryComponent } from './codegen/dao-factory.component';
