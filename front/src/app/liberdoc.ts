@@ -420,7 +420,7 @@ export class LiberDoc {
           },
 
           {
-            id: 'table_cell',
+            id: 'table-cell',
             name: '表格单元格',
             basedOn: 'Normal',
 

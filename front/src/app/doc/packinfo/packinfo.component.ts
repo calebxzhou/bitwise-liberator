@@ -40,20 +40,20 @@ export class PackinfoComponent implements OnInit {
       const file = files[i];
       const filePathArray = file.webkitRelativePath.split('/');
       if (filePathArray.shift() !== 'src') {
-        alert('必须选择src文件夹');
-        return;
+        alert('未选择src文件夹，可能会出现问题');
       }
       const dirName = filePathArray
         .slice(0, -1)
         .join('/')
         .replaceAll('main/java/', '')
+        .replaceAll('app/', '')
         .replaceAll('main/resources/', '')
         .replaceAll('main/webapp/', '')
         .replaceAll('main/WebContent/', '');
       if (dirName.length === 0) continue;
 
       //只要java py cs格式的文件
-      if (!file.name.match(/\.(java|py|cs)$/)) continue;
+      if (!file.name.match(/\.(java|py|cs|ts)$/)) continue;
 
       let fileItem: FileItem = {
         id: file.name,
