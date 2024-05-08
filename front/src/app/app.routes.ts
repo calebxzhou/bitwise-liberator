@@ -10,7 +10,6 @@ import {
   MockDataComponent,
 } from './mock-data/mock-data.component';
 import { FumogramComponent } from './diagram/fumogram.component';
-import { DocDslTestComponent } from './doc-dsl-test/doc-dsl-test.component';
 import { PackinfoComponent } from './doc/packinfo/packinfo.component';
 import { DbinfoComponent } from './doc/dbinfo/dbinfo.component';
 import { CaseinfoComponent } from './doc/caseinfo/caseinfo.component';
@@ -51,7 +50,6 @@ export const routes: Routes = [
   { path: 'dbinfo', component: DbinfoComponent },
   { path: 'pjtest', component: PjtestComponent },
   { path: 'caseinfo', component: CaseinfoComponent },
-  { path: 'doc-dsl-test', component: DocDslTestComponent },
   { path: 'home', component: ToolboxComponent },
   { path: 'toolbox', component: ToolboxComponent },
   { path: 'fumogram', component: FumogramComponent },

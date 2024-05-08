@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BlobReader, Entry, TextWriter, ZipReader } from '@zip.js/zip.js';
-import { saveDocFromDsl } from '../doc-dsl';
 import { LiberDoc, Table3lColumn, TableCellInfo } from '../../liberdoc';
 
 @Component({
@@ -90,15 +89,31 @@ export class PackinfoComponent implements OnInit {
       reader.readAsText(file);
     }
     this.packages = Array.from(packageMap, ([name, files]) => {
-      let packageName = '用于存储文件的包'; // Default  name
+      let comment = '文件'; // Default  name
       if (name.includes('controller')) {
-        packageName = '用于存储控制器件类文件的包';
+        comment = '控制器类';
       } else if (name.includes('service')) {
-        packageName = '用于存储服务类文件的包';
+        comment = '服务类';
       } else if (name.includes('mapper')) {
-        packageName = '用于存储数据库映射类文件的包';
+        comment = '数据库映射类';
+      } else if (name.includes('filter')) {
+        comment = '过滤器';
+      } else if (name.includes('dao')) {
+        comment = '数据访问对象';
+      } else if (name.includes('listener')) {
+        comment = '监听器';
+      } else if (name.includes('config')) {
+        comment = '配置';
+      } else if (name.includes('util')) {
+        comment = '工具类';
+      } else if (
+        name.includes('entity') ||
+        name.includes('model') ||
+        name.includes('po')
+      ) {
+        comment = '实体类';
       }
-
+      let packageName = `用于存储${comment}的包`; // Default  name
       return {
         id: name.replaceAll('/', '.'),
         name: packageName,

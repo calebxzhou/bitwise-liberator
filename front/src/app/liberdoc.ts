@@ -52,9 +52,12 @@ export class LiberDoc {
   h4(text: string) {
     this.docChildren.push(
       new Paragraph({
-        //小标题前面空两个字
-        text: ChineseSpace + ChineseSpace + text,
+        text,
         style: 'h4',
+        //首行缩进2字符
+        indent: {
+          firstLine: 480,
+        },
       })
     );
     return this;

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Project, UseCase } from '../../project';
 import { splitBySpaces } from '../../util';
-import { saveDocFromDsl } from '../doc-dsl';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { LiberDoc, TableCellInfo, TableRowInfo } from '../../liberdoc';

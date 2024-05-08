@@ -3,9 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Column, Project, Table } from '../../project';
-import { LineError } from '../../errors';
 import { splitBySpaces } from '../../util';
-import { saveDocFromDsl } from '../doc-dsl';
+import { LiberDoc, Table3lColumn, TableCellInfo } from '../../liberdoc';
 
 @Component({
   selector: 'bl-dbinfo',
@@ -102,42 +101,57 @@ export class DbinfoComponent implements OnInit {
     }
   }
   exportWord() {
-    let docdsl = `标2 2.3 数据库设计
-    标3 2.3.1 概念结构设计
-    标6 图2.3 ${this.pj.name}数据库E-R图
-    标3 2.3.2 逻辑结构设计\n`;
-    docdsl += this.pj.tables
-      .map(
-        (table, index) =>
-          `标4 （${index + 1}）${table.name}（${table.columns
-            .map((c) => c.name)
-            .join('、')}）`
+    let doc = new LiberDoc();
+    doc
+      .h2(`2.3 数据库设计`)
+      .h3(`2.3.1 概念结构设计`)
+      .h6(`图2.3 ${this.pj.name}系统数据库E-R图`)
+      .h3(`2.3.2 逻辑结构设计`);
+    this.pj.tables.forEach((table, index) =>
+      doc.h4(
+        `（${index + 1}）${table.name}（${table.columns
+          .map((c) => c.name)
+          .join('、')}）`
       )
-      .join('\n');
-    docdsl += `\n标3 2.3.3 物理结构设计\n`;
-    docdsl += this.pj.tables
-      .map(
-        (table, index) =>
-          `标4 ${index + 1}. ${table.name}信息（${table.id}）表
-        正文 ${table.name}信息表用来保存所有的${
+    );
+    doc.h3(`2.3.3 物理结构设计`);
+    this.pj.tables.forEach((table, index) => {
+      let data: TableCellInfo[][] = [];
+      table.columns.forEach((c) => {
+        data.push([
+          new TableCellInfo(c.id),
+          new TableCellInfo(c.type),
+          new TableCellInfo(c.length == 0 ? '——' : c.length + ''),
+          new TableCellInfo(c.nullable ? '是' : '否'),
+          new TableCellInfo(c.primaryKey ? '是' : '否'),
+          new TableCellInfo(c.name),
+        ]);
+      });
+      doc
+        .h4(`${index + 1}. ${table.name}信息（${table.id}）表`)
+        .p(
+          `${table.name}信息表用来保存所有的${
             table.name
           }信息，并在本系统的对应界面显示对应的${
             table.name
           }信息。显示的信息包括${table.columns
             .map((c) => `${c.name}（${c.id}）`)
-            .join('、')}。${table.name}信息表的结构，如表2.${index + 1}所示。
-        标6 表2.${index + 1} ${table.name}信息表 ${table.id}
-        三线表 字段名1985中中 数据类型1560中中 长度1275中中 是否为空1275中中 是否主键1275中中 描述1700中中#${table.columns
-          .map(
-            (c) =>
-              `${c.id} ${c.type} ${c.length == 0 ? '——' : c.length} ${
-                c.nullable ? '是' : '否'
-              } ${c.primaryKey ? '是' : '否'} ${c.name}`
-          )
-          .join('#')}`
-      )
-      .join('\n');
-    saveDocFromDsl(docdsl);
+            .join('、')}。${table.name}信息表的结构，如表2.${index + 1}所示。`
+        )
+        .h6(`表2.${index + 1} ${table.name}信息表 ${table.id}`)
+        .table3l(
+          [
+            new Table3lColumn('字段名', 1985),
+            new Table3lColumn('数据类型', 1560),
+            new Table3lColumn('长度', 1275),
+            new Table3lColumn('是否为空', 1275),
+            new Table3lColumn('是否主键', 1275),
+            new Table3lColumn('描述', 1700),
+          ],
+          data
+        );
+    });
+    doc.save();
   }
   dsl = '';
   defaultDsl = `XXXXX管理系统
