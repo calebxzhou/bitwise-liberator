@@ -12,19 +12,28 @@
   ></textarea>
   <div class="ml-6">
     <p>系统名称：{{ pj.name }}</p>
-    @for (case of pj.testCases; track $index) {
-    <p>{{ $index + 1 }}.</p>
-    <p>测试用例：{{ case.name }}</p>
-    <p>测试字段：{{ case.fields.join("、") }}</p>
-    <p>测试操作：</p>
-    @for (action of case.actions; track $index) {
-    <hr />
-    <p>条件： {{ action.conditions.join("，") }}</p>
-    <p>数据： {{ action.datas.join("，") }}</p>
-    <p>描述： {{ action.intro }}</p>
-    <p>结果： {{ action.result }}</p>
-    <br />
-    } }
+    @for (mod of pj.moduleTests; track $index) {
+    <div class="m-6">
+      <p class="font-extrabold">{{ mod.name }}模块</p>
+      @for (func of mod.funcTests; track $index) {
+      <p>{{ func.name }}功能</p>
+      <table>
+        <th>编号</th>
+        <th>测试项</th>
+        <th>输入</th>
+        <th>结果</th>
+        @for (case of func.testCases; track $index) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ case.name }}</td>
+          <td>{{ case.operation }}</td>
+          <td>{{ case.result }}</td>
+        </tr>
+        }
+      </table>
+      }
+    </div>
+    }
 
     <button mat-flat-button color="primary" (click)="exportWord()">
       导出word

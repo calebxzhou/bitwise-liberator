@@ -1,11 +1,16 @@
 import { Component } from '@angular/core';
-import { LiberDoc, TableCellInfo, TableRowInfo } from '../../liberdoc';
+import {
+  LiberDoc,
+  TableCellInfo,
+  TableRowInfo,
+  Table3lColumn,
+} from '../../liberdoc';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { Project, TestCase, TestCaseAction } from '../../project';
+import { ModuleTest, Project, FuncTest, TestCase } from '../../project';
 import { splitBySpaces } from '../../util';
 import { AlignmentType, VerticalAlign } from 'docx';
 
@@ -36,55 +41,47 @@ export class PjtestComponent {
   }
   parse(dsl: string) {
     let pj = new Project();
-    let lines = dsl.split('\n');
+    let lines = dsl
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
     //第一行是项目名
     pj.name = lines.shift() ?? '本项目';
-    lines = lines.map((l) => l.trim()).filter((l) => l.length > 0);
-    let tcase = null;
-    let action: TestCaseAction | undefined;
+    let moduleNow = null;
+    let funcNow = null;
+    let caseNow = null;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       let tokens = splitBySpaces(line);
       if (tokens.length === 0) continue;
-      //有一个token的是新用例
-      if (tokens.length === 1) {
-        //保存上一个用例
-        if (tcase) pj.testCases.push(tcase);
-        tcase = new TestCase();
-        tcase.name = tokens[0];
+      //读取模块
+      if (tokens[0] === '模块') {
+        if (moduleNow) pj.moduleTests.push(moduleNow);
+        moduleNow = new ModuleTest();
+        moduleNow.name = tokens[1];
         continue;
       }
-      if (!tcase) continue;
-      let keyword = tokens.shift();
+      //读取功能
+      if (tokens[0] === '功能' && moduleNow) {
+        if (funcNow) moduleNow.funcTests.push(funcNow);
+        funcNow = new FuncTest();
+        funcNow.name = tokens[1];
 
-      switch (keyword) {
-        case '输入':
-          tcase.fields = tokens;
-          break;
-        //遇到条件，新建测试操作
-        case '条件':
-          action = new TestCaseAction();
-          action.conditions = tokens;
-          break;
-        case '数据':
-          if (!action) continue;
-          action.datas = tokens;
-          break;
-        case '描述':
-          if (!action) continue;
-          action.intro = tokens.join('');
-          break;
-        case '结果':
-          if (!action) continue;
-          action.result = `操作${tokens.shift()}，${tokens.join('')}`;
-          tcase.actions.push(action);
-          break;
+        continue;
       }
-      /* if (action) {
-        tcase.actions.push(action);
-      } */
+      //读取测试
+      if (funcNow) {
+        if (caseNow) funcNow.testCases.push(caseNow);
+        caseNow = new TestCase();
+        caseNow.name = line;
+        caseNow.operation = lines[++i];
+        caseNow.result = lines[++i];
+        continue;
+      }
     }
-    if (tcase) pj.testCases.push(tcase);
+    if (caseNow && funcNow) funcNow.testCases.push(caseNow);
+    if (funcNow && moduleNow) moduleNow.funcTests.push(funcNow);
+    if (moduleNow) pj.moduleTests.push(moduleNow);
     return pj;
   }
   exportWord() {
@@ -92,110 +89,69 @@ export class PjtestComponent {
       .h1('4 系统测试')
       .p(
         '系统测试是软件开发过程中不可或缺的环节。除了检测系统的正常运行和功能模块的执行情况，还需要验证系统的稳定性和可靠性。这包括长时间运行系统以观察是否会出现内存泄漏或其他资源耗尽的问题。同时，性能测试也是系统测试的重要组成部分，它可以帮助确定系统在高负载下的响应时间和处理能力。'
-      )
-      .p(
-        '在进行系统测试时，还需要考虑到系统的安全性。这涉及到对系统进行各种安全测试，以确保没有安全漏洞，如SQL注入、跨站脚本攻击等。此外，还需要测试系统的用户权限设置，确保用户只能访问他们被授权的数据和功能。另一个重要的测试领域是用户体验。这不仅仅是关于界面的美观，更重要的是界面的直观性和易用性。用户体验测试通常涉及到真实用户的参与，他们会提供关于系统操作流程是否顺畅、功能是否容易理解和使用的反馈。最后，系统测试还应该包括灾难恢复测试。这是为了确保在发生系统崩溃或数据丢失事件时，系统能够迅速恢复并且数据能够被成功恢复或重新生成。总之，系统测试是确保软件产品质量、性能和安全性的关键步骤。通过全面的测试，可以在软件发布前发现并修复潜在的问题，从而减少生产环境中的风险。测试团队应该与开发团队紧密合作，确保测试计划的全面性和测试活动的有效性。只有这样，才能确保软件系统能够在各种情况下稳定、安全地运行，满足用户的需求和期望。'
-      )
-      .h6('表4.1 系统测试环境表')
-      .table([
-        new TableRowInfo(300, [
-          new TableCellInfo('操作系统', 1400),
-          new TableCellInfo('Windows 11', 7000),
-        ]),
-        new TableRowInfo(1800, [
-          new TableCellInfo('软件配置', 1400),
-          new TableCellInfo(
-            '微软Edge浏览器\nMySQL数据库\nNavicat 数据库操作软件\nIntelliJ IDEA 集成开发环境',
-            7000
-          ),
-        ]),
-      ]);
-    this.pj.testCases.forEach((tcase, i) => {
-      doc
-        .h4(`(${i + 1}) ${tcase.name}测试用例`)
-        .h6(`表4.${i + 1} ${tcase.name}测试用例表`)
-        .table([
-          new TableRowInfo(300, [
+      );
+    let tblCount = 1;
+    this.pj.moduleTests.forEach((mod, i) => {
+      doc.h2(`4.${i + 1} ${mod.name}模块测试`);
+      mod.funcTests.forEach((func, j) => {
+        doc
+          .p(`${func.name}测试用例表，如表4.${tblCount}所示。`)
+          .h6(`表4.${tblCount} ${func.name}测试用例表`);
+        let data: TableCellInfo[][] = [];
+        func.testCases.forEach((cas, k) => {
+          data.push([
             new TableCellInfo(
-              '测试用例：' + tcase.name,
-              8800,
-              7,
-              AlignmentType.LEFT
+              `${k + 1}`,
+              0,
+              0,
+              AlignmentType.CENTER,
+              VerticalAlign.TOP
             ),
-          ]),
-          new TableRowInfo(300, [
             new TableCellInfo(
-              '测试数据：' +
-                tcase.fields
-                  .map((field, i) => `${field}：${tcase.actions[0].datas[i]}`)
-                  .join('；'),
-              8800,
-              7,
-              AlignmentType.LEFT
+              cas.name,
+              0,
+              0,
+              AlignmentType.BOTH,
+              VerticalAlign.TOP
             ),
-          ]),
-          new TableRowInfo(510, [
-            new TableCellInfo('测试操作', 740),
-            new TableCellInfo('预置条件', 1600),
-            new TableCellInfo('测试描述', 1600),
-            new TableCellInfo('数据', 1600),
-            new TableCellInfo('期望结果', 1120),
-            new TableCellInfo('实际结果', 1120),
-            new TableCellInfo('测试状态', 1120),
-          ]),
-          ...tcase.actions.map(
-            (action, i) =>
-              new TableRowInfo(1730, [
-                new TableCellInfo(`${i + 1}`, 740),
-                new TableCellInfo(
-                  action.conditions
-                    .map((cond, i) => `（${i + 1}）${cond}`)
-                    .join('\n'),
-                  1680,
-                  1,
-                  AlignmentType.BOTH,
-                  VerticalAlign.TOP
-                ),
-                new TableCellInfo(
-                  action.intro,
-                  1500,
-                  1,
-                  AlignmentType.BOTH,
-                  VerticalAlign.TOP
-                ),
-                new TableCellInfo(
-                  tcase.fields
-                    .map((field, j) => `${field}：${action.datas[j]}`)
-                    .join('\n'),
-                  1500,
-                  1,
-                  AlignmentType.BOTH,
-                  VerticalAlign.TOP
-                ),
-                new TableCellInfo(
-                  action.result,
-                  1120,
-                  1,
-                  AlignmentType.BOTH,
-                  VerticalAlign.TOP
-                ),
-                new TableCellInfo(
-                  action.result,
-                  1120,
-                  1,
-                  AlignmentType.BOTH,
-                  VerticalAlign.TOP
-                ),
-                new TableCellInfo(
-                  '与预期结果相同',
-                  1120,
-                  1,
-                  AlignmentType.BOTH,
-                  VerticalAlign.TOP
-                ),
-              ])
-          ),
-        ]);
+            new TableCellInfo(
+              cas.operation,
+              0,
+              0,
+              AlignmentType.BOTH,
+              VerticalAlign.TOP,
+              240
+            ),
+            new TableCellInfo(
+              cas.result,
+              0,
+              0,
+              AlignmentType.BOTH,
+              VerticalAlign.TOP,
+              240
+            ),
+            new TableCellInfo(
+              cas.result,
+              0,
+              0,
+              AlignmentType.BOTH,
+              VerticalAlign.TOP,
+              240
+            ),
+          ]);
+        });
+        doc.table3l(
+          [
+            new Table3lColumn('编号', 740),
+            new Table3lColumn('测试项', 1525),
+            new Table3lColumn('描述输入/操作', 3300),
+            new Table3lColumn('期望结果', 1800),
+            new Table3lColumn('真实结果', 1700),
+          ],
+          data
+        );
+        tblCount++;
+      });
     });
     doc.save();
   }
@@ -207,6 +163,44 @@ export class PjtestComponent {
   }
   dsl = '';
   defaultDsl = `XXXXX系统
+  模块 普通用户
+
+  功能 普通用户登录和登出系统
+
+  普通用户登录
+  输入正确用户名和密码，点击登录按钮
+  跳转至普通用户首页
+
+  普通用户登出
+  点击登出按钮
+  退出系统
+
+  功能 普通用户注册
+
+  普通用户注册
+  输入已经存在的用户名“aaato”
+  注册失败，提示：用户名存在
+
+  普通用户注册
+  按照要求输入正确的信息
+  注册成功
+
+  模块 管理员
+
+  功能 管理员登录和登出系统
+
+  管理员登录
+ 输入正确用户名和密码，点击登录按钮
+  跳转至管理员首页
+
+  管理员登出
+  点击登出按钮
+  退出系统
+
+   
+
+  `;
+  /* defaultDsl = `XXXXX系统
   用户注册
   输入 手机号 密码
     条件 准备手机号 准备密码 手机号位数为11位 手机号未被注册
@@ -234,5 +228,5 @@ export class PjtestComponent {
     数据 A12376872346 00001
     描述 用户登录以后选择商品，可以进行购买
     结果 失败 系统提示：商品无货
-    `;
+    `; */
 }

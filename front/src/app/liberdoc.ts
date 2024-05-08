@@ -71,9 +71,12 @@ export class LiberDoc {
   p(text: string) {
     this.docChildren.push(
       new Paragraph({
-        //正文前面空两个字
-        text: ChineseSpace + ChineseSpace + text,
+        text,
         style: 'p',
+        //首行缩进2字符
+        indent: {
+          firstLine: 480,
+        },
       })
     );
     return this;
@@ -99,7 +102,7 @@ export class LiberDoc {
     return this;
   }
   //三线表
-  table3l(columns: Table3lColumn[], rowCells: string[][]) {
+  table3l(columns: Table3lColumn[], rowCells: TableCellInfo[][]) {
     let rows: TableRow[] = [];
     let headerCells = columns.map((col) => {
       return new TableCell({
@@ -115,6 +118,7 @@ export class LiberDoc {
           size: col.width,
           type: WidthType.DXA,
         },
+
         verticalAlign: col.vAlign,
         //设置边框
         borders: {
@@ -142,6 +146,10 @@ export class LiberDoc {
     rows.push(
       new TableRow({
         children: headerCells,
+        height: {
+          value: 400,
+          rule: 'atLeast',
+        },
       })
     );
 
@@ -149,20 +157,23 @@ export class LiberDoc {
       (row, rowIndex) =>
         new TableRow({
           children: row.map(
-            (cellContent, cellIndex) =>
+            (cell, cellIndex) =>
               new TableCell({
                 children: [
                   new Paragraph({
-                    text: cellContent,
+                    text: cell.text,
                     style: 'table-cell',
-                    alignment: columns[cellIndex].hAlign,
+                    alignment: cell.hAlign,
+                    indent: {
+                      firstLine: cell.indent,
+                    },
                   }),
                 ],
                 width: {
                   size: columns[cellIndex].width,
                   type: WidthType.DXA,
                 },
-                verticalAlign: columns[cellIndex].vAlign,
+                verticalAlign: cell.vAlign,
                 borders: {
                   left: {
                     style: BorderStyle.NIL,
@@ -496,11 +507,17 @@ export class LiberDoc {
   }
 }
 //三线表表头
-export interface Table3lColumn {
-  name: string;
-  width: number;
-  hAlign: (typeof AlignmentType)[keyof typeof AlignmentType];
-  vAlign: (typeof VerticalAlign)[keyof typeof VerticalAlign];
+export class Table3lColumn {
+  name!: string;
+  width!: number;
+  hAlign: (typeof AlignmentType)[keyof typeof AlignmentType] =
+    AlignmentType.CENTER;
+  vAlign: (typeof VerticalAlign)[keyof typeof VerticalAlign] =
+    VerticalAlign.CENTER;
+  constructor(name: string, width: number) {
+    this.name = name;
+    this.width = width;
+  }
 }
 //表行
 export class TableRowInfo {
@@ -513,24 +530,29 @@ export class TableRowInfo {
 }
 export class TableCellInfo {
   text: string = '';
-  width: number = 1000;
+  width: number = 0;
+  //跨越列数
   columnSpan: number = 1;
+  //缩进
+  indent: number = 0;
   hAlign: (typeof AlignmentType)[keyof typeof AlignmentType] =
     AlignmentType.CENTER;
   vAlign: (typeof VerticalAlign)[keyof typeof VerticalAlign] =
     VerticalAlign.CENTER;
   constructor(
     text: string,
-    width: number,
+    width?: number,
     columnSpan?: number,
     hAlign?: (typeof AlignmentType)[keyof typeof AlignmentType],
-    vAlign?: (typeof VerticalAlign)[keyof typeof VerticalAlign]
+    vAlign?: (typeof VerticalAlign)[keyof typeof VerticalAlign],
+    indent?: number
   ) {
     this.text = text;
-    this.width = width;
+    if (width) this.width = width;
     if (columnSpan) this.columnSpan = columnSpan;
     if (hAlign) this.hAlign = hAlign;
     if (vAlign) this.vAlign = vAlign;
+    if (indent) this.indent = indent;
   }
 }
 //表格宽度

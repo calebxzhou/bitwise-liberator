@@ -19,25 +19,27 @@ export class Project {
   actors: ActorAccess[] = [];
   //功能用例
   useCases: UseCase[] = [];
+  //模块测试
+  moduleTests: ModuleTest[] = [];
+}
+export class ModuleTest {
+  //模块名
+  name!: string;
+  //功能测试
+  funcTests: FuncTest[] = [];
+}
+//功能测试用例
+export class FuncTest {
+  //功能名
+  name!: string;
   //测试用例
   testCases: TestCase[] = [];
 }
-//测试用例
 export class TestCase {
-  //名称
+  //测试项
   name!: string;
-  //字段
-  fields: string[] = [];
   //操作
-  actions: TestCaseAction[] = [];
-}
-export class TestCaseAction {
-  //条件
-  conditions: string[] = [];
-  //数据
-  datas: string[] = [];
-  //描述
-  intro!: string;
+  operation!: string;
   //结果
   result!: string;
 }
