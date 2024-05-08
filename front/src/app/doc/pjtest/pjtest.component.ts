@@ -31,13 +31,13 @@ import { AlignmentType, VerticalAlign } from 'docx';
 export class PjtestComponent {
   pj = new Project();
   ngOnInit(): void {
-    this.dsl = localStorage.getItem('pjtest') ?? this.defaultDsl;
+    this.dsl = localStorage.getItem('pjtest2') ?? this.defaultDsl;
     this.doParse();
   }
   doParse() {
     this.pj = this.parse(this.dsl);
     console.log(this.pj);
-    localStorage.setItem('pjtest', this.dsl);
+    localStorage.setItem('pjtest2', this.dsl);
   }
   parse(dsl: string) {
     let pj = new Project();
