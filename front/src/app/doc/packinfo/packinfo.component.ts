@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BlobReader, Entry, TextWriter, ZipReader } from '@zip.js/zip.js';
 import { saveDocFromDsl } from '../doc-dsl';
+import { LiberDoc, Table3lColumn, TableCellInfo } from '../../liberdoc';
 
 @Component({
   selector: 'bl-packinfo',
@@ -110,22 +111,32 @@ export class PackinfoComponent implements OnInit {
     this.packages.splice(pIdx, 1);
   }
   exportWord() {
-    let dsl = `标1 3 系统实现
-    标2 3.1 系统框架
-        正文 本系统采取并使用了Spring IoC、Spring MVC和MyBatis框架进行程序代码的开发，方便信息的维护。数据库方面使用了轻量级MySQL数据库，方便基本数据的操作，以及解决高并发时数据的操作，使用Vue框架进行前端代码的书写，界面美观且易于用户进行操作。本系统的工程目录结构图，如图3.1所示。
-        标6 图3.1 工程目录结构图\n`;
+    let doc = new LiberDoc()
+      .h1('3 系统实现')
+      .h2('3.1 系统框架')
+      .p(
+        '本系统采取并使用了Spring IoC、Spring MVC和MyBatis框架进行程序代码的开发，方便信息的维护。数据库方面使用了轻量级MySQL数据库，方便基本数据的操作，以及解决高并发时数据的操作，使用Vue框架进行前端代码的书写，界面美观且易于用户进行操作。本系统的工程目录结构图，如图3.1所示'
+      )
+      .h6('图3.1 工程目录结构图');
     for (let i = 0; i < this.packages.length; i++) {
       let pkg = this.packages[i];
-      dsl += `正文 ${pkg.id}包是${pkg.name}。${pkg.id}包的说明表，如表3.${
-        i + 1
-      }所示。
-      标6 表3.${i + 1} ${pkg.id}包的说明表
-      三线表 文件名4536中中 作用4536中中#`;
-      dsl += pkg.files.map((file) => `${file.id} ${file.name}`).join('#');
-      dsl += '\n';
+      let cells: TableCellInfo[][] = [];
+      pkg.files.forEach((file) => {
+        cells.push([new TableCellInfo(file.id), new TableCellInfo(file.name)]);
+      });
+      doc
+        .p(
+          `正文 ${pkg.id}包是${pkg.name}。${pkg.id}包的说明表，如表3.${
+            i + 1
+          }所示。`
+        )
+        .h6(`表3.${i + 1} ${pkg.id}包的说明表`)
+        .table3l(
+          [new Table3lColumn('文件名', 4536), new Table3lColumn('作用', 4536)],
+          cells
+        );
     }
-    console.log(dsl);
-    saveDocFromDsl(dsl);
+    doc.save();
   }
 }
 interface Package {
