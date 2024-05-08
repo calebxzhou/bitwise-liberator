@@ -200,8 +200,8 @@ export class LiberDoc {
                   marginUnitType: WidthType.DXA,
                   left: 100,
                   right: 100,
-                  top: 40,
-                  bottom: 40,
+                  top: 20,
+                  bottom: 20,
                 },
               })
           ),
