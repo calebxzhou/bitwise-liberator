@@ -47,6 +47,7 @@ export class PackinfoComponent implements OnInit {
         .slice(0, -1)
         .join('/')
         .replaceAll('main/java/', '')
+        .replaceAll('test/java/', '')
         .replaceAll('app/', '')
         .replaceAll('main/resources/', '')
         .replaceAll('main/webapp/', '')
@@ -126,9 +127,7 @@ export class PackinfoComponent implements OnInit {
       });
       doc
         .p(
-          `正文 ${pkg.id}包是${pkg.name}。${pkg.id}包的说明表，如表3.${
-            i + 1
-          }所示。`
+          `${pkg.id}包是${pkg.name}。${pkg.id}包的说明表，如表3.${i + 1}所示。`
         )
         .h6(`表3.${i + 1} ${pkg.id}包的说明表`)
         .table3l(
