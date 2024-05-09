@@ -36,7 +36,6 @@ export class PjtestComponent {
   }
   doParse() {
     this.pj = this.parse(this.dsl);
-    console.log(this.pj);
     localStorage.setItem('pjtest2', this.dsl);
   }
   parse(dsl: string) {
@@ -47,23 +46,34 @@ export class PjtestComponent {
       .filter((l) => l.length > 0);
     //第一行是项目名
     pj.name = lines.shift() ?? '本项目';
-    let moduleNow = null;
-    let funcNow = null;
-    let caseNow = null;
+    let moduleNow: ModuleTest | null = null;
+    let funcNow: FuncTest | null = null;
+    let caseNow: TestCase | null = null;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       let tokens = splitBySpaces(line);
       if (tokens.length === 0) continue;
       //读取模块
       if (tokens[0] === '模块') {
-        if (moduleNow) pj.moduleTests.push(moduleNow);
+        //保存上一个模块的功能
+        if (funcNow && moduleNow) {
+          moduleNow.funcTests.push(funcNow);
+          funcNow = null;
+        }
+        //保存上一个模块
+        if (moduleNow) {
+          pj.moduleTests.push(moduleNow);
+        }
         moduleNow = new ModuleTest();
         moduleNow.name = tokens[1];
         continue;
       }
       //读取功能
-      if (tokens[0] === '功能' && moduleNow) {
-        if (funcNow) moduleNow.funcTests.push(funcNow);
+      if (tokens[0] === '功能') {
+        //保存上一个功能
+        if (funcNow && moduleNow) {
+          moduleNow.funcTests.push(funcNow);
+        }
         funcNow = new FuncTest();
         funcNow.name = tokens[1];
 
@@ -71,15 +81,14 @@ export class PjtestComponent {
       }
       //读取测试
       if (funcNow) {
-        if (caseNow) funcNow.testCases.push(caseNow);
         caseNow = new TestCase();
         caseNow.name = line;
         caseNow.operation = lines[++i];
         caseNow.result = lines[++i];
+        funcNow.testCases.push(caseNow);
         continue;
       }
     }
-    if (caseNow && funcNow) funcNow.testCases.push(caseNow);
     if (funcNow && moduleNow) moduleNow.funcTests.push(funcNow);
     if (moduleNow) pj.moduleTests.push(moduleNow);
     return pj;
