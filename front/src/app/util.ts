@@ -22,6 +22,38 @@ export function splitByReturn(inputStr: string) {
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
 }
+//字符串居中填充
+export function centerString(
+  input: string,
+  totalLength: number,
+  fillChar: string = ' '
+): string[] {
+  // Function to calculate the display length of a string considering Chinese characters as double length
+  const getDisplayLength = (str: string): number => {
+    let displayLength = 0;
+    for (const char of str) {
+      // Assuming that Chinese characters fall into the Unicode range 0x4e00 to 0x9fff
+      displayLength += char.match(/[\u4e00-\u9fff]/) ? 2 : 1;
+    }
+    return displayLength;
+  };
+
+  const inputDisplayLength = getDisplayLength(input);
+  if (inputDisplayLength > totalLength) {
+    // If the input display length is longer than the total length, we'll truncate it
+    // This part of the function needs to be adjusted to handle Chinese characters properly
+    return [input.substring(0, totalLength)];
+  }
+
+  const padding = totalLength - inputDisplayLength;
+  const paddingLeft = Math.floor(padding / 2);
+  const paddingRight = padding - paddingLeft;
+  return [fillChar.repeat(paddingLeft), input, fillChar.repeat(paddingRight)];
+}
+
+export function base64ToUint8Array(b64: string) {
+  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+}
 export function extractChineseChars(inputString: string) {
   let chineseCharacters = inputString.match(/[\p{Script=Han}]/gu);
   return chineseCharacters ? chineseCharacters.join('') : '';
