@@ -50,7 +50,11 @@ export function centerString(
   const paddingRight = padding - paddingLeft;
   return [fillChar.repeat(paddingLeft), input, fillChar.repeat(paddingRight)];
 }
-
+export function trimBase64(b64: string) {
+  return b64
+    .replaceAll('data:image/jpeg;base64,', '')
+    .replaceAll('data:image/png;base64,', '');
+}
 export function base64ToUint8Array(b64: string) {
   return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 }
