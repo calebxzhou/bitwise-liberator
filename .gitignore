@@ -5,7 +5,7 @@ front/dist
 front/tmp
 front/out-tsc
 front/bazel-out
-
+front/src/app/paper/paper-test.ts
 # Node
 front/node_modules
 npm-debug.log

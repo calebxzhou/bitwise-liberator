@@ -48,6 +48,7 @@ export class LiberDoc {
     this.docChildren.push(
       new Paragraph({
         text,
+        pageBreakBefore: true,
         style: 'h1',
         autoSpaceEastAsianText: true,
       })
@@ -694,6 +695,93 @@ export class LiberDoc {
 
       styles: {
         paragraphStyles: [
+          {
+            id: 'toc1',
+            name: '目录一级',
+            basedOn: 'Normal',
+            next: 'Normal',
+            uiPriority: 39,
+            quickFormat: true,
+            run: {
+              sizeComplexScript: Size4S,
+              size: Size4S,
+              bold: true,
+              font: {
+                ascii: TimesNewRoman,
+                eastAsia: SimSun,
+                hAnsi: SimSun,
+                hint: 'eastAsia',
+              },
+            },
+            paragraph: {
+              spacing: {
+                line: 440,
+                lineRule: 'exact',
+              },
+              alignment: 'left',
+              rightTabStop: 9061,
+            },
+          },
+          {
+            id: 'toc2',
+            name: '目录二级',
+            basedOn: 'Normal',
+            next: 'Normal',
+            uiPriority: 39,
+            quickFormat: true,
+            run: {
+              sizeComplexScript: Size4S,
+              size: Size4S,
+
+              font: {
+                ascii: TimesNewRoman,
+                eastAsia: SimSun,
+                hAnsi: SimSun,
+                hint: 'eastAsia',
+              },
+            },
+            paragraph: {
+              spacing: {
+                line: 440,
+                lineRule: 'exact',
+              },
+              alignment: 'left',
+              indent: {
+                left: 240,
+              },
+              rightTabStop: 9061,
+            },
+          },
+          {
+            id: 'toc3',
+            name: '目录三级',
+            basedOn: 'Normal',
+            next: 'Normal',
+            uiPriority: 39,
+            quickFormat: true,
+            run: {
+              sizeComplexScript: Size4S,
+              size: Size4S,
+
+              font: {
+                ascii: TimesNewRoman,
+                eastAsia: SimSun,
+                hAnsi: SimSun,
+                hint: 'eastAsia',
+              },
+            },
+            paragraph: {
+              spacing: {
+                line: 440,
+                lineRule: 'exact',
+              },
+              alignment: 'left',
+              indent: {
+                left: 480,
+              },
+              rightTabStop: 9061,
+            },
+          },
           {
             id: 'h1',
             name: '一级标题',

@@ -3,12 +3,15 @@ import { TitleComponent } from '../title/title.component';
 import { CommonModule } from '@angular/common';
 import { LiberDoc, SituPaper } from '../liberdoc';
 import { trimBase64 } from '../util';
+import { testPaper } from './paper-test';
 import {
   AlignmentType,
   Footer,
   PageNumber,
   Paragraph,
   SectionType,
+  StyleLevel,
+  TableOfContents,
   TextRun,
 } from 'docx';
 declare var mammoth: any;
@@ -21,10 +24,94 @@ declare var mammoth: any;
   styles: ``,
 })
 export class PaperComponent implements OnInit {
-  preview: string = '';
+  preview: string = testPaper;
   totalParaIndex = 0;
   ngOnInit(): void {
-    //new LiberDoc().situ(new SituPaper()).save();
+    this.processHtml(this.preview);
+  }
+  processHtml(html: string) {
+    const parser = new DOMParser();
+    const htm = parser.parseFromString(html, 'text/html');
+
+    let doc = new LiberDoc();
+
+    let pnodes = htm.querySelectorAll('p,h1,h2,h3');
+    //基本信息
+    this.readBasicInfo(pnodes, doc);
+    //读取摘要
+    this.readAbstract(true, pnodes, doc);
+    this.readAbstract(false, pnodes, doc);
+
+    doc.sectionEnd({
+      properties: {
+        type: SectionType.NEXT_PAGE,
+        page: {
+          //摘要1和2是罗马数字页码
+          pageNumbers: {
+            start: 1,
+            formatType: 'upperRoman',
+          },
+        },
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({
+              children: [
+                // Field code for Roman numeral page number
+                new TextRun({
+                  children: [PageNumber.CURRENT],
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+          ],
+        }),
+      },
+    });
+    //目录
+    doc.h1('目  录');
+    doc.docChildren.push(
+      new TableOfContents('Summary', {
+        hyperlink: true,
+        headingStyleRange: '1-3',
+        stylesWithLevels: [
+          new StyleLevel('toc1', 1),
+          new StyleLevel('toc2', 2),
+          new StyleLevel('toc3', 3),
+        ],
+      })
+    );
+    this.totalParaIndex = Array.from(pnodes).findIndex(n=>n.textContent?.startsWith('绪  论'))
+    this.readBody(pnodes, doc);
+    //全部结束
+    doc.sectionEnd({
+      properties: {
+        type: SectionType.NEXT_PAGE,
+        page: {
+          pageNumbers: {
+            start: 1,
+            formatType: 'decimal',
+          },
+        },
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({
+              children: [
+                // Field code for Roman numeral page number
+                new TextRun({
+                  children: [PageNumber.CURRENT],
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+          ],
+        }),
+      },
+    });
+    doc.save();
   }
   onFileChange(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -39,52 +126,38 @@ export class PaperComponent implements OnInit {
           .then((result: any) => {
             // The extracted text is in result.value
             this.preview = result.value;
-            const parser = new DOMParser();
-            const htm = parser.parseFromString(result.value, 'text/html');
-
-            let doc = new LiberDoc();
+            this.processHtml(result.value);
             console.log(result.messages);
-            let pnodes = htm.querySelectorAll('p,h1,h2,h3');
-            //基本信息
-            this.readBasicInfo(pnodes, doc);
-            //读取摘要
-            this.readAbstract(true, pnodes, doc);
-            this.readAbstract(false, pnodes, doc);
-
-            doc.sectionEnd({
-              properties: {
-                type: SectionType.NEXT_PAGE,
-                page: {
-                  //摘要1和2是罗马数字页码
-                  pageNumbers: {
-                    start: 1,
-                    formatType: 'upperRoman',
-                  },
-                },
-              },
-              footers: {
-                default: new Footer({
-                  children: [
-                    new Paragraph({
-                      children: [
-                        // Field code for Roman numeral page number
-                        new TextRun({
-                          children: [PageNumber.CURRENT],
-                        }),
-                      ],
-                      alignment: AlignmentType.CENTER,
-                    }),
-                  ],
-                }),
-              },
-            });
-
-            doc.save();
           })
           .catch((err: any) => console.error(err));
       };
       reader.readAsArrayBuffer(file);
     }
+  }
+  //读取正文
+  readBody(nodes: NodeListOf<Element>, doc: LiberDoc) {
+    Array.from(nodes)
+      .slice(this.totalParaIndex)
+      .forEach((node, i) => {
+        let text = node.textContent?.trim() ?? '';
+        if (text.startsWith('绪 ')) {
+          doc.h1('绪  论');
+        }
+        //1 系统分析与设计
+        else if (/^\d.*/.test(text)) {
+          doc.h1(text);
+        }
+        // 1.1 需求分析
+        else if (/^\d\.\d.*/.test(text)) {
+          doc.h2(text);
+        }
+        // 1.1.1 需求分析
+        else if (/^\d\.\d\.\d.*/.test(text)) {
+          doc.h3(text);
+        } else {
+          doc.p(text);
+        }
+      });
   }
   //读取基本信息
   readBasicInfo(nodes: NodeListOf<Element>, doc: LiberDoc) {
