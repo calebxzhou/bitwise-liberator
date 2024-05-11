@@ -114,7 +114,8 @@ export abstract class CodegenComponent implements OnInit {
     this.renderPreview();
   }
   doParse() {
-    this.pj = this.parse(this.dsl);
+    this.pj = this.parseDslToProjectEntites(this.dsl);
+    localStorage.setItem(this.templateName, this.dsl);
   }
   reset() {
     this.dsl = this.defaultDsl;
@@ -126,9 +127,6 @@ export abstract class CodegenComponent implements OnInit {
     } else {
       this.renderPreviewMultiFile();
     }
-  }
-  parse(dsl: string): Project {
-    return this.parseDslToProjectEntites(dsl);
   }
   async getTemplate(name: string) {
     return await (await fetch(`assets/templates/${name}.hbr`)).text();

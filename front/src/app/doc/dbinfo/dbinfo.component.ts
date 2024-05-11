@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Column, Project, Table } from '../../project';
 import { splitBySpaces } from '../../util';
-import { LiberDoc, Table3lColumn, TableCellInfo } from '../../liberdoc';
-
+import { TableCellInfo, Table3lColumn } from '../../liberdoc/doc-table';
+import { LiberDoc } from '../../liberdoc/liberdoc';
 @Component({
   selector: 'bl-dbinfo',
   standalone: true,

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -19,4 +20,15 @@
     <app-root></app-root>
   </body>
   <script src="assets/js/mammoth.browser.min.js"></script>
+  <script>
+    const userAgent = window.navigator.userAgent;
+    if (
+      userAgent.toLowerCase().includes("wechat") ||
+      userAgent.toLowerCase().includes("weixin") ||
+      userAgent.toLowerCase().includes("micromsg")
+    ) {
+      alert("不支持微信打开\n请复制链接后，使用系统自带浏览器打开");
+      window.close(); // Note: This will only work if the window was opened using JavaScript
+    }
+  </script>
 </html>

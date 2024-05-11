@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>添加段落</h2>
+<mat-dialog-content>
+  <div>
+    <label>段落类型</label>
+    <mat-radio-group [(ngModel)]="data.type">
+      <div>
+        <mat-radio-button value="p" checked>正文</mat-radio-button>
+        <mat-radio-button value="h1">1️⃣ 1 一级标题</mat-radio-button>
+        <mat-radio-button value="h2">2️⃣ 1.1 二级标题</mat-radio-button>
+        <mat-radio-button value="h3">3️⃣ 1.1.1 三级标题</mat-radio-button>
+        <mat-radio-button value="img">🖼️ 图片</mat-radio-button>
+        <mat-radio-button value="table">📋 表格</mat-radio-button>
+      </div>
+      <div>
+        <mat-radio-button value="use-case">🥰 1.3.2 用例描述</mat-radio-button>
+        <mat-radio-button value="db-info">🗃️ 2.3 数据库设计</mat-radio-button>
+        <mat-radio-button value="pack-info">🧰 3.1 系统框架</mat-radio-button>
+        <mat-radio-button value="pjtest">🔬 4 系统测试</mat-radio-button>
+      </div>
+    </mat-radio-group>
+  </div>
+  <div
+    *ngIf="data.type === 'p' || data.type === 'h1' || data.type === 'h2' || data.type === 'h3'"
+  >
+    <mat-form-field class="w-full">
+      <mat-label>内容</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        matInput
+        [(ngModel)]="data.content"
+      ></textarea>
+    </mat-form-field>
+  </div>
+  <div *ngIf="data.type === 'img'">
+    <label>请上传图片</label>
+  </div>
+  <div *ngIf="data.type === 'table'">
+    <mat-form-field class="w-full">
+      <mat-label>表头</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        matInput
+        [(ngModel)]="data.content"
+      ></textarea>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">取消</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>确定</button>
+</mat-dialog-actions>

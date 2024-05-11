@@ -3,11 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Project, UseCase } from '../../project';
-import { splitBySpaces } from '../../util';
+import { numberToCircle, splitBySpaces } from '../../util';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { LiberDoc, TableCellInfo, TableRowInfo } from '../../liberdoc';
-import { Alignment, AlignmentType, VerticalAlign } from 'docx';
+import { LiberDoc } from '../../liberdoc/liberdoc';
 @Component({
   selector: 'bl-caseinfo',
   standalone: true,
@@ -59,9 +58,7 @@ export class CaseinfoComponent implements OnInit {
       //有2个token的是事件流
       if (tokens.length === 2) {
         if (!usecase) continue;
-        usecase.steps.push(
-          `${usecase.steps.length + 1}. ${tokens[0]}：${tokens[1]}。`
-        );
+        usecase.steps.push(`${tokens[0]}：${tokens[1]}。`);
         continue;
       }
       //其余是简介
@@ -79,48 +76,19 @@ export class CaseinfoComponent implements OnInit {
     let doc = new LiberDoc().h3('1.3.2 用例描述');
 
     this.pj.useCases.forEach((usecase, i) => {
-      let rows: TableRowInfo[] = [
-        new TableRowInfo(500, [
-          new TableCellInfo('功能编号', 2200),
-          new TableCellInfo(usecase.id, 2200),
-          new TableCellInfo('用例名称', 2200),
-          new TableCellInfo(usecase.name, 2200),
-        ]),
-        new TableRowInfo(500, [
-          new TableCellInfo('用例描述', 2200),
-          new TableCellInfo(usecase.intro, 6600, 3, AlignmentType.LEFT),
-        ]),
-        new TableRowInfo(500, [
-          new TableCellInfo('优先级', 2200),
-          new TableCellInfo(usecase.priority, 6600, 3, AlignmentType.LEFT),
-        ]),
-        new TableRowInfo(500, [
-          new TableCellInfo('参与者', 2200),
-          new TableCellInfo(usecase.role, 6600, 3, AlignmentType.LEFT),
-        ]),
-        new TableRowInfo(500, [
-          new TableCellInfo('前置条件', 2200),
-          new TableCellInfo(usecase.condition, 6600, 3, AlignmentType.LEFT),
-        ]),
-        new TableRowInfo(500, [
-          new TableCellInfo('后置条件', 2200),
-          new TableCellInfo(usecase.after, 6600, 3, AlignmentType.LEFT),
-        ]),
-        new TableRowInfo(2500, [
-          new TableCellInfo('事件流', 2200),
-          new TableCellInfo(
-            '基本流\n' + usecase.steps.join('\n'),
-            6600,
-            3,
-            AlignmentType.LEFT,
-            VerticalAlign.TOP
-          ),
-        ]),
-      ];
       doc
-        .p(`${usecase.name}用例描述如表1.${i + 1}所示。`)
-        .h6(`表1.${i + 1} ${usecase.name}用例详细说明表`)
-        .table(rows);
+        .p(`${i + 1}. ${usecase.name}用例描述`)
+        .p(`（1）功能编号：` + usecase.id)
+        .p(`（2）用例名称：` + usecase.name)
+        .p(`（3）用例描述：` + usecase.intro)
+        .p(`（4）优先级：` + usecase.priority)
+        .p(`（5）参与者：` + usecase.role)
+        .p(`（6）前置条件：` + usecase.condition)
+        .p(`（7）后置条件：` + usecase.after)
+        .p(`（8）事件流：`);
+      usecase.steps.forEach((step, j) => {
+        doc.p(`${numberToCircle(j + 1)} ${step}`);
+      });
     });
     doc.save();
   }

@@ -5,7 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BlobReader, Entry, TextWriter, ZipReader } from '@zip.js/zip.js';
-import { LiberDoc, Table3lColumn, TableCellInfo } from '../../liberdoc';
+import { LiberDoc } from '../../liberdoc/liberdoc';
+import { TableCellInfo, Table3lColumn } from '../../liberdoc/doc-table';
 
 @Component({
   selector: 'bl-packinfo',

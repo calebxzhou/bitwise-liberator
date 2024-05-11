@@ -1,4 +1,22 @@
-<bl-title title="文档格式调整"></bl-title>
-<p>请选择一个Word文档。</p>
-<input type="file" (change)="onFileChange($event)" />
-<pre [innerHTML]="preview"></pre>
+<div>
+  <button mat-button>📎 打开</button>
+  <button mat-button>💽 保存</button>
+  <button mat-button (click)="reset()">🗑️ 复原</button>
+  <button mat-button>💾 导出Word</button>
+  <button mat-flat-button color="accent" (click)="openParagraphDialog()">
+    📋 添加段落
+  </button>
+
+  <button mat-flat-button color="primary" (click)="openBaseInfoModal()">
+    📌 基本信息设定
+  </button>
+</div>
+<div class="flex m-3">
+  <pre
+    class="h-[90vh] w-1/2 whitespace-pre-line outline-double"
+    contenteditable="true"
+    #preElement
+    (input)="onInput($event)"
+  ></pre>
+  <div class="ml-6"></div>
+</div>

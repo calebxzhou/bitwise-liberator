@@ -1,0 +1,95 @@
+<h2 mat-dialog-title>基本信息设定</h2>
+<mat-dialog-content>
+  <div>
+    <mat-form-field style="min-width: 800px">
+      <mat-label>论文题目</mat-label>
+      <input matInput [(ngModel)]="data.title" />
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field>
+      <mat-label>学院</mat-label>
+      <input matInput [(ngModel)]="data.college" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>专业</mat-label>
+      <input matInput [(ngModel)]="data.major" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>学号</mat-label>
+      <input matInput [(ngModel)]="data.studentId" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>学生姓名</mat-label>
+      <input matInput [(ngModel)]="data.studentName" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>指导教师姓名</mat-label>
+      <input matInput [(ngModel)]="data.teacherName" />
+    </mat-form-field>
+  </div>
+  <div class="flex">
+    <mat-form-field>
+      <mat-label>中文关键词</mat-label>
+      <input matInput [(ngModel)]="data.keywordCn" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>英文关键词</mat-label>
+      <input matInput [(ngModel)]="data.keywordEn" />
+    </mat-form-field>
+    <div class="block">
+      <span class="text-sm">学生签名（点图片上传）</span>
+      <img
+        class="cursor-pointer max-h-10"
+        [src]="data.studentNameImage"
+        (click)="fileInput.click()"
+      />
+      <input
+        type="file"
+        #fileInput
+        (change)="onSelectStudentImage($event)"
+        style="display: none"
+      />
+    </div>
+    <div class="block">
+      <span class="text-sm">教师签名（点图片上传）</span>
+      <img
+        class="cursor-pointer max-h-10"
+        [src]="data.teacherNameImage"
+        (click)="fileInput2.click()"
+      />
+      <input
+        type="file"
+        #fileInput2
+        (change)="onSelectTeacherImage($event)"
+        style="display: none"
+      />
+    </div>
+  </div>
+  <div class="flex">
+    <mat-form-field class="w-1/2">
+      <mat-label>中文摘要</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        matInput
+        [(ngModel)]="data.abstractCn"
+      ></textarea>
+    </mat-form-field>
+    <mat-form-field class="w-1/2">
+      <mat-label>英文摘要</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        [(ngModel)]="data.abstractEn"
+      ></textarea>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">取消</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>确定</button>
+</mat-dialog-actions>

@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  LiberDoc,
-  TableCellInfo,
-  TableRowInfo,
-  Table3lColumn,
-} from '../../liberdoc';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +8,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ModuleTest, Project, FuncTest, TestCase } from '../../project';
 import { splitBySpaces } from '../../util';
 import { AlignmentType, VerticalAlign } from 'docx';
+import { TableCellInfo, Table3lColumn } from '../../liberdoc/doc-table';
+import { LiberDoc } from '../../liberdoc/liberdoc';
 
 @Component({
   selector: 'bl-pjtest',

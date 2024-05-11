@@ -1,9 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { TitleComponent } from '../title/title.component';
 import { CommonModule } from '@angular/common';
-import { LiberDoc, SituPaper } from '../liberdoc';
+import { LiberDoc } from '../liberdoc/liberdoc';
 import { trimBase64 } from '../util';
-import { testPaper } from './paper-test';
 import {
   AlignmentType,
   Footer,
@@ -14,20 +20,90 @@ import {
   TableOfContents,
   TextRun,
 } from 'docx';
+import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialog } from '@angular/material/dialog';
+import { BaseInfoDialogComponent } from './base-info.dialog';
+import { SituPaper, SituPaperParagraph } from './situ-paper';
+import { ParagraphDialogComponent } from './paragraph.dialog.';
 declare var mammoth: any;
 
 @Component({
   selector: 'bl-paper',
   standalone: true,
-  imports: [CommonModule, TitleComponent],
+  imports: [
+    CommonModule,
+    TitleComponent,
+    MatButtonModule,
+    FormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+  ],
   templateUrl: './paper.component.html',
   styles: ``,
 })
-export class PaperComponent implements OnInit {
-  preview: string = testPaper;
+export class PaperComponent implements OnInit, AfterViewInit {
+  dsl = `defaultDsl`;
+  paper = new SituPaper();
+  @ViewChild('preElement') preElement!: ElementRef;
+  preview: string = ``;
   totalParaIndex = 0;
+  paragraphs: SituPaperParagraph[] = [];
+  constructor(public dialog: MatDialog) {}
   ngOnInit(): void {
-    this.processHtml(this.preview);
+    // this.dsl = localStorage.getItem('paper') ?? defaultDsl;
+  }
+  ngAfterViewInit(): void {
+    this.preElement.nativeElement.innerHTML = this.dsl;
+  }
+  openBaseInfoModal(): void {
+    const dialogRef = this.dialog.open(BaseInfoDialogComponent, {
+      data: this.paper,
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      this.paper = result;
+    });
+  }
+  openParagraphDialog() {
+    const dialogRef = this.dialog.open(ParagraphDialogComponent, {
+      data: new SituPaperParagraph(),
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      this.paragraphs.push(result);
+    });
+  }
+  onInput(event: Event) {
+    //this.dsl = (event.target as HTMLPreElement).innerHTML ?? defaultDsl;
+    localStorage.setItem('paper', this.dsl);
+  }
+  reset() {
+    if (confirm('真的要还原整个文档吗？？？？真的要还原整个文档吗？？？？')) {
+      this.paper = new SituPaper();
+      // this.dsl = defaultDsl;
+      this.preElement.nativeElement.innerHTML = this.dsl;
+      localStorage.setItem('paper', this.dsl);
+    }
+  }
+  @HostListener('paste', ['$event'])
+  handlePaste(event: ClipboardEvent) {
+    const clipboardData = event.clipboardData || (window as any).clipboardData;
+    const items = clipboardData.items;
+    for (const item of items) {
+      if (item.type.indexOf('image') === 0) {
+        const blob = item.getAsFile();
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          this.preElement.nativeElement.appendChild(img);
+        };
+        reader.readAsDataURL(blob);
+        // Prevent the default paste behavior
+        event.preventDefault();
+      }
+    }
   }
   processHtml(html: string) {
     const parser = new DOMParser();
@@ -82,7 +158,9 @@ export class PaperComponent implements OnInit {
         ],
       })
     );
-    this.totalParaIndex = Array.from(pnodes).findIndex(n=>n.textContent?.startsWith('绪  论'))
+    this.totalParaIndex = Array.from(pnodes).findIndex((n) =>
+      n.textContent?.startsWith('绪  论')
+    );
     this.readBody(pnodes, doc);
     //全部结束
     doc.sectionEnd({

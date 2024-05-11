@@ -55,6 +55,13 @@ export function trimBase64(b64: string) {
     .replaceAll('data:image/jpeg;base64,', '')
     .replaceAll('data:image/png;base64,', '');
 }
+export function numberToCircle(num: number) {
+  if (num < 1 || num > 10) {
+    return 'Input should be a number between 1 and 10';
+  }
+  const circledNumbers = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩'];
+  return circledNumbers[num - 1];
+}
 export function base64ToUint8Array(b64: string) {
   return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 }
