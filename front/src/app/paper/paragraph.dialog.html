@@ -2,7 +2,10 @@
 <mat-dialog-content>
   <div>
     <label>段落类型</label>
-    <mat-radio-group [(ngModel)]="data.type">
+    <mat-radio-group
+      [(ngModel)]="data.type"
+      (change)="onTypeSelectionChange($event)"
+    >
       <div>
         <mat-radio-button value="p" checked>正文</mat-radio-button>
         <mat-radio-button value="h1">1️⃣ 1 一级标题</mat-radio-button>
@@ -12,7 +15,7 @@
         <mat-radio-button value="table">📋 表格</mat-radio-button>
       </div>
       <div>
-        <mat-radio-button value="use-case">🥰 1.3.2 用例描述</mat-radio-button>
+        <mat-radio-button value="case-info">🥰 1.3.2 用例描述</mat-radio-button>
         <mat-radio-button value="db-info">🗃️ 2.3 数据库设计</mat-radio-button>
         <mat-radio-button value="pack-info">🧰 3.1 系统框架</mat-radio-button>
         <mat-radio-button value="pjtest">🔬 4 系统测试</mat-radio-button>
@@ -29,24 +32,214 @@
         cdkAutosizeMinRows="1"
         cdkAutosizeMaxRows="20"
         matInput
-        [(ngModel)]="data.content"
+        [(ngModel)]="data.content[0]"
       ></textarea>
     </mat-form-field>
   </div>
   <div *ngIf="data.type === 'img'">
-    <label>请上传图片</label>
+    <label>请上传/粘贴<b>一张</b>图片</label>
+    <input type="file" />
+    <pre contenteditable="true"></pre>
   </div>
   <div *ngIf="data.type === 'table'">
     <mat-form-field class="w-full">
-      <mat-label>表头</mat-label>
+      <mat-label>表头 【名称=宽度点数】空格分隔</mat-label>
+      <input matInput [(ngModel)]="data.content[0]" />
+    </mat-form-field>
+    <mat-form-field class="w-full">
+      <mat-label>表数据 【两个大于号>> 分隔】</mat-label>
       <textarea
         cdkTextareaAutosize
         cdkAutosizeMinRows="1"
         cdkAutosizeMaxRows="20"
         matInput
-        [(ngModel)]="data.content"
-      ></textarea>
+        [(ngModel)]="data.content[1]"
+      >
+      </textarea>
     </mat-form-field>
+  </div>
+  <div *ngIf="data.type === 'case-info'" class="flex">
+    <mat-form-field class="w-1/2">
+      <mat-label>描述用例</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="30"
+        matInput
+        (keyup)="onCaseInfoInputKeyup($event)"
+        [(ngModel)]="data.content[0]"
+      >
+      </textarea>
+    </mat-form-field>
+    <div class="w-1/2">
+      @for (case of pj.useCases; track $index) {
+      <p>表1.{{ $index + 1 }} {{ case.name }}用例详细说明表</p>
+      <p>用例编号：{{ case.id }}，用例名称：{{ case.name }}</p>
+      <p>用例描述：{{ case.intro }}</p>
+      <p>参与者：{{ case.role }}</p>
+
+      <span>优先级：</span>
+      <input
+        [(ngModel)]="case.priority"
+        [name]="case.id"
+        type="radio"
+        value="中等"
+      />中等
+      <input
+        [(ngModel)]="case.priority"
+        [name]="case.id"
+        type="radio"
+        value="高"
+      />高
+      <input
+        [(ngModel)]="case.priority"
+        [name]="case.id"
+        type="radio"
+        value="极高"
+      />极高
+      <input
+        [(ngModel)]="case.priority"
+        [name]="case.id"
+        type="radio"
+        value="低"
+      />低
+      <input
+        [(ngModel)]="case.priority"
+        [name]="case.id"
+        type="radio"
+        value="极低"
+      />极低
+      <br />
+      <mat-form-field class="w-80">
+        <mat-label>前置条件</mat-label>
+        <input matInput [(ngModel)]="case.condition" />
+      </mat-form-field>
+      <mat-form-field class="w-80">
+        <mat-label>后置条件</mat-label>
+        <input matInput [(ngModel)]="case.after" /> </mat-form-field
+      ><br />
+      <span
+        >事件流
+        <p *ngFor="let step of case.steps">{{ step }}</p></span
+      >
+      <br />
+      <hr />
+      }
+    </div>
+  </div>
+  <div *ngIf="data.type === 'db-info'" class="flex">
+    <mat-form-field class="w-1/2">
+      <mat-label>描述数据库</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="30"
+        matInput
+        (keyup)="onDbInfoKeyup($event)"
+        [(ngModel)]="data.content[0]"
+      >
+      </textarea>
+    </mat-form-field>
+    <div class="w-1/2">
+      @for (table of pj.tables; track $index) {
+      <p>{{ $index + 1 }}. {{ table.name }}表{{ table.id }}</p>
+      <table class="border">
+        <th>#</th>
+        <th>字段名</th>
+        <th>数据类型</th>
+        <th>长度</th>
+        <th>是否为空</th>
+        <th>是否主键</th>
+        <th>描述</th>
+        <tr class="border" *ngFor="let col of table.columns; index as ci">
+          <td>{{ ci + 1 }}</td>
+          <td>{{ col.id }}</td>
+          <td>{{ col.type }}</td>
+          <td>{{ col.length }}</td>
+          <td><input type="checkbox" [(ngModel)]="col.nullable" /></td>
+          <td>
+            <input type="checkbox" [(ngModel)]="col.primaryKey" />
+          </td>
+          <td>{{ col.name }}</td>
+        </tr>
+      </table>
+      }
+    </div>
+  </div>
+  <div *ngIf="data.type === 'pack-info'">
+    <span>请在每个代码文件的第一行写上作用。例：</span>
+    <img src="assets/file-example.jpg" class="w-40" />
+    <span>写好以后，选择项目的&nbsp;<b>src文件夹</b></span>
+    <input
+      class="ml-5"
+      type="file"
+      webkitdirectory
+      multiple
+      (change)="onPackInfoDirSelected($event)"
+    />
+    <div class="block mb-8" *ngFor="let package of packages; index as pi">
+      <hr />
+      <span class="text-3xl mr-3">{{ pi + 1 }}.</span>
+      <button mat-flat-button color="warn" (click)="removePackage(pi)">
+        删除
+      </button>
+
+      <mat-form-field class="w-64">
+        <mat-label>目录路径</mat-label>
+        <input matInput [(ngModel)]="package.id" />
+      </mat-form-field>
+      <mat-form-field class="w-64">
+        <mat-label>目录名称</mat-label>
+        <input matInput [(ngModel)]="package.name" />
+      </mat-form-field>
+      <div class="flex flex-row flex-wrap items-center gap-1">
+        @for (file of package.files; track $index) {
+
+        <mat-form-field class="min-w-40">
+          <mat-label>{{ $index + 1 }}.{{ file.id }}</mat-label>
+          <input matInput [(ngModel)]="file.name" />
+        </mat-form-field>
+        }
+      </div>
+    </div>
+  </div>
+  <div *ngIf="data.type === 'pjtest'" class="flex">
+    <mat-form-field class="w-1/2">
+      <mat-label>描述系统测试</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="50"
+        matInput
+        (keyup)="onPjtestInputKeyup($event)"
+        [(ngModel)]="data.content[0]"
+      >
+      </textarea>
+    </mat-form-field>
+    <div class="w-1/2">
+      @for (mod of pj.moduleTests; track $index) {
+      <div class="m-6">
+        <p class="font-extrabold">{{ mod.name }}模块</p>
+        @for (func of mod.funcTests; track $index) {
+        <p>{{ func.name }}功能</p>
+        <table>
+          <th>编号</th>
+          <th>测试项</th>
+          <th>输入</th>
+          <th>结果</th>
+          @for (case of func.testCases; track $index) {
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ case.name }}</td>
+            <td>{{ case.operation }}</td>
+            <td>{{ case.result }}</td>
+          </tr>
+          }
+        </table>
+        }
+      </div>
+      }
+    </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
