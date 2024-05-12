@@ -25,13 +25,19 @@ import {
 } from 'docx';
 import { FileChild } from 'docx/build/file/file-child';
 import saveAs from 'file-saver';
-import { base64ToUint8Array, centerString, trimBase64 } from '../util';
+import {
+  base64ToUint8Array,
+  centerString,
+  getImageDimensions,
+  trimBase64,
+} from '../util';
 import {
   defaultSignB64,
   LineSpacing,
   SimHei,
   SimSun,
   situLogoImageB64,
+  Size1S,
   Size2,
   Size3,
   Size4,
@@ -62,11 +68,15 @@ export class LiberDoc {
   //自定义section，为空就默认
   sections: ISectionOptions[] = [];
   docChildren: FileChild[] = [];
-
+  custom(paragraph: Paragraph) {
+    this.docChildren.push(paragraph);
+    return this;
+  }
   h1(text: string) {
     this.docChildren.push(
       new Paragraph({
         text,
+        //一级标题分页
         pageBreakBefore: true,
         style: 'h1',
         autoSpaceEastAsianText: true,
@@ -129,9 +139,25 @@ export class LiberDoc {
     );
     return this;
   }
+  code(text: string) {
+    this.docChildren.push(
+      new Paragraph({
+        text,
+        style: 'code',
+        autoSpaceEastAsianText: true,
+      })
+    );
+    return this;
+  }
   img(dataB64: string, width: number, height: number) {
     let data = trimBase64(dataB64);
     let buf = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
+    if (width > 1000) {
+      // Calculate the new height to maintain the aspect ratio
+      let aspectRatio = height / width;
+      width = 500;
+      height = width * aspectRatio;
+    }
     const imageRun = new ImageRun({
       data: buf,
       transformation: {
@@ -336,7 +362,8 @@ export class LiberDoc {
       new Paragraph({
         children: [
           new TextRun({
-            text: ' ',
+            text: '_',
+            color: 'ffffff',
             font: 'SimHei',
             size: Size3,
           }),
@@ -371,6 +398,46 @@ export class LiberDoc {
           //固定值
           lineRule: 'exact',
         },
+      })
+    );
+    return this;
+  }
+  emptyLine3XL() {
+    this.docChildren.push(
+      new Paragraph({
+        spacing: {
+          line: 480,
+          lineRule: 'auto',
+        },
+        children: [
+          new TextRun({
+            text: '_',
+            color: 'ffffff',
+            bold: true,
+            size: Size1S,
+            font: SimSun,
+          }),
+        ],
+      })
+    );
+    return this;
+  }
+  emptyLineM(fontSize: number) {
+    this.docChildren.push(
+      new Paragraph({
+        spacing: {
+          line: 480,
+          lineRule: 'auto',
+        },
+        children: [
+          new TextRun({
+            text: '_',
+            color: 'ffffff',
+            bold: true,
+            size: fontSize,
+            font: SimSun,
+          }),
+        ],
       })
     );
     return this;
@@ -708,6 +775,7 @@ export class LiberDoc {
     );
     return this;
   }
+
   done() {
     return new Document({
       creator: 'Bitwise Liberator Doc',
@@ -1034,11 +1102,43 @@ export class LiberDoc {
                 //行间距为22磅
                 line: LineSpacing,
                 //固定值
-                lineRule: 'atLeast',
+                lineRule: 'exact',
               },
               indent: {
                 //首行缩进2字符
                 firstLine: 480,
+              },
+            },
+          },
+          {
+            id: 'code',
+            name: '代码',
+            basedOn: 'Normal',
+
+            run: {
+              //小四号
+              sizeComplexScript: Size4S,
+              size: Size4S,
+
+              //宋体
+              font: {
+                ascii: TimesNewRoman,
+                eastAsia: SimSun,
+                hAnsi: SimSun,
+                hint: 'eastAsia',
+              },
+            },
+
+            paragraph: {
+              //左
+              alignment: 'left',
+              spacing: {
+                before: 0,
+                after: 0,
+                //行间距为22磅
+                line: LineSpacing,
+                //固定值
+                lineRule: 'exact',
               },
             },
           },

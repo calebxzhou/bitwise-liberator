@@ -1,5 +1,6 @@
 //表格宽度
 export const TableWidth = 9072;
+export const Size5S = 18;
 //五号
 export const Size5 = 21;
 //小四

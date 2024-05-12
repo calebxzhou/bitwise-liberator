@@ -49,13 +49,13 @@ importers:
         version: 2.7.41
       css-loader:
         specifier: ^7.1.1
-        version: 7.1.1(webpack@5.90.3(esbuild@0.20.1))
+        version: 7.1.1(webpack@5.90.3)
       docx:
         specifier: ^8.5.0
         version: 8.5.0
       file-loader:
         specifier: ^6.2.0
-        version: 6.2.0(webpack@5.90.3(esbuild@0.20.1))
+        version: 6.2.0(webpack@5.90.3)
       file-saver:
         specifier: ^2.0.5
         version: 2.0.5
@@ -70,7 +70,7 @@ importers:
         version: 0.48.0
       monaco-editor-webpack-plugin:
         specifier: ^7.1.0
-        version: 7.1.0(monaco-editor@0.48.0)(webpack@5.90.3(esbuild@0.20.1))
+        version: 7.1.0(monaco-editor@0.48.0)(webpack@5.90.3)
       ngx-cookie-service:
         specifier: ^17.1.0
         version: 17.1.0(@angular/common@17.3.0(@angular/core@17.3.0(rxjs@7.8.1)(zone.js@0.14.4))(rxjs@7.8.1))(@angular/core@17.3.0(rxjs@7.8.1)(zone.js@0.14.4))
@@ -79,7 +79,7 @@ importers:
         version: 0.12.7
       postcss-loader:
         specifier: ^8.1.1
-        version: 8.1.1(postcss@8.4.36)(typescript@5.3.3)(webpack@5.90.3(esbuild@0.20.1))
+        version: 8.1.1(postcss@8.4.36)(typescript@5.3.3)(webpack@5.90.3)
       process:
         specifier: ^0.11.10
         version: 0.11.10
@@ -91,7 +91,7 @@ importers:
         version: 7.8.1
       style-loader:
         specifier: ^4.0.0
-        version: 4.0.0(webpack@5.90.3(esbuild@0.20.1))
+        version: 4.0.0(webpack@5.90.3)
       tslib:
         specifier: ^2.3.0
         version: 2.6.2
@@ -7208,7 +7208,7 @@ snapshots:
     optionalDependencies:
       webpack: 5.90.3(esbuild@0.20.1)
 
-  css-loader@7.1.1(webpack@5.90.3(esbuild@0.20.1)):
+  css-loader@7.1.1(webpack@5.90.3):
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.36)
       postcss: 8.4.36
@@ -7219,7 +7219,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       semver: 7.6.0
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.20.1)
+      webpack: 5.90.3
 
   css-select@5.1.0:
     dependencies:
@@ -7556,11 +7556,11 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  file-loader@6.2.0(webpack@5.90.3(esbuild@0.20.1)):
+  file-loader@6.2.0(webpack@5.90.3):
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.90.3(esbuild@0.20.1)
+      webpack: 5.90.3
 
   file-saver@2.0.5: {}
 
@@ -8353,11 +8353,11 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  monaco-editor-webpack-plugin@7.1.0(monaco-editor@0.48.0)(webpack@5.90.3(esbuild@0.20.1)):
+  monaco-editor-webpack-plugin@7.1.0(monaco-editor@0.48.0)(webpack@5.90.3):
     dependencies:
       loader-utils: 2.0.4
       monaco-editor: 0.48.0
-      webpack: 5.90.3(esbuild@0.20.1)
+      webpack: 5.90.3
 
   monaco-editor@0.48.0: {}
 
@@ -8702,14 +8702,14 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  postcss-loader@8.1.1(postcss@8.4.36)(typescript@5.3.3)(webpack@5.90.3(esbuild@0.20.1)):
+  postcss-loader@8.1.1(postcss@8.4.36)(typescript@5.3.3)(webpack@5.90.3):
     dependencies:
       cosmiconfig: 9.0.0(typescript@5.3.3)
       jiti: 1.21.0
       postcss: 8.4.36
       semver: 7.6.0
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.20.1)
+      webpack: 5.90.3
     transitivePeerDependencies:
       - typescript
 
@@ -9263,9 +9263,9 @@ snapshots:
 
   strip-final-newline@2.0.0: {}
 
-  style-loader@4.0.0(webpack@5.90.3(esbuild@0.20.1)):
+  style-loader@4.0.0(webpack@5.90.3):
     dependencies:
-      webpack: 5.90.3(esbuild@0.20.1)
+      webpack: 5.90.3
 
   sucrase@3.35.0:
     dependencies:
@@ -9341,6 +9341,15 @@ snapshots:
       webpack: 5.90.3(esbuild@0.20.1)
     optionalDependencies:
       esbuild: 0.20.1
+
+  terser-webpack-plugin@5.3.10(webpack@5.90.3):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 3.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.29.1
+      webpack: 5.90.3
 
   terser@5.29.1:
     dependencies:
@@ -9601,6 +9610,37 @@ snapshots:
     dependencies:
       typed-assert: 1.0.9
       webpack: 5.90.3(esbuild@0.20.1)
+
+  webpack@5.90.3:
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.5
+      '@webassemblyjs/ast': 1.12.1
+      '@webassemblyjs/wasm-edit': 1.12.1
+      '@webassemblyjs/wasm-parser': 1.12.1
+      acorn: 8.11.3
+      acorn-import-assertions: 1.9.0(acorn@8.11.3)
+      browserslist: 4.23.0
+      chrome-trace-event: 1.0.3
+      enhanced-resolve: 5.16.0
+      es-module-lexer: 1.4.2
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.0
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 3.3.0
+      tapable: 2.2.1
+      terser-webpack-plugin: 5.3.10(webpack@5.90.3)
+      watchpack: 2.4.0
+      webpack-sources: 3.2.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
 
   webpack@5.90.3(esbuild@0.20.1):
     dependencies:

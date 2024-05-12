@@ -12,6 +12,23 @@ export function getMongoIdValidator(): ValidatorFn {
     return isValid ? null : { invalid: 'id invalid' };
   };
 }
+export async function getImageDimensions(imgSrc: string) {
+  const imgLoadPromise = new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = imgSrc;
+  });
+
+  try {
+    const img = await imgLoadPromise;
+    return { width: img.width, height: img.height };
+  } catch (error) {
+    console.error('Error loading image:', error);
+    throw error;
+  }
+}
+
 //空格分割 1/+空格
 export function splitBySpaces(inputStr: string) {
   return inputStr.split(/\s+/);
@@ -22,6 +39,17 @@ export function splitByReturn(inputStr: string) {
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
 }
+export function removeEmptyLines(input: string): string {
+  // Split the input string into lines
+  const lines = input.split('\n');
+
+  // Filter out lines that are empty or contain only whitespace
+  const filteredLines = lines.filter((line) => line.trim().length > 0);
+
+  // Join the filtered lines back into a single string
+  return filteredLines.join('\n');
+}
+
 //字符串居中填充
 export function centerString(
   input: string,

@@ -25,6 +25,7 @@ import { EditJspComponent } from './codegen/jsp-edit.component';
 import { InsertJspComponent } from './codegen/jsp-insert.component';
 import { SelectJspComponent } from './codegen/jsp-select.component';
 import { PaperComponent } from './paper/paper.component';
+import { AttachmentComponent } from './attachment/attachment.component';
 
 export const routes: Routes = [
   { path: 'mock-data', component: MockDataComponent },
@@ -50,6 +51,7 @@ export const routes: Routes = [
   { path: 'ergram', component: ErgramComponent },
   { path: 'actogram', component: ActogramComponent },
   { path: 'paper', component: PaperComponent },
+  { path: 'attachment', component: AttachmentComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];

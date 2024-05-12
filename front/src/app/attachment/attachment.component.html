@@ -1,0 +1,71 @@
+<div class="block">
+  <p class="text-3xl m-5">论文附图</p>
+</div>
+<div class="block">
+  <mat-form-field class="w-96">
+    <mat-label>题目</mat-label>
+    <input matInput [(ngModel)]="info.title" />
+  </mat-form-field>
+  <mat-form-field class="w-48">
+    <mat-label>学院</mat-label>
+    <input matInput [(ngModel)]="info.college" />
+  </mat-form-field>
+  <mat-form-field class="w-48">
+    <mat-label>学号</mat-label>
+    <input matInput [(ngModel)]="info.studentId" />
+  </mat-form-field>
+  <mat-form-field class="w-48">
+    <mat-label>专业</mat-label>
+    <input matInput [(ngModel)]="info.major" />
+  </mat-form-field>
+  <mat-form-field class="w-48">
+    <mat-label>学生</mat-label>
+    <input matInput [(ngModel)]="info.studentName" />
+  </mat-form-field>
+  <mat-form-field class="w-48">
+    <mat-label>教师</mat-label>
+    <input matInput [(ngModel)]="info.teacherName" />
+  </mat-form-field>
+</div>
+<span>1. 选择项目的&nbsp;<b>代码文件夹</b></span>
+<input
+  class="ml-5"
+  type="file"
+  webkitdirectory
+  multiple
+  (change)="handleDir($event)"
+/>
+<div *ngIf="fileCodes.length > 0">
+  <p>2. 选择核心代码文件</p>
+  <mat-checkbox (change)="selectAll()">全选 </mat-checkbox>
+  <section>
+    @for (fileCode of fileCodes; track $index) {
+    <mat-checkbox [(ngModel)]="fileCode.selected">
+      {{ fileCode.fileName }}
+    </mat-checkbox>
+    }
+  </section>
+  <p>3. 选择截图（按住ctrl键可以多选）</p>
+  <input
+    class="ml-5"
+    type="file"
+    accept=".jpg,.png"
+    multiple
+    (change)="handleImageSelect($event)"
+  />
+</div>
+<div *ngIf="images.length > 0">
+  <p>4. 确认图片名（拖拽图片改变顺序）</p>
+  <div cdkDropList class="flex flex-wrap" (cdkDropListDropped)="drop($event)">
+    @for (image of images; track $index) {
+    <div class="block" cdkDrag>
+      <img [src]="image.data" class="w-52 h-32 cursor-move" />
+      <mat-form-field class="w-48">
+        <mat-label>{{ $index + 1 }}.图片名</mat-label>
+        <input matInput [(ngModel)]="image.fileName" />
+      </mat-form-field>
+    </div>
+    }
+  </div>
+</div>
+<button mat-flat-button color="primary" (click)="exportWord()">导出word</button>

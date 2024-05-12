@@ -48,7 +48,7 @@ export class PaperComponent implements OnInit, AfterViewInit {
   dsl = `defaultDsl`;
   paper = new SituPaper();
   @ViewChild('preElement') preElement!: ElementRef;
-  preview: string = ``;
+  preview = ``;
   totalParaIndex = 0;
   paragraphs: SituPaperParagraph[] = [];
   constructor(public dialog: MatDialog) {}
@@ -56,7 +56,7 @@ export class PaperComponent implements OnInit, AfterViewInit {
     // this.dsl = localStorage.getItem('paper') ?? defaultDsl;
   }
   ngAfterViewInit(): void {
-    this.preElement.nativeElement.innerHTML = this.dsl;
+    // this.preElement.nativeElement.innerHTML = this.dsl;
   }
   openBaseInfoModal(): void {
     const dialogRef = this.dialog.open(BaseInfoDialogComponent, {
@@ -70,7 +70,8 @@ export class PaperComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(ParagraphDialogComponent, {
       data: new SituPaperParagraph(),
     });
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: SituPaperParagraph) => {
+      console.log(result);
       this.paragraphs.push(result);
     });
   }
@@ -86,7 +87,7 @@ export class PaperComponent implements OnInit, AfterViewInit {
       localStorage.setItem('paper', this.dsl);
     }
   }
-  @HostListener('paste', ['$event'])
+  /* @HostListener('paste', ['$event'])
   handlePaste(event: ClipboardEvent) {
     const clipboardData = event.clipboardData || (window as any).clipboardData;
     const items = clipboardData.items;
@@ -104,7 +105,7 @@ export class PaperComponent implements OnInit, AfterViewInit {
         event.preventDefault();
       }
     }
-  }
+  } */
   processHtml(html: string) {
     const parser = new DOMParser();
     const htm = parser.parseFromString(html, 'text/html');

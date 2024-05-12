@@ -7,6 +7,3 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 bootstrapApplication(AppComponent, appConfig).catch((err) =>
   console.error(err)
 );
-
-import * as process from 'process';
-window['process'] = process;
