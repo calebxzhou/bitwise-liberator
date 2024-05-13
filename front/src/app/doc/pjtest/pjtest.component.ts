@@ -45,7 +45,6 @@ export class PjtestComponent {
     pj.name = lines.shift() ?? '本项目';
     let moduleNow: ModuleTest | null = null;
     let funcNow: FuncTest | null = null;
-    let caseNow: TestCase | null = null;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       let tokens = splitBySpaces(line);
@@ -54,12 +53,12 @@ export class PjtestComponent {
       if (tokens[0] === '模块') {
         //保存上一个模块的功能
         if (funcNow && moduleNow) {
-          moduleNow.funcTests.push(funcNow);
+          moduleNow.funcs.push(funcNow);
           funcNow = null;
         }
         //保存上一个模块
         if (moduleNow) {
-          pj.moduleTests.push(moduleNow);
+          pj.tests.push(moduleNow);
         }
         moduleNow = new ModuleTest();
         moduleNow.name = tokens[1];
@@ -69,7 +68,7 @@ export class PjtestComponent {
       if (tokens[0] === '功能') {
         //保存上一个功能
         if (funcNow && moduleNow) {
-          moduleNow.funcTests.push(funcNow);
+          moduleNow.funcs.push(funcNow);
         }
         funcNow = new FuncTest();
         funcNow.name = tokens[1];
@@ -77,17 +76,19 @@ export class PjtestComponent {
         continue;
       }
       //读取测试
-      if (funcNow) {
-        caseNow = new TestCase();
-        caseNow.name = line;
-        caseNow.operation = lines[++i];
-        caseNow.result = lines[++i];
-        funcNow.testCases.push(caseNow);
+      if (tokens[0] === '测试' && funcNow) {
+        let cas = new TestCase();
+        let caseTokens = tokens[1].split('>>');
+        cas.condition = caseTokens[0];
+        cas.intro = caseTokens[1];
+        cas.data = caseTokens[2];
+        cas.result = caseTokens[3];
+        funcNow.testCases.push(cas);
         continue;
       }
     }
-    if (funcNow && moduleNow) moduleNow.funcTests.push(funcNow);
-    if (moduleNow) pj.moduleTests.push(moduleNow);
+    if (funcNow && moduleNow) moduleNow.funcs.push(funcNow);
+    if (moduleNow) pj.tests.push(moduleNow);
     return pj;
   }
   exportWord() {
@@ -97,12 +98,12 @@ export class PjtestComponent {
         '系统测试是软件开发过程中不可或缺的环节。除了检测系统的正常运行和功能模块的执行情况，还需要验证系统的稳定性和可靠性。这包括长时间运行系统以观察是否会出现内存泄漏或其他资源耗尽的问题。同时，性能测试也是系统测试的重要组成部分，它可以帮助确定系统在高负载下的响应时间和处理能力。'
       );
     let tblCount = 1;
-    this.pj.moduleTests.forEach((mod, i) => {
-      doc.h2(`4.${i + 1} ${mod.name}模块测试`);
-      mod.funcTests.forEach((func, j) => {
+    this.pj.tests.forEach((mod, i) => {
+      doc.h2(`4.${i + 1} ${mod.name}测试`);
+      mod.funcs.forEach((func, j) => {
         doc
-          .p(`${func.name}测试用例表，如表4.${tblCount}所示。`)
-          .h6(`表4.${tblCount} ${func.name}测试用例表`);
+          .p(`${mod.name}测试用例表，如表4.${tblCount}所示。`)
+          .h6(`表4.${tblCount} ${mod.name}测试用例表`);
         let data: TableCellInfo[][] = [];
         func.testCases.forEach((cas, k) => {
           data.push([
@@ -114,14 +115,22 @@ export class PjtestComponent {
               VerticalAlign.TOP
             ),
             new TableCellInfo(
-              cas.name,
+              cas.condition,
               0,
               0,
               AlignmentType.BOTH,
               VerticalAlign.TOP
             ),
             new TableCellInfo(
-              cas.operation,
+              cas.intro,
+              0,
+              0,
+              AlignmentType.BOTH,
+              VerticalAlign.TOP,
+              240
+            ),
+            new TableCellInfo(
+              cas.data,
               0,
               0,
               AlignmentType.BOTH,
@@ -138,6 +147,14 @@ export class PjtestComponent {
             ),
             new TableCellInfo(
               cas.result,
+              0,
+              0,
+              AlignmentType.BOTH,
+              VerticalAlign.TOP,
+              240
+            ),
+            new TableCellInfo(
+              `与预期结果相同`,
               0,
               0,
               AlignmentType.BOTH,
@@ -148,11 +165,13 @@ export class PjtestComponent {
         });
         doc.table3l(
           [
-            new Table3lColumn('编号', 740),
-            new Table3lColumn('测试项', 1525),
-            new Table3lColumn('描述输入/操作', 3300),
-            new Table3lColumn('期望结果', 1800),
-            new Table3lColumn('真实结果', 1700),
+            new Table3lColumn('测试操作', 740),
+            new Table3lColumn('预置条件', 1600),
+            new Table3lColumn('测试描述', 1600),
+            new Table3lColumn('数据', 1600),
+            new Table3lColumn('期望结果', 1120),
+            new Table3lColumn('实际结果', 1120),
+            new Table3lColumn('测试状态', 1120),
           ],
           data
         );
@@ -169,42 +188,23 @@ export class PjtestComponent {
   }
   dsl = '';
   defaultDsl = `XXXXX系统
+  模块 模块名称
+  功能 功能名称1
+  测试 预置条件1>>测试描述1>>数据1>>结果1
+  测试 预置条件2>>测试描述2>>数据2>>结果2
+  测试 预置条件3>>测试描述3>>数据3>>结果3
+  功能 功能名称2
+  测试 预置条件1>>测试描述1>>数据1>>结果1
+  测试 预置条件2>>测试描述2>>数据2>>结果2
+  测试 预置条件3>>测试描述3>>数据3>>结果3
+
   模块 普通用户
-
   功能 普通用户登录和登出系统
-
-  普通用户登录
-  输入正确用户名和密码，点击登录按钮
-  跳转至普通用户首页
-
-  普通用户登出
-  点击登出按钮
-  退出系统
-
+  测试 输入登录链接>>输入正确用户名和密码，点击登录按钮>>admin；123456>>登录成功
+  测试 输入登录链接>>输入错误用户名和密码，点击登录按钮>>admin8；1234568>>登录失败
   功能 普通用户注册
-
-  普通用户注册
-  输入已经存在的用户名“aaato”
-  注册失败，提示：用户名存在
-
-  普通用户注册
-  按照要求输入正确的信息
-  注册成功
-
-  模块 管理员
-
-  功能 管理员登录和登出系统
-
-  管理员登录
-  输入正确用户名和密码，点击登录按钮
-  跳转至管理员首页
-
-  管理员登出
-  点击登出按钮
-  退出系统
-
-   
-
+  测试 输入注册链接>>输入未被注册的用户名>>user；123456>>注册成功
+  测试 输入注册链接>>输入已被注册的用户名>>admin；123456>>注册失败，提示：用户名存在
   `;
   /* defaultDsl = `XXXXX系统
   用户注册

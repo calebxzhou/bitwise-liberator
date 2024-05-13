@@ -19,14 +19,14 @@ export class Project {
   actors: ActorAccess[] = [];
   //功能用例
   useCases: UseCase[] = [];
-  //模块测试
-  moduleTests: ModuleTest[] = [];
+  //系统模块测试
+  tests: ModuleTest[] = [];
 }
 export class ModuleTest {
   //模块名
   name!: string;
-  //功能测试
-  funcTests: FuncTest[] = [];
+  //要测试的功能
+  funcs: FuncTest[] = [];
 }
 //功能测试用例
 export class FuncTest {
@@ -36,10 +36,12 @@ export class FuncTest {
   testCases: TestCase[] = [];
 }
 export class TestCase {
-  //测试项
-  name!: string;
-  //操作
-  operation!: string;
+  //预置条件
+  condition!: string;
+  //测试描述
+  intro!: string;
+  //数据
+  data!: string;
   //结果
   result!: string;
 }

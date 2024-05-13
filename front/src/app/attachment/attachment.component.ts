@@ -74,6 +74,7 @@ export class AttachmentComponent implements OnInit {
   fileCodes: AttachmentCode[] = [];
   images: AttachmentImage[] = [];
   info: SituPaper = new SituPaper();
+  indent = false;
   isSelectAll = false;
   selectAll() {
     if (!this.isSelectAll) {
@@ -85,10 +86,10 @@ export class AttachmentComponent implements OnInit {
     }
   }
   ngOnInit(): void {
-    let json = localStorage.getItem('attachment');
+    /*  let json = localStorage.getItem('attachment');
     if (json) {
       this.fileCodes = JSON.parse(json);
-    }
+    } */
   }
   drop(event: CdkDragDrop<AttachmentImage[]>) {
     moveItemInArray(this.images, event.previousIndex, event.currentIndex);
@@ -349,8 +350,15 @@ export class AttachmentComponent implements OnInit {
       .filter((f) => f.selected)
       .forEach((file, i) => {
         doc.code(`${i + 1}. ${file.fileName}`);
-        file.code.split('\n').forEach((c) => {
-          doc.code(c);
+        file.code.split('\n').forEach((code) => {
+          //缩进
+          if (!this.indent) {
+            code = code
+              .split('\n')
+              .map((t) => t.trim())
+              .join('\n');
+          }
+          doc.code(code);
         });
       });
     doc.h1('附图B  系统功能界面');
@@ -475,15 +483,9 @@ export class AttachmentComponent implements OnInit {
         //删除多余空行
         text = removeEmptyLines(text);
         console.log(text);
-        //每行代码全部靠左，左边不缩进。（Python代码除外）
-        if (!file.name.endsWith('.py')) {
-          text = text
-            .split('\n')
-            .map((t) => t.trim())
-            .join('\n');
-        }
+
         this.fileCodes.push(new AttachmentCode(file.name, text));
-        localStorage.setItem('attachment', JSON.stringify(this.fileCodes));
+        // localStorage.setItem('attachment', JSON.stringify(this.fileCodes));
       };
       reader.readAsText(file);
     }

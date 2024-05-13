@@ -60,60 +60,7 @@ export class ParagraphDialogComponent {
   removePackage(pIdx: number) {
     this.packages.splice(pIdx, 1);
   }
-  onPjtestInputKeyup(event: KeyboardEvent) {
-    const dsl = (event.target as HTMLInputElement).value;
-    let pj = new Project();
-    let lines = dsl
-      .split('\n')
-      .map((l) => l.trim())
-      .filter((l) => l.length > 0);
-    let moduleNow: ModuleTest | null = null;
-    let funcNow: FuncTest | null = null;
-    let caseNow: TestCase | null = null;
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      let tokens = splitBySpaces(line);
-      if (tokens.length === 0) continue;
-      //读取模块
-      if (tokens[0] === '模块') {
-        //保存上一个模块的功能
-        if (funcNow && moduleNow) {
-          moduleNow.funcTests.push(funcNow);
-          funcNow = null;
-        }
-        //保存上一个模块
-        if (moduleNow) {
-          pj.moduleTests.push(moduleNow);
-        }
-        moduleNow = new ModuleTest();
-        moduleNow.name = tokens[1];
-        continue;
-      }
-      //读取功能
-      if (tokens[0] === '功能') {
-        //保存上一个功能
-        if (funcNow && moduleNow) {
-          moduleNow.funcTests.push(funcNow);
-        }
-        funcNow = new FuncTest();
-        funcNow.name = tokens[1];
-
-        continue;
-      }
-      //读取测试
-      if (funcNow) {
-        caseNow = new TestCase();
-        caseNow.name = line;
-        caseNow.operation = lines[++i];
-        caseNow.result = lines[++i];
-        funcNow.testCases.push(caseNow);
-        continue;
-      }
-    }
-    if (funcNow && moduleNow) moduleNow.funcTests.push(funcNow);
-    if (moduleNow) pj.moduleTests.push(moduleNow);
-    this.pj = pj;
-  }
+  onPjtestInputKeyup(event: KeyboardEvent) {}
   onPackInfoDirSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) {
