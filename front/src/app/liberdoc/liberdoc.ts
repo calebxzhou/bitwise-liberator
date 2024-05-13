@@ -182,7 +182,7 @@ export class LiberDoc {
           //表头单元格
           new Paragraph({
             text: col.name,
-            style: 'table_cell',
+            style: 'table-cell',
             alignment: AlignmentType.CENTER,
           }),
         ],

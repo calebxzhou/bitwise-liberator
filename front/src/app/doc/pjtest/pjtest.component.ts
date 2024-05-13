@@ -76,9 +76,9 @@ export class PjtestComponent {
         continue;
       }
       //读取测试
-      if (tokens[0] === '测试' && funcNow) {
+      if (tokens.shift() === '测试' && funcNow) {
         let cas = new TestCase();
-        let caseTokens = tokens[1].split('>>');
+        let caseTokens = tokens.join(' ').split('>>');
         cas.condition = caseTokens[0];
         cas.intro = caseTokens[1];
         cas.data = caseTokens[2];
@@ -99,10 +99,10 @@ export class PjtestComponent {
       );
     let tblCount = 1;
     this.pj.tests.forEach((mod, i) => {
-      doc.h2(`4.${i + 1} ${mod.name}测试`);
+      doc.h2(`4.${i + 1} ${mod.name}模块测试`);
       mod.funcs.forEach((func, j) => {
         doc
-          .p(`${mod.name}测试用例表，如表4.${tblCount}所示。`)
+          .p(`${func.name}功能测试用例表，如表4.${tblCount}所示。`)
           .h6(`表4.${tblCount} ${mod.name}测试用例表`);
         let data: TableCellInfo[][] = [];
         func.testCases.forEach((cas, k) => {
@@ -165,10 +165,10 @@ export class PjtestComponent {
         });
         doc.table3l(
           [
-            new Table3lColumn('测试操作', 740),
+            new Table3lColumn('测试操作', 850),
             new Table3lColumn('预置条件', 1600),
             new Table3lColumn('测试描述', 1600),
-            new Table3lColumn('数据', 1600),
+            new Table3lColumn('数据', 1500),
             new Table3lColumn('期望结果', 1120),
             new Table3lColumn('实际结果', 1120),
             new Table3lColumn('测试状态', 1120),
