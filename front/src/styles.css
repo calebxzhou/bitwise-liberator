@@ -51,17 +51,17 @@ body {
 .docdsl-preview h1 {
   font-family: HeiRoman;
   text-align: center;
-  font-size: 32px;
+  font-size: 24px;
   margin: 20px 20px;
 }
 .docdsl-preview h2 {
   font-family: HeiRoman;
-  font-size: 28px;
+  font-size: 22px;
   margin: 20px 5px;
 }
 .docdsl-preview h3 {
   font-family: HeiRoman;
-  font-size: 24px;
+  font-size: 20px;
 }
 .docdsl-preview h6 {
   font-family: HeiRoman;

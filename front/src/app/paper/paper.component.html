@@ -1,25 +1,167 @@
-<div>
-  <button mat-button>📎 打开</button>
-  <button mat-button>💽 保存</button>
+<div class="sticky top-0 z-10 bg-white">
+  <input
+    type="file"
+    #opener
+    (change)="open($event)"
+    style="display: none"
+    accept=".json"
+  />
+  <button mat-button (click)="opener.click()">📎 打开</button>
+  <button mat-button (click)="save()">💽 保存</button>
   <button mat-button (click)="reset()">🗑️ 复原</button>
   <button mat-button (click)="exportWord()">💾 导出Word</button>
   <button mat-flat-button color="accent" (click)="openParagraphDialog()">
     📋 添加段落
   </button>
-
-  <button mat-flat-button color="primary" (click)="openBaseInfoModal()">
-    📌 基本信息设定
-  </button>
 </div>
-<div class="m-3">
-  <!-- <pre
-    class="h-[90vh] w-1/2 whitespace-pre-line outline-double"
-    contenteditable="true"
-    #preElement
-    (input)="onInput($event)"
-  ></pre> -->
-  @for (parag of paragraphs; track $index) {
+<div>
+  <div class="flex">
+    <mat-form-field class="w-80">
+      <mat-label>论文题目</mat-label>
+      <input matInput [(ngModel)]="paper.title" />
+    </mat-form-field>
+    <mat-form-field class="w-40">
+      <mat-label>学院</mat-label>
+      <input matInput [(ngModel)]="paper.college" />
+    </mat-form-field>
+    <mat-form-field class="w-44">
+      <mat-label>专业</mat-label>
+      <input matInput [(ngModel)]="paper.major" />
+    </mat-form-field>
+    <mat-form-field class="w-36">
+      <mat-label>学号</mat-label>
+      <input matInput [(ngModel)]="paper.studentId" />
+    </mat-form-field>
+    <mat-form-field class="w-20">
+      <mat-label>学生姓名</mat-label>
+      <input matInput [(ngModel)]="paper.studentName" />
+    </mat-form-field>
+    <mat-form-field class="w-20">
+      <mat-label>教师姓名</mat-label>
+      <input matInput [(ngModel)]="paper.teacherName" />
+    </mat-form-field>
+  </div>
+  <div class="flex">
+    <mat-form-field>
+      <mat-label>中文关键词</mat-label>
+      <input matInput [(ngModel)]="paper.keywordCn" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>英文关键词</mat-label>
+      <input matInput [(ngModel)]="paper.keywordEn" />
+    </mat-form-field>
+    <div class="block">
+      <span class="text-sm">学生签名</span>
+      <img
+        class="cursor-pointer max-h-10"
+        [src]="paper.studentNameImage"
+        (click)="fileInput.click()"
+      />
+      <input
+        type="file"
+        #fileInput
+        (change)="onSelectStudentImage($event)"
+        style="display: none"
+      />
+    </div>
+    <div class="block">
+      <span class="text-sm">教师签名</span>
+      <img
+        class="cursor-pointer max-h-10"
+        [src]="paper.teacherNameImage"
+        (click)="fileInput2.click()"
+      />
+      <input
+        type="file"
+        #fileInput2
+        (change)="onSelectTeacherImage($event)"
+        style="display: none"
+      />
+    </div>
+  </div>
+  <div class="flex">
+    <mat-form-field class="w-1/2">
+      <mat-label>中文摘要</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        matInput
+        [(ngModel)]="paper.abstractCn"
+      ></textarea>
+    </mat-form-field>
+    <mat-form-field class="w-1/2">
+      <mat-label>英文摘要</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        [(ngModel)]="paper.abstractEn"
+      ></textarea>
+    </mat-form-field>
+  </div>
+  <div class="flex">
+    <mat-form-field class="w-1/2">
+      <mat-label>结论</mat-label>
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        matInput
+        [(ngModel)]="paper.result"
+      ></textarea>
+    </mat-form-field>
+    <mat-form-field class="w-1/2">
+      <mat-label>致谢</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        [(ngModel)]="paper.thank"
+      ></textarea>
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field class="w-1/2 float-left">
+      <mat-label>绪论</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="20"
+        [(ngModel)]="paper.intro"
+      ></textarea>
+    </mat-form-field>
+    <span>参考文献</span
+    ><button mat-flat-button color="primary" (click)="openCiteDialog()">
+      添加参考文献
+    </button>
+    @for (cite of paper.cites; track $index) {
+    <div class="block">
+      <span
+        >[{{ $index + 1 }}]{{ cite.title }}.{{ cite.author }}.{{
+          cite.year
+        }}....</span
+      ><button mat-flat-button color="primary" (click)="editCite($index)">
+        编辑
+      </button>
+      <button
+        mat-flat-button
+        color="accent"
+        (click)="paper.cites.splice($index, 1)"
+      >
+        删除
+      </button>
+    </div>
+    }
+  </div>
+</div>
+<div class="m-3" cdkDropList (cdkDropListDropped)="drop($event)">
+  @for (parag of paper.paragraphs; track $index) {
   <bl-paragraph-display
+    cdkDrag
     [para]="parag"
     [index]="$index"
     (onEdit)="editParagraph($event)"

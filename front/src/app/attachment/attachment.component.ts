@@ -22,6 +22,7 @@ import {
 import {
   ChineseSpace,
   SimSun,
+  SimSunFont,
   Size1,
   Size1S,
   Size2,
@@ -38,6 +39,11 @@ import {
   ImageItem,
   ImageSelectorComponent,
 } from '../image-selector/image-selector.component';
+import {
+  getHeader,
+  getSection,
+  sectionNoHeadFoot as SectionNoHeadFoot,
+} from '../liberdoc/doc-const-para';
 class AttachmentCode {
   fileName!: string;
   code!: string;
@@ -139,12 +145,7 @@ export class AttachmentComponent implements OnInit {
             (str, i) =>
               new TextRun({
                 text: str,
-                font: {
-                  ascii: TimesNewRoman,
-                  eastAsia: SimSun,
-                  hAnsi: SimSun,
-                  hint: 'eastAsia',
-                },
+                font: SimSunFont,
                 size: Size3,
                 underline: {
                   type: 'single',
@@ -175,12 +176,7 @@ export class AttachmentComponent implements OnInit {
             (str, i) =>
               new TextRun({
                 text: str,
-                font: {
-                  ascii: TimesNewRoman,
-                  eastAsia: SimSun,
-                  hAnsi: SimSun,
-                  hint: 'eastAsia',
-                },
+                font: SimSunFont,
                 size: Size3,
                 underline: {
                   type: 'single',
@@ -211,12 +207,7 @@ export class AttachmentComponent implements OnInit {
             (str, i) =>
               new TextRun({
                 text: str,
-                font: {
-                  ascii: TimesNewRoman,
-                  eastAsia: SimSun,
-                  hAnsi: SimSun,
-                  hint: 'eastAsia',
-                },
+                font: SimSunFont,
                 size: Size3,
                 underline: {
                   type: 'single',
@@ -247,12 +238,7 @@ export class AttachmentComponent implements OnInit {
             (str, i) =>
               new TextRun({
                 text: str,
-                font: {
-                  ascii: TimesNewRoman,
-                  eastAsia: SimSun,
-                  hAnsi: SimSun,
-                  hint: 'eastAsia',
-                },
+                font: SimSunFont,
                 size: Size3,
                 underline: {
                   type: 'single',
@@ -283,12 +269,7 @@ export class AttachmentComponent implements OnInit {
             (str, i) =>
               new TextRun({
                 text: str,
-                font: {
-                  ascii: TimesNewRoman,
-                  eastAsia: SimSun,
-                  hAnsi: SimSun,
-                  hint: 'eastAsia',
-                },
+                font: SimSunFont,
                 size: Size3,
                 underline: {
                   type: 'single',
@@ -319,12 +300,7 @@ export class AttachmentComponent implements OnInit {
             (str, i) =>
               new TextRun({
                 text: str,
-                font: {
-                  ascii: TimesNewRoman,
-                  eastAsia: SimSun,
-                  hAnsi: SimSun,
-                  hint: 'eastAsia',
-                },
+                font: SimSunFont,
                 size: Size3,
                 underline: {
                   type: 'single',
@@ -338,18 +314,7 @@ export class AttachmentComponent implements OnInit {
       })
     );
     doc.emptyLineM(Size4S);
-    doc.sectionEnd({
-      properties: {
-        page: {
-          margin: {
-            top: 1700,
-            right: 1138,
-            bottom: 1700,
-            left: 1700,
-          },
-        },
-      },
-    });
+    doc.sectionEnd(SectionNoHeadFoot);
     doc.h1('附图A  程序代码');
     this.fileCodes
       .filter((f) => f.selected)
@@ -371,104 +336,7 @@ export class AttachmentComponent implements OnInit {
       doc.img(img.data, img.width, img.height);
       doc.h6(`图B.${i + 1} ${img.name}`);
     });
-    doc.sectionEnd({
-      headers: {
-        default: {
-          options: {
-            children: [
-              new Paragraph({
-                tabStops: [
-                  {
-                    type: 'center',
-                    position: 4153,
-                  },
-                  {
-                    type: 'clear',
-                    position: 377,
-                  },
-                  {
-                    type: 'right',
-                    position: 8306,
-                  },
-                ],
-                border: {
-                  bottom: {
-                    style: 'single',
-                    size: 6,
-                    space: 1,
-                  },
-                },
-                spacing: {
-                  line: 180,
-                  after: 600,
-                  lineRule: 'atLeast',
-                },
-                alignment: 'center',
-                children: [
-                  new TextRun({
-                    characterSpacing: -5,
-                    text: '沈阳工学院毕业设计（论文）附图',
-                    size: Size5,
-                  }),
-                ],
-              }),
-            ],
-          },
-        },
-      },
-      properties: {
-        type: SectionType.NEXT_PAGE,
-        page: {
-          pageNumbers: {
-            start: 1,
-            formatType: 'decimal',
-          },
-          margin: {
-            top: 1700,
-            right: 1138,
-            bottom: 1700,
-            left: 1700,
-          },
-        },
-      },
-      footers: {
-        default: new Footer({
-          children: [
-            new Paragraph({
-              tabStops: [
-                {
-                  type: 'center',
-                  position: 4153,
-                },
-                {
-                  type: 'clear',
-                  position: 377,
-                },
-                {
-                  type: 'right',
-                  position: 8306,
-                },
-              ],
-              border: {
-                top: {
-                  style: 'single',
-                  size: 6,
-                  space: 1,
-                },
-              },
-
-              children: [
-                // Field code for Roman numeral page number
-                new TextRun({
-                  children: [PageNumber.CURRENT],
-                }),
-              ],
-              alignment: AlignmentType.CENTER,
-            }),
-          ],
-        }),
-      },
-    });
+    doc.sectionEnd(getSection(false, '沈阳工学院毕业设计（论文）附图'));
     doc.save();
   }
   handleDir(event: Event): void {

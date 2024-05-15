@@ -78,6 +78,15 @@ export function centerString(
   const paddingRight = padding - paddingLeft;
   return [fillChar.repeat(paddingLeft), input, fillChar.repeat(paddingRight)];
 }
+export function calculateWithPercentage(
+  num: number,
+  percentage: string
+): number {
+  // Convert the percentage string to a decimal
+  const decimal = parseFloat(percentage.replace('%', '')) / 100;
+  // Multiply the number by the decimal
+  return num * decimal;
+}
 export function trimBase64(b64: string) {
   return b64
     .replaceAll('data:image/jpeg;base64,', '')

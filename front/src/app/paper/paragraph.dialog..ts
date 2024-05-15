@@ -53,7 +53,6 @@ import {
   styles: ``,
 })
 export class ParagraphDialogComponent {
-  pj = new Project();
   constructor(
     public dialogRef: MatDialogRef<ParagraphDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SituPaperParagraph
@@ -66,9 +65,9 @@ export class ParagraphDialogComponent {
     this.data.contents = images;
   }
   onTypeSelectionChange(event: MatRadioChange) {
-    this.data.contents = [];
     if (event.value === 'table') {
       this.data.contents[0] = '列1=33% 列2=33% 列3=33%';
+      this.data.contents[2] = '测试表包文件表数据库表';
       this.data.contents[1] =
         '第一行第一列>>第一行第二列>>第一行第三列\n第二行第一列>>第二行第二列>>第二行第三列\n第三行第一列>>第三行第二列>>第三行第三列...';
     }

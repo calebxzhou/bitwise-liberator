@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>文献</h2>
+<mat-dialog-content>
+  <div>
+    <label>文献类型</label>
+    <mat-radio-group [(ngModel)]="data.type">
+      <div>
+        <mat-radio-button value="J" checked>J 期刊</mat-radio-button>
+        <mat-radio-button value="M">M 图书</mat-radio-button>
+        <mat-radio-button value="D">D 学位论文</mat-radio-button>
+      </div>
+    </mat-radio-group>
+  </div>
+  <mat-form-field>
+    <mat-label>作者</mat-label>
+    <input matInput [(ngModel)]="data.author" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>题目</mat-label>
+    <input matInput [(ngModel)]="data.title" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>年份</mat-label>
+    <input matInput [(ngModel)]="data.year" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>页码</mat-label>
+    <input matInput [(ngModel)]="data.page" />
+  </mat-form-field>
+  <div *ngIf="data.type==='J'">
+    <mat-form-field>
+      <mat-label>期刊</mat-label>
+      <input matInput [(ngModel)]="data.title" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>第几卷</mat-label>
+      <input matInput [(ngModel)]="data.verse" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>第几期</mat-label>
+      <input matInput [(ngModel)]="data.count" />
+    </mat-form-field>
+  </div>
+  <div *ngIf="data.type==='M'">
+    <mat-form-field>
+      <mat-label>出版社</mat-label>
+      <input matInput [(ngModel)]="data.press" />
+    </mat-form-field>
+  </div>
+  <div *ngIf="data.type==='D'">
+    <mat-form-field>
+      <mat-label>学校</mat-label>
+      <input matInput [(ngModel)]="data.school" />
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">取消</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>确定</button>
+</mat-dialog-actions>

@@ -21,13 +21,16 @@ import { MatInputModule } from '@angular/material/input';
     FormsModule,
     MatInputModule,
     CdkDropList,
-    MatButtonModule,
     CdkDrag,
+    MatButtonModule,
   ],
   templateUrl: './image-selector.component.html',
   styles: ``,
 })
 export class ImageSelectorComponent {
+  deleteImage(index: number) {
+    this.images.splice(index, 1);
+  }
   images: ImageItem[] = [];
   @Output() imagesLoaded = new EventEmitter<ImageItem[]>();
 

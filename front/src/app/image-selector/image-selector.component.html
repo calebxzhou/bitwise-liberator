@@ -12,10 +12,13 @@
     @for (image of images; track $index) {
     <div class="block" cdkDrag>
       <img [src]="image.data" class="w-52 h-32 cursor-move" />
-      <mat-form-field class="w-48">
+      <mat-form-field class="block w-48">
         <mat-label>{{ $index + 1 }} 图片名称</mat-label>
         <input matInput [(ngModel)]="image.name" />
       </mat-form-field>
+      <button mat-flat-button color="accent" (click)="deleteImage($index)">
+        删除图片
+      </button>
     </div>
     }
   </div>

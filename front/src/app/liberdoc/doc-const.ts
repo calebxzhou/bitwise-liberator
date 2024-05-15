@@ -1,3 +1,5 @@
+import { LineRuleType } from 'docx';
+
 //表格宽度
 export const TableWidth = 9072;
 export const Size5S = 18;
@@ -22,8 +24,35 @@ export const TimesNewRoman: string = 'Times New Roman';
 //默认中文字体
 export const SimSun: string = '宋体';
 export const SimHei: string = '黑体';
+export const SimSunFont = {
+  ascii: TimesNewRoman,
+  eastAsia: SimSun,
+  hAnsi: SimSun,
+  hint: 'eastAsia',
+};
+export const SimHeiFont = {
+  ascii: TimesNewRoman,
+  eastAsia: SimHei,
+  hAnsi: SimHei,
+  hint: 'eastAsia',
+};
+//situ论文纸张边距
+export const SituPaperMargin = {
+  top: 1700,
+  right: 1138,
+  bottom: 1700,
+  left: 1700,
+};
 //默认行间距22磅
 export const LineSpacing: number = 440;
+export const ExactSpace22pt = {
+  before: 0,
+  after: 0,
+  //行间距为22磅
+  line: LineSpacing,
+  //固定值
+  lineRule: LineRuleType.EXACT,
+};
 //默认前后间隔 1行
 export const SpaceBeforeAfter1Line: number = 327;
 //前后间隔 12磅=240 22磅=440 6磅=120

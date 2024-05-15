@@ -9,6 +9,7 @@ import {
   ImageRun,
   ISectionOptions,
   ISectionPropertiesOptions,
+  LeaderType,
   LevelFormat,
   Numbering,
   Packer,
@@ -22,6 +23,8 @@ import {
   TableLayoutType,
   TableOfContents,
   TableRow,
+  TabStopPosition,
+  TabStopType,
   TextRun,
   VerticalAlign,
   WidthType,
@@ -36,10 +39,14 @@ import {
 } from '../util';
 import {
   defaultSignB64,
+  ExactSpace22pt,
   LineSpacing,
   SimHei,
+  SimHeiFont,
   SimSun,
+  SimSunFont,
   situLogoImageB64,
+  SituPaperMargin,
   Size1S,
   Size2,
   Size3,
@@ -52,8 +59,10 @@ import {
   TableWidth,
   TimesNewRoman,
 } from './doc-const';
-import { SituPaper } from '../paper/situ-paper';
+import { getCiteString, SituPaper } from '../paper/situ-paper';
 import { Table3lColumn, TableCellInfo, TableRowInfo } from './doc-table';
+import { getSection } from './doc-const-para';
+import { splitByReturn } from '../util';
 export interface LiberSectionOptions {
   readonly headers?: {
     readonly default?: Header;
@@ -83,6 +92,13 @@ export class LiberDoc {
         pageBreakBefore: true,
         style: 'h1',
         autoSpaceEastAsianText: true,
+        tabStops: [
+          {
+            type: TabStopType.RIGHT,
+            position: TabStopPosition.MAX,
+            leader: LeaderType.UNDERSCORE,
+          },
+        ],
       })
     );
     return this;
@@ -93,6 +109,13 @@ export class LiberDoc {
         text,
         style: 'h2',
         autoSpaceEastAsianText: true,
+        tabStops: [
+          {
+            type: TabStopType.RIGHT,
+            position: TabStopPosition.MAX,
+            leader: LeaderType.DOT,
+          },
+        ],
       })
     );
     return this;
@@ -103,6 +126,13 @@ export class LiberDoc {
         text,
         style: 'h3',
         autoSpaceEastAsianText: true,
+        tabStops: [
+          {
+            type: TabStopType.RIGHT,
+            position: TabStopPosition.MAX,
+            leader: LeaderType.DOT,
+          },
+        ],
       })
     );
     return this;
@@ -454,7 +484,7 @@ export class LiberDoc {
     });
     this.docChildren = [];
   }
-  situ(model: SituPaper) {
+  situStart(model: SituPaper) {
     this.emptyLine().emptyLine();
     //Page 1
 
@@ -774,86 +804,75 @@ export class LiberDoc {
         style: 'p',
       })
     );
-    this.sectionEnd({
-      properties: {
-        type: SectionType.NEXT_PAGE,
-        page: {
-          //摘要1和2是罗马数字页码
-          pageNumbers: {
-            start: 1,
-            formatType: 'upperRoman',
-          },
-          margin: {
-            top: 1700,
-            right: 1138,
-            bottom: 1700,
-            left: 1700,
-          },
-        },
-      },
-      footers: {
-        default: new Footer({
-          children: [
-            new Paragraph({
-              children: [
-                // Field code for Roman numeral page number
-                new TextRun({
-                  children: [PageNumber.CURRENT],
-                }),
-              ],
-              alignment: AlignmentType.CENTER,
-            }),
-          ],
-        }),
-      },
-    });
+    this.sectionEnd(getSection(true));
+
     //目录
-    this.h1('目  录');
+    this.custom(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: '目  录',
+            font: SimHeiFont,
+            size: Size3,
+          }),
+        ],
+        alignment: AlignmentType.CENTER,
+      })
+    );
     this.docChildren.push(
-      new TableOfContents('Summary', {
-        hyperlink: true,
-        headingStyleRange: '1-3',
-        stylesWithLevels: [
-          new StyleLevel('toc1', 1),
-          new StyleLevel('toc2', 2),
-          new StyleLevel('toc3', 3),
+      new Paragraph({
+        children: [
+          new TableOfContents('目录', {
+            hyperlink: true,
+            entryAndPageNumberSeparator: '\t',
+            preserveTabInEntries: true,
+            headingStyleRange: '1-4',
+            stylesWithLevels: [
+              new StyleLevel('TOC1', 1),
+              new StyleLevel('TOC2', 2),
+              new StyleLevel('TOC3', 2),
+              new StyleLevel('TOC3', 3),
+              new StyleLevel('TOC4', 4),
+            ],
+          }),
+        ],
+        tabStops: [
+          {
+            type: TabStopType.RIGHT,
+            position: TabStopPosition.MAX,
+            leader: LeaderType.DOT,
+          },
         ],
       })
     );
-    this.sectionEnd({
-      properties: {
-        type: SectionType.NEXT_PAGE,
-        page: {
-          //目录是罗马数字页码
-          pageNumbers: {
-            start: 1,
-            formatType: 'upperRoman',
-          },
-          margin: {
-            top: 1700,
-            right: 1138,
-            bottom: 1700,
-            left: 1700,
-          },
-        },
-      },
-      footers: {
-        default: new Footer({
-          children: [
-            new Paragraph({
-              children: [
-                // Field code for Roman numeral page number
-                new TextRun({
-                  children: [PageNumber.CURRENT],
-                }),
-              ],
-              alignment: AlignmentType.CENTER,
-            }),
-          ],
-        }),
-      },
-    });
+    this.sectionEnd(getSection(true));
+    //绪论
+    this.h1('绪  论');
+    splitByReturn(model.intro).forEach((p) => this.p(p));
     return this;
+  }
+  situEnd(paper: SituPaper) {
+    this.h1('结  论');
+    splitByReturn(paper.result).forEach((p) => this.p(p));
+    this.h1('致  谢');
+    splitByReturn(paper.thank).forEach((p) => this.p(p));
+    this.h1('参考文献');
+    paper.cites.forEach((cite, i) => {
+      this.custom(
+        new Paragraph({
+          style: 'p',
+          text: `[${i + 1}]${getCiteString(cite)}`,
+          indent: {
+            left: 504,
+            hanging: 504,
+          },
+          spacing: {
+            line: 400,
+            lineRule: 'exact',
+          },
+        })
+      );
+    });
   }
   //个人信息（学院，姓名等，论文用）
   personInfo(key: string, value: string) {
@@ -910,94 +929,73 @@ export class LiberDoc {
   done() {
     return new Document({
       creator: 'Bitwise Liberator Doc',
-
+      features: {
+        updateFields: true,
+      },
       styles: {
         paragraphStyles: [
           {
-            id: 'toc1',
-            name: '目录一级',
-            basedOn: 'Normal',
-            next: 'Normal',
-            uiPriority: 39,
-            quickFormat: true,
+            id: 'TOC1',
+            name: 'TOC 1',
             run: {
               sizeComplexScript: Size4S,
               size: Size4S,
               bold: true,
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
+              font: SimSunFont,
             },
             paragraph: {
-              spacing: {
-                line: 440,
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
               alignment: 'left',
-              rightTabStop: 9061,
             },
           },
           {
-            id: 'toc2',
-            name: '目录二级',
-            basedOn: 'Normal',
-            next: 'Normal',
-            uiPriority: 39,
-            quickFormat: true,
-            run: {
-              sizeComplexScript: Size4S,
-              size: Size4S,
-
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
-            },
+            id: 'TOC2',
+            name: 'TOC 2',
             paragraph: {
-              spacing: {
-                line: 440,
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
               alignment: 'left',
               indent: {
                 left: 240,
               },
-              rightTabStop: 9061,
+            },
+            run: {
+              sizeComplexScript: Size4S,
+              size: Size4S,
+              font: SimSunFont,
             },
           },
           {
-            id: 'toc3',
-            name: '目录三级',
-            basedOn: 'Normal',
-            next: 'Normal',
-            uiPriority: 39,
-            quickFormat: true,
+            id: 'TOC3',
+            name: 'TOC 3',
             run: {
               sizeComplexScript: Size4S,
               size: Size4S,
 
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
+              font: SimSunFont,
             },
             paragraph: {
-              spacing: {
-                line: 440,
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
               alignment: 'left',
               indent: {
                 left: 480,
               },
-              rightTabStop: 9061,
+            },
+          },
+          {
+            id: 'TOC4',
+            name: 'TOC 4',
+            run: {
+              sizeComplexScript: Size4S,
+              size: Size4S,
+
+              font: SimSunFont,
+            },
+            paragraph: {
+              spacing: ExactSpace22pt,
+              alignment: 'left',
+              indent: {
+                left: 720,
+              },
             },
           },
           {
@@ -1010,12 +1008,7 @@ export class LiberDoc {
               sizeComplexScript: Size3,
               size: Size3,
               //黑体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimHei,
-                hAnsi: SimHei,
-                hint: 'eastAsia',
-              },
+              font: SimHeiFont,
             },
             paragraph: {
               //居中
@@ -1043,12 +1036,7 @@ export class LiberDoc {
               sizeComplexScript: Size4,
               size: Size4,
               //黑体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimHei,
-                hAnsi: SimHei,
-                hint: 'eastAsia',
-              },
+              font: SimHeiFont,
             },
             paragraph: {
               //居左
@@ -1076,12 +1064,7 @@ export class LiberDoc {
               sizeComplexScript: Size4S,
               size: Size4S,
               //黑体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimHei,
-                hAnsi: SimHei,
-                hint: 'eastAsia',
-              },
+              font: SimHeiFont,
             },
             paragraph: {
               //居左
@@ -1109,24 +1092,12 @@ export class LiberDoc {
               sizeComplexScript: Size4S,
               size: Size4S,
               //宋体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
+              font: SimSunFont,
             },
             paragraph: {
               //居左
               alignment: 'left',
-              spacing: {
-                before: 0,
-                after: 0,
-                //行间距为22磅
-                line: LineSpacing,
-                //固定值
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
             },
           },
           {
@@ -1139,24 +1110,12 @@ export class LiberDoc {
               sizeComplexScript: Size5,
               size: Size5,
               //黑体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimHei,
-                hAnsi: SimHei,
-                hint: 'eastAsia',
-              },
+              font: SimHeiFont,
             },
             paragraph: {
               //居中
               alignment: 'center',
-              spacing: {
-                before: 0,
-                after: 0,
-                //行间距为22磅
-                line: LineSpacing,
-                //固定值
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
             },
           },
 
@@ -1170,22 +1129,10 @@ export class LiberDoc {
               sizeComplexScript: Size5,
               size: Size5,
               //宋体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
+              font: SimSunFont,
             },
             paragraph: {
-              spacing: {
-                before: 0,
-                after: 0,
-                //行间距为22磅
-                line: LineSpacing,
-                //固定值
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
             },
           },
           {
@@ -1196,12 +1143,7 @@ export class LiberDoc {
               sizeComplexScript: Size3,
               size: Size3,
               //黑体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimHei,
-                hAnsi: SimHei,
-                hint: 'eastAsia',
-              },
+              font: SimHeiFont,
               bold: true,
             },
           },
@@ -1216,25 +1158,13 @@ export class LiberDoc {
               size: Size4S,
 
               //宋体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
+              font: SimSunFont,
             },
 
             paragraph: {
               //两端
               alignment: 'both',
-              spacing: {
-                before: 0,
-                after: 0,
-                //行间距为22磅
-                line: LineSpacing,
-                //固定值
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
               indent: {
                 //首行缩进2字符
                 firstLine: 480,
@@ -1252,25 +1182,13 @@ export class LiberDoc {
               size: Size4S,
 
               //宋体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
+              font: SimSunFont,
             },
 
             paragraph: {
               //左
               alignment: 'left',
-              spacing: {
-                before: 0,
-                after: 0,
-                //行间距为22磅
-                line: LineSpacing,
-                //固定值
-                lineRule: 'exact',
-              },
+              spacing: ExactSpace22pt,
             },
           },
           {
@@ -1283,12 +1201,7 @@ export class LiberDoc {
               sizeComplexScript: Size4,
               size: Size4,
               //宋体
-              font: {
-                ascii: TimesNewRoman,
-                eastAsia: SimSun,
-                hAnsi: SimSun,
-                hint: 'eastAsia',
-              },
+              font: SimSunFont,
             },
           },
         ],
@@ -1300,12 +1213,7 @@ export class LiberDoc {
               {
                 properties: {
                   page: {
-                    margin: {
-                      top: 1700,
-                      right: 1138,
-                      bottom: 1700,
-                      left: 1700,
-                    },
+                    margin: SituPaperMargin,
                   },
                   type: SectionType.CONTINUOUS,
                 },

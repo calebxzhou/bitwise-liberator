@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>添加段落</h2>
+<h2 mat-dialog-title>段落</h2>
 <mat-dialog-content>
   <div>
     <label>段落类型</label>
@@ -8,9 +8,9 @@
     >
       <div>
         <mat-radio-button value="p" checked>正文</mat-radio-button>
-        <mat-radio-button value="h1">1️⃣ 1 一级标题</mat-radio-button>
-        <mat-radio-button value="h2">2️⃣ 1.1 二级标题</mat-radio-button>
-        <mat-radio-button value="h3">3️⃣ 1.1.1 三级标题</mat-radio-button>
+        <mat-radio-button value="h1">1️⃣ 一级标题</mat-radio-button>
+        <mat-radio-button value="h2">2️⃣ 二级标题</mat-radio-button>
+        <mat-radio-button value="h3">3️⃣ 三级标题</mat-radio-button>
         <mat-radio-button value="img">🖼️ 图片</mat-radio-button>
         <!-- <mat-radio-button value="formula">➗ 公式</mat-radio-button> -->
         <mat-radio-button value="table">📋 三线表</mat-radio-button>
@@ -43,6 +43,10 @@
     ></bl-image-selector>
   </div>
   <div *ngIf="data.type === 'table'">
+    <mat-form-field class="w-full">
+      <mat-label>表名</mat-label>
+      <input matInput [(ngModel)]="data.contents[2]" />
+    </mat-form-field>
     <mat-form-field class="w-full">
       <mat-label>表头 【名称=宽度占比%】空格分隔</mat-label>
       <input matInput [(ngModel)]="data.contents[0]" />

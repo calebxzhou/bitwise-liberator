@@ -16,6 +16,7 @@ export class ParagraphDisplayComponent {
   @Output() onEdit = new EventEmitter<number>();
   @Output() onDelete = new EventEmitter<number>();
   getTypeDisplay(type: string) {
+    if (!type) return '';
     switch (type) {
       case 'p':
         return '正文';

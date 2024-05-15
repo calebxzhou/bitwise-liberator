@@ -1,6 +1,6 @@
 <div class="group block hover:bg-slate-100 cursor-pointer">
   <div class="flex">
-    【{{ getTypeDisplay(para.type) }}】
+    {{ index + 1 }}.【{{ getTypeDisplay(para.type) }}】
     <div class="hidden group-hover:block">
       <button mat-flat-button class="max-h-5" color="primary" (click)="edit()">
         编辑
@@ -18,16 +18,20 @@
 
   <div class="docdsl-preview">
     <p *ngIf="para.type === 'p'">{{ para.contents[0] }}</p>
-    <p *ngIf="para.type === 'h1'" class="align-middle">
+    <h1 *ngIf="para.type === 'h1'" class="align-middle">
       {{ para.contents[0] }}
-    </p>
-    <p *ngIf="para.type === 'h2'">{{ para.contents[0] }}</p>
-    <p *ngIf="para.type === 'h3'">{{ para.contents[0] }}</p>
+    </h1>
+    <h2 *ngIf="para.type === 'h2'">{{ para.contents[0] }}</h2>
+    <h3 *ngIf="para.type === 'h3'">{{ para.contents[0] }}</h3>
     <div *ngIf="para.type === 'img'">
       @for (content of para.contents; track $index) {
       <p>{{ content.name }}</p>
       <img class="h-32" [src]="content.data" />
       }
+    </div>
+    <div *ngIf="para.type === 'table'">
+      <p>{{ para.contents[2] + " " + para.contents[0] }}</p>
+      <p>{{ para.contents[1] }}</p>
     </div>
   </div>
 </div>
