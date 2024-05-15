@@ -12,12 +12,15 @@ import {
   LevelFormat,
   Numbering,
   Packer,
+  PageNumber,
   Paragraph,
   SectionType,
+  StyleLevel,
   Table,
   TableCell,
   TableLayout,
   TableLayoutType,
+  TableOfContents,
   TableRow,
   TextRun,
   VerticalAlign,
@@ -722,6 +725,134 @@ export class LiberDoc {
       })
     );
     this.sectionEnd({});
+    //摘要/中英
+    this.h1('摘  要');
+    model.abstractCn.split('\n').forEach((t) => this.p(t));
+    this.custom(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: '关键词: ',
+            font: 'SimHei',
+          }),
+          new TextRun({
+            text: model.keywordCn,
+            font: 'Times New Roman',
+          }),
+        ],
+        style: 'p',
+      })
+    );
+    this.custom(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: 'Abstract',
+            bold: true,
+            font: 'Times New Roman',
+          }),
+        ],
+        outlineLevel: 1,
+        style: 'h1',
+        pageBreakBefore: true,
+      })
+    );
+    model.abstractEn.split('\n').forEach((t) => this.p(t));
+    this.custom(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: 'Keywords: ',
+            bold: true,
+            font: 'Times New Roman',
+          }),
+          new TextRun({
+            text: model.keywordCn,
+            font: 'Times New Roman',
+          }),
+        ],
+        style: 'p',
+      })
+    );
+    this.sectionEnd({
+      properties: {
+        type: SectionType.NEXT_PAGE,
+        page: {
+          //摘要1和2是罗马数字页码
+          pageNumbers: {
+            start: 1,
+            formatType: 'upperRoman',
+          },
+          margin: {
+            top: 1700,
+            right: 1138,
+            bottom: 1700,
+            left: 1700,
+          },
+        },
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({
+              children: [
+                // Field code for Roman numeral page number
+                new TextRun({
+                  children: [PageNumber.CURRENT],
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+          ],
+        }),
+      },
+    });
+    //目录
+    this.h1('目  录');
+    this.docChildren.push(
+      new TableOfContents('Summary', {
+        hyperlink: true,
+        headingStyleRange: '1-3',
+        stylesWithLevels: [
+          new StyleLevel('toc1', 1),
+          new StyleLevel('toc2', 2),
+          new StyleLevel('toc3', 3),
+        ],
+      })
+    );
+    this.sectionEnd({
+      properties: {
+        type: SectionType.NEXT_PAGE,
+        page: {
+          //目录是罗马数字页码
+          pageNumbers: {
+            start: 1,
+            formatType: 'upperRoman',
+          },
+          margin: {
+            top: 1700,
+            right: 1138,
+            bottom: 1700,
+            left: 1700,
+          },
+        },
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({
+              children: [
+                // Field code for Roman numeral page number
+                new TextRun({
+                  children: [PageNumber.CURRENT],
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+          ],
+        }),
+      },
+    });
     return this;
   }
   //个人信息（学院，姓名等，论文用）

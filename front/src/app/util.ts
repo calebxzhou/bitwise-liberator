@@ -91,7 +91,7 @@ export function numberToCircle(num: number) {
   return circledNumbers[num - 1];
 }
 export function base64ToUint8Array(b64: string) {
-  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  return Uint8Array.from(atob(trimBase64(b64)), (c) => c.charCodeAt(0));
 }
 export function extractChineseChars(inputString: string) {
   let chineseCharacters = inputString.match(/[\p{Script=Han}]/gu);

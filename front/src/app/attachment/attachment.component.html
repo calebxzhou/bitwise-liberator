@@ -49,15 +49,10 @@
     }
   </section>
   <p>3. 选择截图（按住ctrl键可以多选）</p>
-  <input
-    class="ml-5"
-    type="file"
-    accept=".jpg,.png"
-    multiple
-    (change)="handleImageSelect($event)"
-  />
+  <!-- Use the ImagesUploaderComponent's selector and bind to the imagesLoaded event -->
+  <bl-image-selector (imagesLoaded)="onImageLoaded($event)"></bl-image-selector>
 </div>
-<div *ngIf="images.length > 0">
+<!-- <div *ngIf="images.length > 0">
   <p>4. 确认图片名（拖拽图片改变顺序）</p>
   <div cdkDropList class="flex flex-wrap" (cdkDropListDropped)="drop($event)">
     @for (image of images; track $index) {
@@ -70,5 +65,5 @@
     </div>
     }
   </div>
-</div>
+</div> -->
 <button mat-flat-button color="primary" (click)="exportWord()">导出word</button>

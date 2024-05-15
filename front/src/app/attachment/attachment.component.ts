@@ -34,6 +34,10 @@ import {
 } from '../liberdoc/doc-const';
 import { SituPaper } from '../paper/situ-paper';
 import { MatButtonModule } from '@angular/material/button';
+import {
+  ImageItem,
+  ImageSelectorComponent,
+} from '../image-selector/image-selector.component';
 class AttachmentCode {
   fileName!: string;
   code!: string;
@@ -66,13 +70,14 @@ class AttachmentImage {
     CdkDropList,
     MatButtonModule,
     CdkDrag,
+    ImageSelectorComponent,
   ],
   templateUrl: './attachment.component.html',
   styles: ``,
 })
 export class AttachmentComponent implements OnInit {
   fileCodes: AttachmentCode[] = [];
-  images: AttachmentImage[] = [];
+  images: ImageItem[] = [];
   info: SituPaper = new SituPaper();
   indent = false;
   isSelectAll = false;
@@ -364,7 +369,7 @@ export class AttachmentComponent implements OnInit {
     doc.h1('附图B  系统功能界面');
     this.images.forEach((img, i) => {
       doc.img(img.data, img.width, img.height);
-      doc.h6(`图B.${i + 1} ${img.fileName}`);
+      doc.h6(`图B.${i + 1} ${img.name}`);
     });
     doc.sectionEnd({
       headers: {
@@ -490,28 +495,8 @@ export class AttachmentComponent implements OnInit {
       reader.readAsText(file);
     }
   }
-  handleImageSelect(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let files = input.files;
-    if (!files || files.length === 0) {
-      return;
-    }
-    this.images = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        const base64 = e.target.result as string;
-        getImageDimensions(base64).then((size) => {
-          this.images[i] = new AttachmentImage(
-            file.name.split('.')[0],
-            base64,
-            size.width,
-            size.height
-          );
-        });
-      };
-      reader.readAsDataURL(file);
-    }
+
+  onImageLoaded(images: ImageItem[]): void {
+    this.images = images;
   }
 }

@@ -1,0 +1,22 @@
+<span>请选择图片：</span>
+<input
+  class="ml-5"
+  type="file"
+  accept=".jpg,.png"
+  multiple
+  (change)="handleImageSelect($event)"
+/>
+<div *ngIf="images.length > 0">
+  <p>拖拽图片改变顺序</p>
+  <div cdkDropList class="flex flex-wrap" (cdkDropListDropped)="drop($event)">
+    @for (image of images; track $index) {
+    <div class="block" cdkDrag>
+      <img [src]="image.data" class="w-52 h-32 cursor-move" />
+      <mat-form-field class="w-48">
+        <mat-label>{{ $index + 1 }} 图片名称</mat-label>
+        <input matInput [(ngModel)]="image.name" />
+      </mat-form-field>
+    </div>
+    }
+  </div>
+</div>

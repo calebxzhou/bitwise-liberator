@@ -28,6 +28,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { BaseInfoDialogComponent } from './base-info.dialog';
 import { SituPaper, SituPaperParagraph } from './situ-paper';
 import { ParagraphDialogComponent } from './paragraph.dialog.';
+import { ParagraphDisplayComponent } from '../paragraph-display/paragraph-display.component';
+import { Title } from '@angular/platform-browser';
+import { Size5 } from '../liberdoc/doc-const';
 declare var mammoth: any;
 
 @Component({
@@ -40,6 +43,7 @@ declare var mammoth: any;
     FormsModule,
     MatInputModule,
     MatFormFieldModule,
+    ParagraphDisplayComponent,
   ],
   templateUrl: './paper.component.html',
   styles: ``,
@@ -51,12 +55,26 @@ export class PaperComponent implements OnInit, AfterViewInit {
   preview = ``;
   totalParaIndex = 0;
   paragraphs: SituPaperParagraph[] = [];
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog, private title: Title) {}
   ngOnInit(): void {
-    // this.dsl = localStorage.getItem('paper') ?? defaultDsl;
+    this.title.setTitle('论文解放者 1.0');
+    let json = localStorage.getItem('paper');
+    if (json) {
+      this.paragraphs = JSON.parse(json);
+      //删除null
+      this.paragraphs = this.paragraphs.filter((p) => p);
+      console.log(this.paragraphs);
+    }
   }
   ngAfterViewInit(): void {
     // this.preElement.nativeElement.innerHTML = this.dsl;
+  }
+  editParagraph(index: number) {
+    throw new Error('Method not implemented.');
+  }
+  deleteParagraph(index: number) {
+    this.paragraphs.splice(index, 1);
+    this.updateStorage();
   }
   openBaseInfoModal(): void {
     const dialogRef = this.dialog.open(BaseInfoDialogComponent, {
@@ -66,6 +84,9 @@ export class PaperComponent implements OnInit, AfterViewInit {
       this.paper = result;
     });
   }
+  updateStorage() {
+    localStorage.setItem('paper', JSON.stringify(this.paragraphs));
+  }
   openParagraphDialog() {
     const dialogRef = this.dialog.open(ParagraphDialogComponent, {
       data: new SituPaperParagraph(),
@@ -73,18 +94,130 @@ export class PaperComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((result: SituPaperParagraph) => {
       console.log(result);
       this.paragraphs.push(result);
+      this.updateStorage();
     });
   }
-  onInput(event: Event) {
-    //this.dsl = (event.target as HTMLPreElement).innerHTML ?? defaultDsl;
-    localStorage.setItem('paper', this.dsl);
+  exportWord() {
+    let doc = new LiberDoc();
+    doc.situ(this.paper);
+    console.log(this.paragraphs);
+    this.paragraphs.forEach((p, i) => {
+      let main = p.contents[0];
+      if (p.type === 'p') {
+        doc.p(main);
+      } else if (p.type === 'h1') {
+        doc.h1(main);
+      } else if (p.type === 'h2') {
+        doc.h2(main);
+      } else if (p.type === 'h3') {
+        doc.h3(main);
+      }
+    });
+    doc.sectionEnd({
+      headers: {
+        default: {
+          options: {
+            children: [
+              new Paragraph({
+                tabStops: [
+                  {
+                    type: 'center',
+                    position: 4153,
+                  },
+                  {
+                    type: 'clear',
+                    position: 377,
+                  },
+                  {
+                    type: 'right',
+                    position: 8306,
+                  },
+                ],
+                border: {
+                  bottom: {
+                    style: 'single',
+                    size: 6,
+                    space: 1,
+                  },
+                },
+                spacing: {
+                  line: 180,
+                  after: 600,
+                  lineRule: 'atLeast',
+                },
+                alignment: 'center',
+                children: [
+                  new TextRun({
+                    characterSpacing: -5,
+                    text: '沈阳工学院毕业设计（论文）',
+                    size: Size5,
+                  }),
+                ],
+              }),
+            ],
+          },
+        },
+      },
+      properties: {
+        type: SectionType.NEXT_PAGE,
+        page: {
+          pageNumbers: {
+            start: 1,
+            formatType: 'decimal',
+          },
+          margin: {
+            top: 1700,
+            right: 1138,
+            bottom: 1700,
+            left: 1700,
+          },
+        },
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({
+              tabStops: [
+                {
+                  type: 'center',
+                  position: 4153,
+                },
+                {
+                  type: 'clear',
+                  position: 377,
+                },
+                {
+                  type: 'right',
+                  position: 8306,
+                },
+              ],
+              border: {
+                top: {
+                  style: 'single',
+                  size: 6,
+                  space: 1,
+                },
+              },
+
+              children: [
+                // Field code for Roman numeral page number
+                new TextRun({
+                  children: [PageNumber.CURRENT],
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+          ],
+        }),
+      },
+    });
+    doc.save();
   }
   reset() {
     if (confirm('真的要还原整个文档吗？？？？真的要还原整个文档吗？？？？')) {
       this.paper = new SituPaper();
-      // this.dsl = defaultDsl;
-      this.preElement.nativeElement.innerHTML = this.dsl;
-      localStorage.setItem('paper', this.dsl);
+      this.paragraphs = [];
+      this.updateStorage();
     }
   }
   /* @HostListener('paste', ['$event'])
@@ -285,20 +418,7 @@ export class PaperComponent implements OnInit, AfterViewInit {
       if (isChinese) {
         doc.h1('摘 要');
       } else {
-        doc.docChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: 'Abstract',
-                bold: true,
-                font: 'Times New Roman',
-              }),
-            ],
-            outlineLevel: 1,
-            style: 'h1',
-            pageBreakBefore: true,
-          })
-        );
+        doc.docChildren.push();
       }
 
       // Find the index of the next node that starts with '关键词'

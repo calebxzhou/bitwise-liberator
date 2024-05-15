@@ -2,7 +2,7 @@
   <button mat-button>📎 打开</button>
   <button mat-button>💽 保存</button>
   <button mat-button (click)="reset()">🗑️ 复原</button>
-  <button mat-button>💾 导出Word</button>
+  <button mat-button (click)="exportWord()">💾 导出Word</button>
   <button mat-flat-button color="accent" (click)="openParagraphDialog()">
     📋 添加段落
   </button>
@@ -11,12 +11,19 @@
     📌 基本信息设定
   </button>
 </div>
-<div class="flex m-3">
+<div class="m-3">
   <!-- <pre
     class="h-[90vh] w-1/2 whitespace-pre-line outline-double"
     contenteditable="true"
     #preElement
     (input)="onInput($event)"
   ></pre> -->
-  <div class="ml-6"></div>
+  @for (parag of paragraphs; track $index) {
+  <bl-paragraph-display
+    [para]="parag"
+    [index]="$index"
+    (onEdit)="editParagraph($event)"
+    (onDelete)="deleteParagraph($event)"
+  ></bl-paragraph-display>
+  }
 </div>

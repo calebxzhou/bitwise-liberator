@@ -20,5 +20,5 @@ export class SituPaper {
 }
 export class SituPaperParagraph {
   type: string = 'p';
-  content: string[] = [];
+  contents: any[] = [];
 }
