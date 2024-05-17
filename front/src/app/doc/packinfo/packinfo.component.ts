@@ -131,9 +131,7 @@ export class PackinfoComponent implements OnInit {
     let doc = new LiberDoc()
       .h1('3 系统实现')
       .h2('3.1 系统框架')
-      .p(
-        '本系统采取并使用了Spring IoC、Spring MVC和MyBatis框架进行程序代码的开发，方便信息的维护。数据库方面使用了轻量级MySQL数据库，方便基本数据的操作，以及解决高并发时数据的操作，使用Vue框架进行前端代码的书写，界面美观且易于用户进行操作。本系统的工程目录结构图，如图3.1所示'
-      )
+      .p('工程目录结构图，如图3.1所示')
       .h6('图3.1 工程目录结构图');
     for (let i = 0; i < this.packages.length; i++) {
       let pkg = this.packages[i];
