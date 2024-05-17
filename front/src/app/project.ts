@@ -36,12 +36,12 @@ export class FuncTest {
   testCases: TestCase[] = [];
 }
 export class TestCase {
+  //测试项
+  name!: string;
   //预置条件
   condition!: string;
-  //测试描述
-  intro!: string;
-  //数据
-  data!: string;
+  //步骤和数据
+  step!: string;
   //结果
   result!: string;
 }

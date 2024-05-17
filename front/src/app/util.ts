@@ -12,6 +12,10 @@ export function getMongoIdValidator(): ValidatorFn {
     return isValid ? null : { invalid: 'id invalid' };
   };
 }
+//1 2 3 4->001 002 003 004
+export function formatNumberPadZero(input: number): string {
+  return input.toString().padStart(3, '0');
+}
 export async function getImageDimensions(imgSrc: string) {
   const imgLoadPromise = new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image();

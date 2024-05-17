@@ -264,16 +264,17 @@ export class LiberDoc {
           children: row.map(
             (cell, cellIndex) =>
               new TableCell({
-                children: [
-                  new Paragraph({
-                    text: cell.text,
-                    style: 'table-cell',
-                    alignment: cell.hAlign,
-                    indent: {
-                      firstLine: cell.indent,
-                    },
-                  }),
-                ],
+                children: cell.text.split('\n').map(
+                  (text) =>
+                    new Paragraph({
+                      text,
+                      style: 'table-cell',
+                      alignment: cell.hAlign,
+                      indent: {
+                        firstLine: cell.indent,
+                      },
+                    })
+                ),
                 width: {
                   size: columns[cellIndex].width,
                   type: WidthType.DXA,
@@ -929,9 +930,9 @@ export class LiberDoc {
   done() {
     return new Document({
       creator: 'Bitwise Liberator Doc',
-      features: {
+      /* features: {
         updateFields: true,
-      },
+      }, */
       styles: {
         paragraphStyles: [
           {

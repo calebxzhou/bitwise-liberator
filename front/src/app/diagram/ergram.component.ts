@@ -9,6 +9,7 @@ import {
   EllipseShape,
   drawRhombusWithText,
   drawTextAlongLine,
+  drawLineWithArrow,
 } from '../draw-svg';
 import { Project, EntityRelation, Entity, Field } from '../project';
 import { splitBySpaces, centerOf } from '../util';
@@ -145,6 +146,7 @@ export class ErgramComponent extends DiagramComponent {
         lineY2 = toShape.yDown;
       }
       //画线
+
       let line = svg
         .line(lineX1, lineY1, lineX2, lineY2)
         .stroke({ color: 'black' });

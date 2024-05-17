@@ -153,7 +153,7 @@ export abstract class CodegenComponent implements OnInit {
       for (let entity of this.pj.entities) {
         let code = await this.renderTemplateToCode({ entity });
         await zipWriter.add(
-          `${entity.capId()}DaoImpl.java`,
+          `${entity.capId()}${this.templateName}.java`,
           new Blob([code], { type: 'text/plain' }).stream()
         );
       }

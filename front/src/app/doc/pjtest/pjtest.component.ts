@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { ModuleTest, Project, FuncTest, TestCase } from '../../project';
-import { splitBySpaces } from '../../util';
+import { splitBySpaces, formatNumberPadZero } from '../../util';
 import { AlignmentType, VerticalAlign } from 'docx';
 import { TableCellInfo, Table3lColumn } from '../../liberdoc/doc-table';
 import { LiberDoc } from '../../liberdoc/liberdoc';
@@ -79,9 +79,9 @@ export class PjtestComponent {
       if (tokens.shift() === '测试' && funcNow) {
         let cas = new TestCase();
         let caseTokens = tokens.join(' ').split('>>');
-        cas.condition = caseTokens[0];
-        cas.intro = caseTokens[1];
-        cas.data = caseTokens[2];
+        cas.name = caseTokens[0];
+        cas.condition = caseTokens[1];
+        cas.step = caseTokens[2];
         cas.result = caseTokens[3];
         funcNow.testCases.push(cas);
         continue;
@@ -94,10 +94,25 @@ export class PjtestComponent {
   exportWord() {
     let doc = new LiberDoc()
       .h1('4 系统测试')
-      .p(
-        '系统测试是软件开发过程中不可或缺的环节。除了检测系统的正常运行和功能模块的执行情况，还需要验证系统的稳定性和可靠性。这包括长时间运行系统以观察是否会出现内存泄漏或其他资源耗尽的问题。同时，性能测试也是系统测试的重要组成部分，它可以帮助确定系统在高负载下的响应时间和处理能力。'
+      .p('系统测试是软件开发过程中不可或缺的环节。')
+      .h6('表4.1 系统环境测试表')
+      .table3l(
+        [
+          new Table3lColumn('操作系统', 4500),
+          new Table3lColumn('Windows 10', 4500),
+        ],
+        [
+          [
+            new TableCellInfo('软件配置'),
+            new TableCellInfo(
+              `微软Edge浏览器\nMySQL数据库\nNavicat 数据库操作软件\nIntelliJ IDEA 集成开发环境`
+            ),
+          ],
+        ]
       );
-    let tblCount = 1;
+    let tblCount = 2;
+    let cellIndent = (string: string) => (string.length > 6 ? 240 : 0);
+
     this.pj.tests.forEach((mod, i) => {
       doc.h2(`4.${i + 1} ${mod.name}模块测试`);
       mod.funcs.forEach((func, j) => {
@@ -108,7 +123,7 @@ export class PjtestComponent {
         func.testCases.forEach((cas, k) => {
           data.push([
             new TableCellInfo(
-              `${k + 1}`,
+              formatNumberPadZero(k + 1),
               0,
               0,
               AlignmentType.CENTER,
@@ -119,31 +134,24 @@ export class PjtestComponent {
               0,
               0,
               AlignmentType.BOTH,
-              VerticalAlign.TOP
+              VerticalAlign.TOP,
+              cellIndent(cas.condition)
             ),
             new TableCellInfo(
-              cas.intro,
+              cas.name,
               0,
               0,
               AlignmentType.BOTH,
               VerticalAlign.TOP,
-              240
+              cellIndent(cas.name)
             ),
             new TableCellInfo(
-              cas.data,
+              cas.step,
               0,
               0,
               AlignmentType.BOTH,
               VerticalAlign.TOP,
-              240
-            ),
-            new TableCellInfo(
-              cas.result,
-              0,
-              0,
-              AlignmentType.BOTH,
-              VerticalAlign.TOP,
-              240
+              cellIndent(cas.step)
             ),
             new TableCellInfo(
               cas.result,
@@ -151,27 +159,26 @@ export class PjtestComponent {
               0,
               AlignmentType.BOTH,
               VerticalAlign.TOP,
-              240
+              cellIndent(cas.result)
             ),
             new TableCellInfo(
-              `与预期结果相同`,
+              cas.result,
               0,
               0,
               AlignmentType.BOTH,
               VerticalAlign.TOP,
-              240
+              cellIndent(cas.result)
             ),
           ]);
         });
         doc.table3l(
           [
-            new Table3lColumn('测试操作', 850),
-            new Table3lColumn('预置条件', 1600),
-            new Table3lColumn('测试描述', 1600),
-            new Table3lColumn('数据', 1500),
-            new Table3lColumn('期望结果', 1120),
-            new Table3lColumn('实际结果', 1120),
-            new Table3lColumn('测试状态', 1120),
+            new Table3lColumn('测试编号', 1512),
+            new Table3lColumn('测试项', 1512),
+            new Table3lColumn('预置条件', 1512),
+            new Table3lColumn('测试步骤和数据', 1512),
+            new Table3lColumn('期望结果', 1512),
+            new Table3lColumn('实际结果', 1512),
           ],
           data
         );

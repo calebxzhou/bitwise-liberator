@@ -109,6 +109,33 @@ export function drawLine(
     .line(Number(x1), Number(y1), Number(x2), Number(y2))
     .stroke({ width: 1, color: 'black' });
 }
+export function drawLineWithArrow(
+  svg: Svg,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): Line {
+  // Define the arrow marker within the defs section
+  const defs = svg.defs();
+  const arrowMarker = defs
+    .marker(10, 10, (add) => {
+      add
+        .path('M0,0 L10,5 L0,10 L2,5 z')
+        .fill('white')
+        .stroke({ width: 1, color: 'black' });
+    })
+    .ref(10, 5)
+    .attr({ orient: 'auto' });
+
+  // Draw the line with the arrow marker at the end
+  const line = svg
+    .line(x1, y1, x2, y2)
+    .stroke({ width: 1, color: 'black' })
+    .attr({ 'marker-end': `url(#${arrowMarker.id()})` }); // Ensure this matches the marker ID
+
+  return line;
+}
 export function getLineStartPoint(line: Line) {
   const points = line.array().valueOf();
   // The x and y coordinates of the start point

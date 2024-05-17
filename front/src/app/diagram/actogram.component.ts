@@ -9,6 +9,7 @@ import {
   EllipseShape,
   ActorShape,
   drawActorCenter,
+  drawLineWithArrow,
 } from '../draw-svg';
 import { Project, ActorAccess } from '../project';
 import { centerOf, splitBySpaces } from '../util';
@@ -75,23 +76,21 @@ export class ActogramComponent extends DiagramComponent {
         //画线
         let ellipse = funcPos.get(func)!;
         if (i % 2 == 0) {
-          svg
-            .line(
-              actorShape.armRx,
-              actorShape.armRy,
-              ellipse.xLeft,
-              centerOf(ellipse.yDown, ellipse.yUp)
-            )
-            .stroke({ color: 'black' });
+          drawLineWithArrow(
+            svg,
+            actorShape.armRx,
+            actorShape.armRy,
+            ellipse.xLeft,
+            centerOf(ellipse.yDown, ellipse.yUp)
+          );
         } else {
-          svg
-            .line(
-              actorShape.armLx,
-              actorShape.armLy,
-              ellipse.xRight,
-              centerOf(ellipse.yDown, ellipse.yUp)
-            )
-            .stroke({ color: 'black' });
+          drawLineWithArrow(
+            svg,
+            actorShape.armLx,
+            actorShape.armLy,
+            ellipse.xRight,
+            centerOf(ellipse.yDown, ellipse.yUp)
+          );
         }
       }
     });
