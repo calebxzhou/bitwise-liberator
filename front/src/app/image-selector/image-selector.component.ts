@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { getImageDimensions } from '../util';
 import {
   CdkDropList,
@@ -32,6 +32,7 @@ export class ImageSelectorComponent {
     this.images.splice(index, 1);
   }
   images: ImageItem[] = [];
+  @Input() multipleImages!: boolean;
   @Output() imagesLoaded = new EventEmitter<ImageItem[]>();
 
   handleImageSelect(event: Event): void {
@@ -51,9 +52,9 @@ export class ImageSelectorComponent {
     reader.onload = (e: any) => {
       const base64 = e.target.result as string;
       getImageDimensions(base64).then((size) => {
-        this.images.push(
-          new ImageItem(file.name, base64, size.width, size.height)
-        );
+        let img = new ImageItem(file.name, base64, size.width, size.height);
+        if (this.multipleImages) this.images.push(img);
+        else this.images[0] = img;
         this.imagesLoaded.emit(this.images);
       });
       // Resolve the promise with the ImageUpload instance
@@ -77,4 +78,7 @@ export class ImageItem {
     this.width = width;
     this.height = height;
   }
+}
+export function getImageDisplayName(img: ImageItem) {
+  return img.name.split('.')[0];
 }

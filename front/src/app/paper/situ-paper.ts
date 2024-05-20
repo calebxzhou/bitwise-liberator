@@ -54,9 +54,12 @@ export function getCiteString(cite: PaperCite) {
 }
 export class SituPaperParagraph {
   type: string = 'p';
-  contents: any[] = [];
-  constructor(type?: string, contents?: any[]) {
+  content: any;
+  constructor(type?: string, content?: any) {
     if (type) this.type = type;
-    if (contents) this.contents = contents;
+    if (content) this.content = content;
   }
+}
+export class SituPaperTable{
+  
 }

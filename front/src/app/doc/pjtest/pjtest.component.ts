@@ -94,23 +94,9 @@ export class PjtestComponent {
   exportWord() {
     let doc = new LiberDoc()
       .h1('4 系统测试')
-      .p('系统测试是软件开发过程中不可或缺的环节。')
-      .h6('表4.1 系统环境测试表')
-      .table3l(
-        [
-          new Table3lColumn('操作系统', 4500),
-          new Table3lColumn('Windows 10', 4500),
-        ],
-        [
-          [
-            new TableCellInfo('软件配置'),
-            new TableCellInfo(
-              `微软Edge浏览器\nMySQL数据库\nNavicat 数据库操作软件\nIntelliJ IDEA 集成开发环境`
-            ),
-          ],
-        ]
-      );
-    let tblCount = 2;
+      .p('系统测试是软件开发过程中不可或缺的环节。');
+
+    let tblCount = 1;
     let cellIndent = (string: string) => (string.length > 6 ? 240 : 0);
 
     this.pj.tests.forEach((mod, i) => {

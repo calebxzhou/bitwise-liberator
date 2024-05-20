@@ -17,21 +17,18 @@
   </div>
 
   <div class="docdsl-preview">
-    <p *ngIf="para.type === 'p'">{{ para.contents[0] }}</p>
+    <p *ngIf="para.type === 'p'">{{ para.content }}</p>
     <h1 *ngIf="para.type === 'h1'" class="align-middle">
-      {{ para.contents[0] }}
+      {{ para.content }}
     </h1>
-    <h2 *ngIf="para.type === 'h2'">{{ para.contents[0] }}</h2>
-    <h3 *ngIf="para.type === 'h3'">{{ para.contents[0] }}</h3>
+    <h2 *ngIf="para.type === 'h2'">{{ para.content }}</h2>
+    <h3 *ngIf="para.type === 'h3'">{{ para.content }}</h3>
     <div *ngIf="para.type === 'img'">
-      @for (content of para.contents; track $index) {
-      <p>{{ content.name }}</p>
-      <img class="h-32" [src]="content.data" />
-      }
+      <p>{{ para.content.name }}</p>
+      <img class="h-32" [src]="para.content.data" />
     </div>
     <div *ngIf="para.type === 'table'">
-      <p>{{ para.contents[2] + " " + para.contents[0] }}</p>
-      <p>{{ para.contents[1] }}</p>
+      <p>{{ para.content }}</p>
     </div>
   </div>
 </div>

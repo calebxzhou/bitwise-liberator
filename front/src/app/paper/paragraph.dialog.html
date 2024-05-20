@@ -33,32 +33,25 @@
         cdkAutosizeMinRows="1"
         cdkAutosizeMaxRows="20"
         matInput
-        [(ngModel)]="data.contents[0]"
+        [(ngModel)]="data.content"
       ></textarea>
     </mat-form-field>
   </div>
   <div *ngIf="data.type === 'img'">
     <bl-image-selector
+      [multipleImages]="false"
       (imagesLoaded)="onImageLoaded($event)"
     ></bl-image-selector>
   </div>
   <div *ngIf="data.type === 'table'">
     <mat-form-field class="w-full">
-      <mat-label>表名</mat-label>
-      <input matInput [(ngModel)]="data.contents[2]" />
-    </mat-form-field>
-    <mat-form-field class="w-full">
-      <mat-label>表头 【名称=宽度占比%】空格分隔</mat-label>
-      <input matInput [(ngModel)]="data.contents[0]" />
-    </mat-form-field>
-    <mat-form-field class="w-full">
-      <mat-label>表数据 【两个大于号>> 分隔】</mat-label>
+      <mat-label>表名 表头 表数据【两个大于号>> 分隔】</mat-label>
       <textarea
         cdkTextareaAutosize
         cdkAutosizeMinRows="1"
         cdkAutosizeMaxRows="20"
         matInput
-        [(ngModel)]="data.contents[1]"
+        [(ngModel)]="data.content"
       >
       </textarea>
     </mat-form-field>

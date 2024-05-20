@@ -3,7 +3,7 @@
   class="ml-5"
   type="file"
   accept=".jpg,.png"
-  multiple
+  [multiple]="multipleImages ? 'multiple' : ''"
   (change)="handleImageSelect($event)"
 />
 <div *ngIf="images.length > 0">

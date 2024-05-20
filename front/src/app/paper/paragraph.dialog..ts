@@ -61,15 +61,15 @@ export class ParagraphDialogComponent {
     this.dialogRef.close();
   }
   onImageLoaded(images: ImageItem[]) {
-    this.data.type = 'img';
-    this.data.contents = images;
+    this.data = new SituPaperParagraph('img', images[0]);
   }
   onTypeSelectionChange(event: MatRadioChange) {
     if (event.value === 'table') {
-      this.data.contents[0] = '列1=33% 列2=33% 列3=33%';
-      this.data.contents[2] = '测试表包文件表数据库表';
-      this.data.contents[1] =
-        '第一行第一列>>第一行第二列>>第一行第三列\n第二行第一列>>第二行第二列>>第二行第三列\n第三行第一列>>第三行第二列>>第三行第三列...';
+      this.data.content = `测试表包文件表数据库表
+列1=33% 列2=33% 列3=33%
+第一行第一列>>第一行第二列>>第一行第三列
+第二行第一列>>第二行第二列>>第二行第三列
+第三行第一列>>第三行第二列>>第三行第三列...`;
     }
   }
 }

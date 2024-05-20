@@ -38,7 +38,7 @@ export class ParagraphDisplayComponent {
     }
   }
   getPreview() {
-    return this.para.contents[0].slice(0, 7) + '...';
+    return this.para.content[0].slice(0, 7) + '...';
   }
   edit() {
     this.onEdit.emit(this.index);

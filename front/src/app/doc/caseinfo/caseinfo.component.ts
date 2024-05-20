@@ -76,39 +76,20 @@ export class CaseinfoComponent implements OnInit {
   }
   exportWord() {
     let doc = new LiberDoc().h3('1.3.2 用例描述');
-
     this.pj.useCases.forEach((usecase, i) => {
       doc
-        .p(`${usecase.name}用例详细说明表，如表1.${i + 1}所示。`)
-        .h6(`表1.${i + 1} ${usecase.name}用例详细说明表`)
-        .table3l(
-          [
-            new Table3lColumn('功能编号', 1800),
-            new Table3lColumn(usecase.id, 7200),
-          ],
-          [
-            [new TableCellInfo('用例名称'), new TableCellInfo(usecase.name)],
-            [new TableCellInfo('用例描述'), new TableCellInfo(usecase.intro)],
-            [new TableCellInfo('优先级'), new TableCellInfo(usecase.priority)],
-            [new TableCellInfo('参与者'), new TableCellInfo(usecase.role)],
-            [
-              new TableCellInfo('前置条件'),
-              new TableCellInfo(usecase.condition),
-            ],
-            [new TableCellInfo('后置条件'), new TableCellInfo(usecase.after)],
-            [
-              new TableCellInfo('事件流'),
-              new TableCellInfo(
-                usecase.steps.map((step, j) => `${j + 1}. ${step}`).join('\n'),
-                0,
-                0,
-                AlignmentType.LEFT,
-                VerticalAlign.CENTER,
-                1880
-              ),
-            ],
-          ]
-        );
+        .p(`${i + 1}. ${usecase.name}用例描述`)
+        .p(`（1）功能编号：` + usecase.id)
+        .p(`（2）用例名称：` + usecase.name)
+        .p(`（3）用例描述：` + usecase.intro)
+        .p(`（4）优先级：` + usecase.priority)
+        .p(`（5）参与者：` + usecase.role)
+        .p(`（6）前置条件：` + usecase.condition)
+        .p(`（7）后置条件：` + usecase.after)
+        .p(`（8）事件流：`);
+      usecase.steps.forEach((step, j) => {
+        doc.p(`${numberToCircle(j + 1)} ${step}`);
+      });
     });
     doc.save();
   }

@@ -80,7 +80,7 @@
     </div>
   </div>
   <div class="flex">
-    <mat-form-field class="w-1/2">
+    <mat-form-field class="w-1/5">
       <mat-label>中文摘要</mat-label>
       <textarea
         cdkTextareaAutosize
@@ -90,7 +90,7 @@
         [(ngModel)]="paper.abstractCn"
       ></textarea>
     </mat-form-field>
-    <mat-form-field class="w-1/2">
+    <mat-form-field class="w-1/5">
       <mat-label>英文摘要</mat-label>
       <textarea
         matInput
@@ -100,9 +100,7 @@
         [(ngModel)]="paper.abstractEn"
       ></textarea>
     </mat-form-field>
-  </div>
-  <div class="flex">
-    <mat-form-field class="w-1/2">
+    <mat-form-field class="w-1/5">
       <mat-label>结论</mat-label>
       <textarea
         cdkTextareaAutosize
@@ -112,7 +110,7 @@
         [(ngModel)]="paper.result"
       ></textarea>
     </mat-form-field>
-    <mat-form-field class="w-1/2">
+    <mat-form-field class="w-1/5">
       <mat-label>致谢</mat-label>
       <textarea
         matInput
@@ -122,9 +120,7 @@
         [(ngModel)]="paper.thank"
       ></textarea>
     </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field class="w-1/2 float-left">
+    <mat-form-field class="w-1/5">
       <mat-label>绪论</mat-label>
       <textarea
         matInput
@@ -134,29 +130,28 @@
         [(ngModel)]="paper.intro"
       ></textarea>
     </mat-form-field>
-    <span>参考文献</span
-    ><button mat-flat-button color="primary" (click)="openCiteDialog()">
-      添加参考文献
-    </button>
-    @for (cite of paper.cites; track $index) {
-    <div class="block">
-      <span
-        >[{{ $index + 1 }}]{{ cite.title }}.{{ cite.author }}.{{
-          cite.year
-        }}....</span
-      ><button mat-flat-button color="primary" (click)="editCite($index)">
-        编辑
-      </button>
-      <button
-        mat-flat-button
-        color="accent"
-        (click)="paper.cites.splice($index, 1)"
-      >
-        删除
-      </button>
-    </div>
-    }
   </div>
+  <button mat-flat-button color="primary" (click)="openCiteDialog()">
+    添加参考文献
+  </button>
+  @for (cite of paper.cites; track $index) {
+  <div class="block">
+    <span
+      >[{{ $index + 1 }}]{{ cite.title }}.{{ cite.author }}.{{
+        cite.year
+      }}....</span
+    ><button mat-flat-button color="primary" (click)="editCite($index)">
+      编辑
+    </button>
+    <button
+      mat-flat-button
+      color="accent"
+      (click)="paper.cites.splice($index, 1)"
+    >
+      删除
+    </button>
+  </div>
+  }
 </div>
 <div class="m-3" cdkDropList (cdkDropListDropped)="drop($event)">
   @for (parag of paper.paragraphs; track $index) {
