@@ -34,7 +34,11 @@
         cdkAutosizeMaxRows="20"
         matInput
         [(ngModel)]="data.content"
+        [formControl]="contentControl"
       ></textarea>
+      <mat-error *ngIf="contentControl.hasError('startsWithNumber')">
+        不需要数字开头
+      </mat-error>
     </mat-form-field>
   </div>
   <div *ngIf="data.type === 'img'">

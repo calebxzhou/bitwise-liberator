@@ -10,7 +10,7 @@
   <button mat-button (click)="save()">💽 保存</button>
   <button mat-button (click)="reset()">🗑️ 复原</button>
   <button mat-button (click)="exportWord()">💾 导出Word</button>
-  <button mat-flat-button color="accent" (click)="openParagraphDialog()">
+  <button mat-flat-button color="accent" (click)="openEditParagraph(-1)">
     📋 添加段落
   </button>
 </div>
@@ -159,7 +159,7 @@
     cdkDrag
     [para]="parag"
     [index]="$index"
-    (onEdit)="editParagraph($event)"
+    (onEdit)="openEditParagraph($event)"
     (onDelete)="deleteParagraph($event)"
   ></bl-paragraph-display>
   }

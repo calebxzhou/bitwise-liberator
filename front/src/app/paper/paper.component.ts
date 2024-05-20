@@ -77,15 +77,19 @@ export class PaperComponent implements OnInit {
     this.readStorage();
   }
   //编辑段落
-  editParagraph(index: number) {
+  openEditParagraph(index: number) {
     const dialogRef = this.dialog.open(ParagraphDialogComponent, {
-      data: this.paper.paragraphs[index],
+      data:
+        index >= 0 ? this.paper.paragraphs[index] : new SituPaperParagraph(),
     });
     dialogRef.afterClosed().subscribe((result: SituPaperParagraph) => {
-      if (result) {
-        this.paper.paragraphs[index] = result;
-        this.updateStorage();
+      if (!result) return;
+      if (result.type === 'p' && !result.content.endsWith('。')) {
+        result.content += '。';
       }
+      if (index >= 0) this.paper.paragraphs[index] = result;
+      else this.paper.paragraphs.push(result);
+      this.updateStorage();
     });
   }
   editCite(index: number) {
@@ -164,20 +168,6 @@ export class PaperComponent implements OnInit {
     let paper = await db.paper.get(0);
     let json = paper?.json;
     if (json) this.paper = JSON.parse(json);
-  }
-  openParagraphDialog() {
-    const dialogRef = this.dialog.open(ParagraphDialogComponent, {
-      data: new SituPaperParagraph(),
-    });
-    dialogRef.afterClosed().subscribe((result: SituPaperParagraph) => {
-      if (result) {
-        if (result.type === 'p' && !result.content.endsWith('。')) {
-          result.content += '。';
-        }
-        this.paper.paragraphs.push(result);
-        this.updateStorage();
-      }
-    });
   }
   openCiteDialog() {
     const dialogRef = this.dialog.open(PaperCiteDialogComponent, {

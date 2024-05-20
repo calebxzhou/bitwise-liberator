@@ -1,5 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogTitle,
@@ -48,11 +56,17 @@ import {
     MatDialogClose,
     MatRadioModule,
     ImageSelectorComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: './paragraph.dialog.html',
   styles: ``,
 })
 export class ParagraphDialogComponent {
+  contentControl = new FormControl('', [
+    Validators.required,
+    this.startsWithNumberValidator(),
+  ]);
+
   constructor(
     public dialogRef: MatDialogRef<ParagraphDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SituPaperParagraph
@@ -71,5 +85,14 @@ export class ParagraphDialogComponent {
 第二行第一列>>第二行第二列>>第二行第三列
 第三行第一列>>第三行第二列>>第三行第三列...`;
     }
+  }
+  startsWithNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const content = control.value;
+      if (content && content.length > 0 && !isNaN(content[0])) {
+        return { startsWithNumber: { value: control.value } };
+      }
+      return null;
+    };
   }
 }
