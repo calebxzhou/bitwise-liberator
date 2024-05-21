@@ -9,7 +9,14 @@ using LiberatorDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LiberatorDoc.Controllers;
+/*
+调整格式： 
+目录
+页眉页脚
+图片
+times new roman
 
+*/
 //上传word 返回表格信息
 [ApiController]
 [Route("[controller]")]

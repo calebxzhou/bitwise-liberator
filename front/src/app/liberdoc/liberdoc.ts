@@ -798,7 +798,7 @@ export class LiberDoc {
             font: 'Times New Roman',
           }),
           new TextRun({
-            text: model.keywordCn,
+            text: model.keywordEn,
             font: 'Times New Roman',
           }),
         ],

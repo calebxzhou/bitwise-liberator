@@ -50,7 +50,7 @@
   </section>
   <p>3. 选择截图（按住ctrl键可以多选）</p>
   <!-- Use the ImagesUploaderComponent's selector and bind to the imagesLoaded event -->
-  <bl-image-selector (imagesLoaded)="onImageLoaded($event)"></bl-image-selector>
+  <bl-image-selector [multipleImages]="true" (imagesLoaded)="onImageLoaded($event)"></bl-image-selector>
 </div>
 <!-- <div *ngIf="images.length > 0">
   <p>4. 确认图片名（拖拽图片改变顺序）</p>
