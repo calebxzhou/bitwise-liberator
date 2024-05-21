@@ -9,9 +9,17 @@
   <button mat-button (click)="opener.click()">📎 打开</button>
   <button mat-button (click)="save()">💽 保存</button>
   <button mat-button (click)="reset()">🗑️ 复原</button>
+  <button mat-button (click)="import_word.click()">💾 导入Word</button>
+  <input
+    type="file"
+    #import_word
+    (change)="importWord($event)"
+    style="display: none"
+    accept=".docx"
+  />
   <button mat-button (click)="exportWord()">💾 导出Word</button>
   <button mat-flat-button color="accent" (click)="openEditParagraph(-1)">
-    📋 添加段落
+    📋 添加内容
   </button>
 </div>
 <div>

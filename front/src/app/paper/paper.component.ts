@@ -14,6 +14,9 @@ import {
   trimBase64,
   calculateWithPercentage,
   splitByReturn,
+  containsCharacters,
+  filterChineseEnglish,
+  getImageDimensions,
 } from '../util';
 import {
   AlignmentType,
@@ -91,6 +94,92 @@ export class PaperComponent implements OnInit {
       else this.paper.paragraphs.push(result);
       this.updateStorage();
     });
+  }
+  async importWord(event: Event) {
+    this.paper = new SituPaper();
+    const inputEvent = event as InputEvent;
+    const file = (inputEvent.target as HTMLInputElement).files![0];
+    if (!file) return;
+    let data = await file.arrayBuffer();
+    let result = await mammoth.convertToHtml({ arrayBuffer: data });
+    let html = result.value; // The generated HTML
+    var messages = result.messages; // Any messages, such as warnings during conversion
+    console.log(messages);
+    const parser = new DOMParser();
+    const htmlNodes = parser
+      .parseFromString(html, 'text/html')
+      .querySelectorAll('p, h1, h2, h3, img,table');
+    for (let index = 0; index < htmlNodes.length; index++) {
+      const node = htmlNodes[index];
+      const text = node.textContent ?? '';
+
+      if (node.tagName == 'P') {
+        let images = node.querySelectorAll('img');
+        if (images.length > 0) {
+          let nextText = htmlNodes[index + 2].textContent ?? '';
+          let imageName = nextText.match(/图\d+\.\d+(.*)/)?.pop() ?? '';
+          let size = await getImageDimensions(images[0].src);
+          let image = new ImageItem(
+            imageName,
+            images[0].src,
+            size.width,
+            size.height
+          );
+
+          this.addParagraph(new SituPaperParagraph('img', image));
+          index += 2;
+        } else {
+          this.addParagraph(new SituPaperParagraph('p', text));
+        }
+        continue;
+      }
+      //数字+空格=一级标题
+      if (node.tagName === 'H1' || /^[0-9] /.test(text)) {
+        this.addParagraph(
+          new SituPaperParagraph('h1', filterChineseEnglish(text))
+        );
+        continue;
+      }
+      //数字+点+数字=二级标题
+      if (node.tagName === 'H2' || /^[0-9]+\.[0-9]+/.test(text)) {
+        this.addParagraph(
+          new SituPaperParagraph('h2', filterChineseEnglish(text))
+        );
+        continue;
+      }
+      //数字+点+数字+点+数字=三级标题
+      if (node.tagName === 'H3' || /^[0-9]+\.[0-9]+\.[0-9]+/.test(text)) {
+        this.addParagraph(
+          new SituPaperParagraph('h3', filterChineseEnglish(text))
+        );
+        continue;
+      }
+      if (node.tagName === 'TABLE') {
+        let trs = Array.from(node.querySelectorAll('tr'));
+        let ths = Array.from(trs.shift()?.querySelectorAll('td') ?? []);
+        let tableName =
+          htmlNodes[index - 1].textContent?.match(/表\d+\.\d+(.*)/)?.pop() ??
+          '';
+        let thStr = ths
+          .map((td) => `${td.textContent}=${100 / ths.length}%`)
+          .join(' ');
+        let trsStr = trs
+          .map((tr) =>
+            Array.from(tr.querySelectorAll('td'))
+              .map((td) => td.textContent)
+              .join('>>')
+          )
+          .join('\n');
+        let fullStr = `${tableName}\n${thStr}\n${trsStr}`;
+        console.log(fullStr);
+        this.addParagraph(new SituPaperParagraph('table', fullStr));
+        continue;
+      }
+    }
+  }
+
+  addParagraph(parag: SituPaperParagraph) {
+    this.paper.paragraphs.push(parag);
   }
   editCite(index: number) {
     const dialogRef = this.dialog.open(PaperCiteDialogComponent, {
@@ -182,7 +271,7 @@ export class PaperComponent implements OnInit {
   }
   exportWord() {
     // this.preprocess();
-    console.log(this.paper);
+    // console.log(this.paper);
     let doc = new LiberDoc();
     doc.situStart(this.paper);
     let h1Count = 0;
@@ -194,6 +283,7 @@ export class PaperComponent implements OnInit {
     for (let i = 0; i < paras.length; i++) {
       let now = paras[i];
       let main = now.content;
+      if (!main) continue;
       if (now.type === 'p') {
         let paraStrs = splitByReturn(main);
         //如果正文下一个段落是图片，加上如图xxx所示

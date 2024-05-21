@@ -16,6 +16,17 @@ export function getMongoIdValidator(): ValidatorFn {
 export function formatNumberPadZero(input: number): string {
   return input.toString().padStart(3, '0');
 }
+export function containsCharacters(str: string, chars: string): boolean {
+  return [...chars].every((char) => str.includes(char));
+}
+export function filterChineseEnglish(input: string): string {
+  // Regular expression that matches any character that is not a Chinese or English alphabet
+  const regex = /[^a-zA-Z\u4e00-\u9fa5]/g;
+  // Replace matched characters with an empty string
+  const output = input.replace(regex, '');
+  return output;
+}
+
 export async function getImageDimensions(imgSrc: string) {
   const imgLoadPromise = new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image();
@@ -86,6 +97,7 @@ export function calculateWithPercentage(
   num: number,
   percentage: string
 ): number {
+  if (!percentage) return 0;
   // Convert the percentage string to a decimal
   const decimal = parseFloat(percentage.replace('%', '')) / 100;
   // Multiply the number by the decimal
