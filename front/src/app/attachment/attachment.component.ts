@@ -36,6 +36,7 @@ import {
 import { SituPaper } from '../paper/situ-paper';
 import { MatButtonModule } from '@angular/material/button';
 import {
+  getImageDisplayName,
   ImageItem,
   ImageSelectorComponent,
 } from '../image-selector/image-selector.component';
@@ -334,7 +335,7 @@ export class AttachmentComponent implements OnInit {
     doc.h1('附图B  系统功能界面');
     this.images.forEach((img, i) => {
       doc.img(img.data, img.width, img.height);
-      doc.h6(`图B.${i + 1} ${img.name}`);
+      doc.h6(`图B.${i + 1} ${getImageDisplayName(img)}`);
     });
     doc.sectionEnd(getSection(false, '沈阳工学院毕业设计（论文）附图'));
     doc.save();
