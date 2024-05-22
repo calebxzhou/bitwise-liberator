@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>论文解放者 1.0</title>
+</head>
+<body>
+    <div id="info"></div>
+
+    <input type="file" id="fileUpload" name="fileUpload" onchange="uploadFile()">
+</body>
+
+<script>
+async function uploadFile() {
+    const input = document.getElementById('fileUpload');
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    document.getElementById('info').innerText='正在处理'
+    const response = await fetch('/paperOptimizer', {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!response.ok) {
+        alert('File upload failed');
+        return;
+    }
+
+    const blob = await response.blob();
+
+    // Create a hidden anchor tag to download the file
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = URL.createObjectURL(blob);
+    a.download = '1.docx';
+    document.body.appendChild(a);
+    a.click();
+
+    // Clean up
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    document.getElementById('info').innerText = '处理完成'
+}
+</script>
+
+</html>

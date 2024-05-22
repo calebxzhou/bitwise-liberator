@@ -1,0 +1,213 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\utils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\utils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\options.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\options.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\controllers\\paperoptimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\controllers\\paperoptimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\docops\\docconst.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\docops\\docconst.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\docops\\docparagraphs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\docops\\docparagraphs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\docops\\doctables.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\docops\\doctables.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\docops\\docheadings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\docops\\docheadings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|c:\\users\\liberatorch\\documents\\coding\\bitwise-liberator\\back-doc\\liberatordoc\\docops\\docs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5C27EB9A-8F43-456D-A053-B2A83C228608}|LiberatorDoc\\LiberatorDoc.csproj|solutionrelative:liberatordoc\\docops\\docs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 206,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\appsettings.json",
+              "RelativeDocumentMoniker": "LiberatorDoc\\appsettings.json",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\appsettings.json",
+              "RelativeToolTip": "LiberatorDoc\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-05-22T06:15:24.65Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "LiberatorDoc\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Properties\\launchSettings.json",
+              "RelativeToolTip": "LiberatorDoc\\Properties\\launchSettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-05-22T06:10:46.355Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Utils.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Utils.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\Utils.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Utils.cs",
+              "RelativeToolTip": "LiberatorDoc\\Utils.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T06:10:42.573Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DocConst.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocConst.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\DocOps\\DocConst.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocConst.cs",
+              "RelativeToolTip": "LiberatorDoc\\DocOps\\DocConst.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T01:46:25.792Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DocTables.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocTables.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\DocOps\\DocTables.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocTables.cs",
+              "RelativeToolTip": "LiberatorDoc\\DocOps\\DocTables.cs",
+              "ViewState": "AQIAAG0AAAAAAAAAAAAUwLIAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T01:15:22.859Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "DocHeadings.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocHeadings.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\DocOps\\DocHeadings.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocHeadings.cs",
+              "RelativeToolTip": "LiberatorDoc\\DocOps\\DocHeadings.cs",
+              "ViewState": "AQIAADAAAAAAAAAAAAAIwC8AAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T01:15:15.274Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PaperOptimizer.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Controllers\\PaperOptimizer.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\Controllers\\PaperOptimizer.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Controllers\\PaperOptimizer.cs",
+              "RelativeToolTip": "LiberatorDoc\\Controllers\\PaperOptimizer.cs",
+              "ViewState": "AQIAABgAAAAAAAAAAAAIwEQAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T00:26:54.185Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DocParagraphs.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocParagraphs.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\DocOps\\DocParagraphs.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\DocParagraphs.cs",
+              "RelativeToolTip": "LiberatorDoc\\DocOps\\DocParagraphs.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAxwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T01:15:18.188Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Docs.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\Docs.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\DocOps\\Docs.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\DocOps\\Docs.cs",
+              "RelativeToolTip": "LiberatorDoc\\DocOps\\Docs.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T01:15:20.733Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "index.html",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\wwwroot\\index.html",
+              "RelativeDocumentMoniker": "LiberatorDoc\\wwwroot\\index.html",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\wwwroot\\index.html",
+              "RelativeToolTip": "LiberatorDoc\\wwwroot\\index.html",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACoAAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2024-05-22T00:33:15.389Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Program.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\Program.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Program.cs",
+              "RelativeToolTip": "LiberatorDoc\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T00:27:46.003Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Options.cs",
+              "DocumentMoniker": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Options.cs",
+              "RelativeDocumentMoniker": "LiberatorDoc\\Options.cs",
+              "ToolTip": "C:\\Users\\liberatorch\\Documents\\Coding\\bitwise-liberator\\back-doc\\LiberatorDoc\\Options.cs",
+              "RelativeToolTip": "LiberatorDoc\\Options.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T00:25:32.649Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
